@@ -1,0 +1,334 @@
+{
+  "ID": "86ffa565-7a91-4f9e-bcb0-0f9e354dec31",
+  "Version": "2.2.5.0",
+  "Name": "Node",
+  "Content": {
+    "Content": {
+      "Animation": {
+        "Duration": 0,
+        "Speed": 1.0,
+        "Timelines": [],
+        "ctype": "TimelineActionData"
+      },
+      "AnimationList": [],
+      "ObjectData": {
+        "Tag": 173,
+        "Children": [
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "btn_k.png",
+              "Plist": "mainui.plist"
+            },
+            "Scale9Enable": true,
+            "Scale9OriginX": 15,
+            "Scale9OriginY": 15,
+            "Scale9Width": 36,
+            "Scale9Height": 35,
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 1.0
+            },
+            "Position": {
+              "X": 0.0,
+              "Y": 2.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": -145.0,
+            "RightMargin": -145.0,
+            "TopMargin": -2.0,
+            "BottomMargin": -88.0,
+            "Tag": 105,
+            "ActionTag": -581652656,
+            "Size": {
+              "X": 290.0,
+              "Y": 90.0
+            },
+            "Name": "bg",
+            "ctype": "ImageViewObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 0.58,
+              "Y": 1.17
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 0.58,
+            "RightMargin": -0.58,
+            "TopMargin": -1.17,
+            "BottomMargin": 1.17,
+            "Tag": 1622,
+            "Children": [
+              {
+                "IsCustomSize": true,
+                "FontSize": 12,
+                "LabelText": "死亡后复活，并且再次死亡后，如果拥有其他战机，则会继续出战",
+                "VerticalAlignmentType": "VT_Center",
+                "OutlineSize": 0,
+                "OutlineColor": {
+                  "G": 0,
+                  "B": 0
+                },
+                "ShadowColor": {
+                  "G": 127,
+                  "B": 80
+                },
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -63.55,
+                  "Y": -45.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -63.55,
+                "RightMargin": -23.45,
+                "TopMargin": 5.0,
+                "BottomMargin": -85.0,
+                "Tag": 321,
+                "ActionTag": 306591544,
+                "Size": {
+                  "X": 87.0,
+                  "Y": 80.0
+                },
+                "Name": "sItemDescriptionLab",
+                "ctype": "TextObjectData"
+              }
+            ],
+            "ActionTag": -2104637202,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "Node_5",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 86.0361,
+              "Y": -43.57
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 86.0361,
+            "RightMargin": -86.0361,
+            "TopMargin": 43.57,
+            "BottomMargin": -43.57,
+            "Tag": 360,
+            "Children": [
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "btn_blue_my.png",
+                  "Plist": "mainui.plist"
+                },
+                "Scale9Width": 103,
+                "Scale9Height": 50,
+                "TouchEnable": true,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -0.4,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -50.4,
+                "RightMargin": -49.6,
+                "TopMargin": -30.0,
+                "BottomMargin": -30.0,
+                "Tag": 361,
+                "ActionTag": -1596059135,
+                "Size": {
+                  "X": 100.0,
+                  "Y": 60.0
+                },
+                "Name": "sItemBuyBtn",
+                "ctype": "ImageViewObjectData"
+              },
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "game_g.png",
+                  "Plist": "mainui.plist"
+                },
+                "BlendFunc": {
+                  "Src": 1,
+                  "Dst": 771
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -23.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.1,
+                  "ScaleY": 1.1
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -31.0,
+                "RightMargin": 15.0,
+                "TopMargin": -8.0,
+                "BottomMargin": -8.0,
+                "Tag": 103,
+                "ActionTag": 1128612797,
+                "Size": {
+                  "X": 16.0,
+                  "Y": 16.0
+                },
+                "Name": "Sprite_1",
+                "ctype": "SpriteObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 17,
+                "LabelText": "22000",
+                "VerticalAlignmentType": "VT_Center",
+                "OutlineSize": 0,
+                "OutlineColor": {
+                  "G": 0,
+                  "B": 0
+                },
+                "ShadowColor": {
+                  "G": 127,
+                  "B": 80
+                },
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -10.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -10.0,
+                "RightMargin": -50.0,
+                "TopMargin": -11.0,
+                "BottomMargin": -11.0,
+                "Tag": 363,
+                "ActionTag": -1050560237,
+                "Size": {
+                  "X": 60.0,
+                  "Y": 22.0
+                },
+                "Name": "sItemPriceLab",
+                "ctype": "TextObjectData"
+              }
+            ],
+            "ActionTag": 2024216225,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "PriceNode",
+            "ctype": "SingleNodeObjectData"
+          }
+        ],
+        "Size": {
+          "X": 0.0,
+          "Y": 0.0
+        },
+        "Name": "Node",
+        "ctype": "SingleNodeObjectData"
+      },
+      "ctype": "GameProjectData"
+    }
+  },
+  "Type": "Node"
+}

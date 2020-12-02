@@ -1,0 +1,174 @@
+{
+  "ID": "e2350085-e1aa-48ad-82c0-3dd1ff0b4765",
+  "Version": "2.2.5.0",
+  "Name": "MainLayer",
+  "Content": {
+    "Content": {
+      "Animation": {
+        "Duration": 0,
+        "Speed": 1.0,
+        "Timelines": [],
+        "ctype": "TimelineActionData"
+      },
+      "AnimationList": [],
+      "ObjectData": {
+        "Tag": 105,
+        "Children": [
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "ui_menu0.png",
+              "Plist": "mainui.plist"
+            },
+            "BlendFunc": {
+              "Src": 1,
+              "Dst": 771
+            },
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 160.0,
+              "Y": 138.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.243
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 77.0,
+            "RightMargin": 77.0,
+            "TopMargin": 410.0,
+            "BottomMargin": 118.0,
+            "Tag": 7,
+            "ActionTag": -2099798117,
+            "Size": {
+              "X": 166.0,
+              "Y": 40.0
+            },
+            "Name": "beginGameSpt",
+            "ctype": "SpriteObjectData"
+          },
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "menu_title.png",
+              "Plist": "mainui.plist"
+            },
+            "BlendFunc": {
+              "Src": 1,
+              "Dst": 771
+            },
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 160.0,
+              "Y": 492.5
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.8671
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 17.5,
+            "RightMargin": 17.5,
+            "TopMargin": 40.5,
+            "BottomMargin": 457.5,
+            "Tag": 46,
+            "ActionTag": -131311288,
+            "Size": {
+              "X": 285.0,
+              "Y": 70.0
+            },
+            "Name": "titleSpt",
+            "ctype": "SpriteObjectData"
+          },
+          {
+            "IsCustomSize": true,
+            "FontSize": 20,
+            "LabelText": "Ver 1.0.123",
+            "HorizontalAlignmentType": "HT_Right",
+            "OutlineSize": 0,
+            "OutlineColor": {
+              "G": 0,
+              "B": 0
+            },
+            "ShadowColor": {
+              "G": 127,
+              "B": 80
+            },
+            "ShadowOffsetX": 0,
+            "ShadowOffsetY": 0,
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 151.0,
+              "Y": 18.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {
+              "R": 254,
+              "G": 204,
+              "B": 4
+            },
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.4719,
+              "Y": 0.0317
+            },
+            "PreSize": {
+              "X": 1.0,
+              "Y": 0.0352
+            },
+            "LeftMargin": -9.0,
+            "RightMargin": 9.0,
+            "TopMargin": 540.0,
+            "BottomMargin": 8.0,
+            "Tag": 36,
+            "ActionTag": -113361252,
+            "Size": {
+              "X": 320.0,
+              "Y": 20.0
+            },
+            "Name": "versionLab",
+            "ctype": "TextObjectData"
+          }
+        ],
+        "Size": {
+          "X": 320.0,
+          "Y": 568.0
+        },
+        "Name": "Layer",
+        "ctype": "LayerObjectData"
+      },
+      "ctype": "GameProjectData"
+    }
+  },
+  "Type": "Layer"
+}

@@ -1,0 +1,801 @@
+{
+  "ID": "cde57e86-e7f3-4176-8b51-f28a9b9f9d78",
+  "Version": "2.2.5.0",
+  "Name": "ResultLayer",
+  "Content": {
+    "Content": {
+      "Animation": {
+        "Duration": 0,
+        "Speed": 1.0,
+        "Timelines": [],
+        "ctype": "TimelineActionData"
+      },
+      "AnimationList": [],
+      "ObjectData": {
+        "Children": [
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "sel_role_k0.png",
+              "Plist": "mainui.plist"
+            },
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 160.0,
+              "Y": 221.5
+            },
+            "Scale": {
+              "ScaleX": 1.0185,
+              "ScaleY": 1.5661
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.39
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 10.0,
+            "RightMargin": 10.0,
+            "TopMargin": 275.0,
+            "BottomMargin": 150.0,
+            "Tag": 189,
+            "ActionTag": 224088976,
+            "Size": {
+              "X": 300.0,
+              "Y": 143.0
+            },
+            "Name": "Sprite_1",
+            "ctype": "SpriteObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 160.0,
+              "Y": 325.9009
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.5738
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 160.0,
+            "RightMargin": 160.0,
+            "TopMargin": 242.0991,
+            "BottomMargin": 325.9009,
+            "Tag": 126,
+            "Children": [
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "btn_blue_my.png",
+                  "Plist": "mainui.plist"
+                },
+                "Scale9Enable": true,
+                "Scale9OriginX": 18,
+                "Scale9OriginY": 18,
+                "Scale9Width": 67,
+                "Scale9Height": 14,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "Alpha": 224,
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.4812,
+                  "Y": 0.1162
+                },
+                "LeftMargin": -77.0,
+                "RightMargin": -77.0,
+                "TopMargin": -33.0,
+                "BottomMargin": -33.0,
+                "Tag": 127,
+                "ActionTag": -1664013781,
+                "Size": {
+                  "X": 154.0,
+                  "Y": 66.0
+                },
+                "Name": "Image_13",
+                "ctype": "ImageViewObjectData"
+              },
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "title_result.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -23.0,
+                "RightMargin": -23.0,
+                "TopMargin": -23.0,
+                "BottomMargin": -23.0,
+                "Tag": 190,
+                "ActionTag": 2009770236,
+                "Size": {
+                  "X": 107.0,
+                  "Y": 35.0
+                },
+                "Name": "Sprite_2",
+                "ctype": "SpriteObjectData"
+              }
+            ],
+            "ActionTag": 42329816,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "titleNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 160.0,
+              "Y": 264.3125
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.4653
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 160.0,
+            "RightMargin": 160.0,
+            "TopMargin": 303.6875,
+            "BottomMargin": 264.3125,
+            "Tag": 145,
+            "Children": [
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "ui_gold.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -55.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -73.0,
+                "RightMargin": 37.0,
+                "TopMargin": -10.0,
+                "BottomMargin": -10.0,
+                "Tag": 191,
+                "ActionTag": 13334421,
+                "Size": {
+                  "X": 36.0,
+                  "Y": 20.0
+                },
+                "Name": "Sprite_3",
+                "ctype": "SpriteObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 20,
+                "LabelText": "1000",
+                "HorizontalAlignmentType": "HT_Right",
+                "OutlineSize": 0,
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 62.0,
+                  "Y": 0.5257
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -31.0,
+                "RightMargin": -62.0,
+                "TopMargin": -10.5257,
+                "BottomMargin": -9.4743,
+                "Tag": 107,
+                "ActionTag": -613792816,
+                "Size": {
+                  "X": 93.0,
+                  "Y": 20.0
+                },
+                "Name": "moneyLab",
+                "ctype": "TextObjectData"
+              },
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "game_g.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 80.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.2,
+                  "ScaleY": 1.2
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": 72.0,
+                "RightMargin": -88.0,
+                "TopMargin": -8.0,
+                "BottomMargin": -8.0,
+                "Tag": 192,
+                "ActionTag": 225195104,
+                "Size": {
+                  "X": 16.0,
+                  "Y": 16.0
+                },
+                "Name": "Sprite_4",
+                "ctype": "SpriteObjectData"
+              }
+            ],
+            "ActionTag": -1361491026,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "moneyNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 160.0,
+              "Y": 220.98
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.389
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 160.0,
+            "RightMargin": 160.0,
+            "TopMargin": 347.02,
+            "BottomMargin": 220.98,
+            "Tag": 146,
+            "Children": [
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "ui_fxjl.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -55.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -89.5,
+                "RightMargin": 20.5,
+                "TopMargin": -10.0,
+                "BottomMargin": -10.0,
+                "Tag": 193,
+                "ActionTag": -1704834776,
+                "Size": {
+                  "X": 69.0,
+                  "Y": 20.0
+                },
+                "Name": "Sprite_5",
+                "ctype": "SpriteObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 20,
+                "LabelText": "1500",
+                "HorizontalAlignmentType": "HT_Right",
+                "OutlineSize": 0,
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 62.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -8.0,
+                "RightMargin": -62.0,
+                "TopMargin": -10.0,
+                "BottomMargin": -10.0,
+                "Tag": 106,
+                "ActionTag": -385439471,
+                "Size": {
+                  "X": 70.0,
+                  "Y": 20.0
+                },
+                "Name": "distanceLab",
+                "ctype": "TextObjectData"
+              },
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "mmm_jl0.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 80.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": 66.5,
+                "RightMargin": -93.5,
+                "TopMargin": -12.0,
+                "BottomMargin": -12.0,
+                "Tag": 194,
+                "ActionTag": 1961989485,
+                "Size": {
+                  "X": 27.0,
+                  "Y": 24.0
+                },
+                "Name": "Sprite_6",
+                "ctype": "SpriteObjectData"
+              }
+            ],
+            "ActionTag": 1680413888,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "distanceNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 160.0,
+              "Y": 175.98
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.3098
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 160.0,
+            "RightMargin": 160.0,
+            "TopMargin": 392.02,
+            "BottomMargin": 175.98,
+            "Tag": 147,
+            "Children": [
+              {
+                "FontSize": 16,
+                "LabelText": "最远飞行距离",
+                "OutlineSize": 0,
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -55.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -103.0,
+                "RightMargin": 7.0,
+                "TopMargin": -8.0,
+                "BottomMargin": -8.0,
+                "Tag": 108,
+                "ActionTag": -499145966,
+                "Size": {
+                  "X": 96.0,
+                  "Y": 16.0
+                },
+                "Name": "maxDistanceText",
+                "ctype": "TextObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 20,
+                "LabelText": "1500",
+                "HorizontalAlignmentType": "HT_Right",
+                "OutlineSize": 0,
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 62.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -8.0,
+                "RightMargin": -62.0,
+                "TopMargin": -10.0,
+                "BottomMargin": -10.0,
+                "Tag": 149,
+                "ActionTag": -381115530,
+                "Size": {
+                  "X": 70.0,
+                  "Y": 20.0
+                },
+                "Name": "maxDistanceLab",
+                "ctype": "TextObjectData"
+              },
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "mmm_jl0.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 80.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": 66.5,
+                "RightMargin": -93.5,
+                "TopMargin": -12.0,
+                "BottomMargin": -12.0,
+                "Tag": 195,
+                "ActionTag": -168450507,
+                "Size": {
+                  "X": 27.0,
+                  "Y": 24.0
+                },
+                "Name": "Sprite_7",
+                "ctype": "SpriteObjectData"
+              }
+            ],
+            "ActionTag": 1279927706,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "historyDistanceNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "pause5.png",
+              "Plist": "mainui.plist"
+            },
+            "Scale9Width": 207,
+            "Scale9Height": 60,
+            "TouchEnable": true,
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 124.6252,
+              "Y": 62.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.3895,
+              "Y": 0.1092
+            },
+            "PreSize": {
+              "X": 0.6469,
+              "Y": 0.1056
+            },
+            "LeftMargin": 21.1252,
+            "RightMargin": 91.8748,
+            "TopMargin": 476.0,
+            "BottomMargin": 32.0,
+            "Tag": 15,
+            "ActionTag": 1205273198,
+            "Size": {
+              "X": 207.0,
+              "Y": 60.0
+            },
+            "Name": "againBtn",
+            "ctype": "ImageViewObjectData"
+          },
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "btn_result_main.png",
+              "Plist": "mainui.plist"
+            },
+            "Scale9Width": 63,
+            "Scale9Height": 63,
+            "TouchEnable": true,
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 270.9817,
+              "Y": 62.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.8468,
+              "Y": 0.1092
+            },
+            "PreSize": {
+              "X": 0.1969,
+              "Y": 0.1109
+            },
+            "LeftMargin": 239.4817,
+            "RightMargin": 17.5183,
+            "TopMargin": 474.5,
+            "BottomMargin": 30.5,
+            "Tag": 16,
+            "ActionTag": -668259465,
+            "Size": {
+              "X": 63.0,
+              "Y": 63.0
+            },
+            "Name": "backMainBtn",
+            "ctype": "ImageViewObjectData"
+          },
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "best_jl.png",
+              "Plist": "mainui.plist"
+            },
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 42.0,
+              "Y": 225.0
+            },
+            "Scale": {
+              "ScaleX": 0.7,
+              "ScaleY": 0.7
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.1312,
+              "Y": 0.3961
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 9.0,
+            "RightMargin": 245.0,
+            "TopMargin": 318.0,
+            "BottomMargin": 200.0,
+            "Tag": 196,
+            "ActionTag": 1917387348,
+            "Size": {
+              "X": 66.0,
+              "Y": 50.0
+            },
+            "Name": "newScoreSpt",
+            "ctype": "SpriteObjectData"
+          }
+        ],
+        "Size": {
+          "X": 320.0,
+          "Y": 568.0
+        },
+        "Name": "Layer",
+        "ctype": "LayerObjectData"
+      },
+      "ctype": "GameProjectData"
+    }
+  },
+  "Type": "Layer"
+}

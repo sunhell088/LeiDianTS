@@ -1,0 +1,1387 @@
+{
+  "ID": "452fee64-e97e-4222-8efa-071c4a822a36",
+  "Version": "2.2.5.0",
+  "Name": "PlayerLayer",
+  "Content": {
+    "Content": {
+      "Animation": {
+        "Duration": 0,
+        "Speed": 1.0,
+        "Timelines": [],
+        "ctype": "TimelineActionData"
+      },
+      "AnimationList": [],
+      "ObjectData": {
+        "Tag": 215,
+        "Children": [
+          {
+            "ScrollDirectionType": 0,
+            "ClipAble": true,
+            "BackColorAlpha": 102,
+            "SingleColor": {
+              "R": 150,
+              "G": 150,
+              "B": 100
+            },
+            "FirstColor": {
+              "R": 150,
+              "G": 150,
+              "B": 100
+            },
+            "EndColor": {},
+            "ColorVector": {
+              "ScaleX": -0.9703,
+              "ScaleY": -0.2419
+            },
+            "Scale9OriginX": -50,
+            "Scale9OriginY": -50,
+            "Scale9Width": 100,
+            "Scale9Height": 100,
+            "TouchEnable": true,
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 159.9998,
+              "Y": 360.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.6338
+            },
+            "PreSize": {
+              "X": 0.6875,
+              "Y": 0.4789
+            },
+            "LeftMargin": 49.9998,
+            "RightMargin": 50.0002,
+            "TopMargin": 72.0,
+            "BottomMargin": 224.0,
+            "CallBackType": "Event",
+            "Tag": 241,
+            "Children": [
+              {
+                "BackColorAlpha": 102,
+                "SingleColor": {
+                  "R": 150,
+                  "G": 200
+                },
+                "FirstColor": {
+                  "R": 150,
+                  "G": 200
+                },
+                "EndColor": {},
+                "ColorVector": {
+                  "ScaleY": 1.0
+                },
+                "Scale9Enable": true,
+                "Scale9OriginX": 12,
+                "Scale9OriginY": 13,
+                "Scale9Width": 54,
+                "Scale9Height": 52,
+                "AnchorPoint": {},
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 1.0,
+                  "Y": 1.0
+                },
+                "Tag": 279,
+                "Children": [
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "ui_role_info0.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 1.0
+                    },
+                    "Position": {
+                      "X": 110.0,
+                      "Y": 115.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.5,
+                      "Y": 0.4228
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 29.0,
+                    "RightMargin": 29.0,
+                    "TopMargin": 157.0,
+                    "BottomMargin": 40.0,
+                    "Tag": 338,
+                    "ActionTag": 1998005449,
+                    "Size": {
+                      "X": 162.0,
+                      "Y": 75.0
+                    },
+                    "Name": "Sprite_7",
+                    "ctype": "SpriteObjectData"
+                  },
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "ui_role_head0.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 110.0,
+                      "Y": 165.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.5,
+                      "Y": 0.6066
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 59.5,
+                    "RightMargin": 59.5,
+                    "TopMargin": 57.0,
+                    "BottomMargin": 115.0,
+                    "Tag": 339,
+                    "ActionTag": -1342866300,
+                    "Size": {
+                      "X": 101.0,
+                      "Y": 100.0
+                    },
+                    "Name": "Sprite_8",
+                    "ctype": "SpriteObjectData"
+                  }
+                ],
+                "ActionTag": -1632642311,
+                "Size": {
+                  "X": 220.0,
+                  "Y": 272.0
+                },
+                "Name": "plane1Panel",
+                "ctype": "PanelObjectData"
+              },
+              {
+                "BackColorAlpha": 102,
+                "SingleColor": {
+                  "R": 150,
+                  "G": 200
+                },
+                "FirstColor": {
+                  "R": 150,
+                  "G": 200
+                },
+                "EndColor": {},
+                "ColorVector": {
+                  "ScaleY": 1.0
+                },
+                "Scale9Enable": true,
+                "Scale9OriginX": 12,
+                "Scale9OriginY": 12,
+                "Scale9Width": 54,
+                "Scale9Height": 54,
+                "AnchorPoint": {},
+                "Position": {
+                  "X": 220.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 1.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 1.0,
+                  "Y": 1.0
+                },
+                "LeftMargin": 220.0,
+                "RightMargin": -220.0,
+                "Tag": 280,
+                "Children": [
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "ui_role_head1.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 110.0,
+                      "Y": 165.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.5,
+                      "Y": 0.6066
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 61.5,
+                    "RightMargin": 61.5,
+                    "TopMargin": 65.0,
+                    "BottomMargin": 123.0,
+                    "Tag": 76,
+                    "ActionTag": -1422210716,
+                    "Size": {
+                      "X": 97.0,
+                      "Y": 84.0
+                    },
+                    "Name": "Sprite_1",
+                    "ctype": "SpriteObjectData"
+                  },
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "ui_role_info2.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 1.0
+                    },
+                    "Position": {
+                      "X": 110.0,
+                      "Y": 115.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.5,
+                      "Y": 0.4228
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 29.0,
+                    "RightMargin": 29.0,
+                    "TopMargin": 157.0,
+                    "BottomMargin": 48.0,
+                    "Tag": 79,
+                    "ActionTag": -1241596804,
+                    "Size": {
+                      "X": 162.0,
+                      "Y": 67.0
+                    },
+                    "Name": "Sprite_5",
+                    "ctype": "SpriteObjectData"
+                  }
+                ],
+                "ActionTag": -2107855553,
+                "Size": {
+                  "X": 220.0,
+                  "Y": 272.0
+                },
+                "Name": "plane2Panel",
+                "ctype": "PanelObjectData"
+              },
+              {
+                "BackColorAlpha": 102,
+                "SingleColor": {
+                  "R": 150,
+                  "G": 200
+                },
+                "FirstColor": {
+                  "R": 150,
+                  "G": 200
+                },
+                "EndColor": {},
+                "ColorVector": {
+                  "ScaleY": 1.0
+                },
+                "Scale9Enable": true,
+                "Scale9OriginX": 12,
+                "Scale9OriginY": 12,
+                "Scale9Width": 54,
+                "Scale9Height": 54,
+                "AnchorPoint": {},
+                "Position": {
+                  "X": 440.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 2.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 1.0,
+                  "Y": 1.0
+                },
+                "LeftMargin": 440.0,
+                "RightMargin": -440.0,
+                "Tag": 289,
+                "Children": [
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "ui_role_head2.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 110.0,
+                      "Y": 165.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.5,
+                      "Y": 0.6066
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 59.5,
+                    "RightMargin": 59.5,
+                    "TopMargin": 37.0,
+                    "BottomMargin": 95.0,
+                    "Tag": 78,
+                    "ActionTag": -830557638,
+                    "Size": {
+                      "X": 101.0,
+                      "Y": 140.0
+                    },
+                    "Name": "Sprite_3",
+                    "ctype": "SpriteObjectData"
+                  },
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "ui_role_info1.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 1.0
+                    },
+                    "Position": {
+                      "X": 110.0,
+                      "Y": 115.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.5,
+                      "Y": 0.4228
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 30.0,
+                    "RightMargin": 30.0,
+                    "TopMargin": 157.0,
+                    "BottomMargin": 62.0,
+                    "Tag": 338,
+                    "ActionTag": 1782995957,
+                    "Size": {
+                      "X": 160.0,
+                      "Y": 53.0
+                    },
+                    "Name": "Sprite_105",
+                    "ctype": "SpriteObjectData"
+                  }
+                ],
+                "ActionTag": -828237796,
+                "Size": {
+                  "X": 220.0,
+                  "Y": 272.0
+                },
+                "Name": "plane3Panel",
+                "ctype": "PanelObjectData"
+              }
+            ],
+            "ActionTag": -1116182500,
+            "Size": {
+              "X": 220.0,
+              "Y": 272.0
+            },
+            "Name": "planePageView",
+            "ctype": "PageViewObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 160.0,
+              "Y": 170.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.5,
+              "Y": 0.2993
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 160.0,
+            "RightMargin": 160.0,
+            "TopMargin": 398.0,
+            "BottomMargin": 170.0,
+            "Tag": 817,
+            "Children": [
+              {
+                "AnchorPoint": {},
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": true,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Tag": 819,
+                "Children": [
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "yd_go.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "Scale9Enable": true,
+                    "Scale9Width": 102,
+                    "Scale9Height": 37,
+                    "TouchEnable": true,
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": -51.0,
+                    "RightMargin": -51.0,
+                    "TopMargin": -18.5,
+                    "BottomMargin": -18.5,
+                    "Tag": 54,
+                    "ActionTag": 2048566677,
+                    "Size": {
+                      "X": 102.0,
+                      "Y": 37.0
+                    },
+                    "Name": "beginGameBtn",
+                    "ctype": "ImageViewObjectData"
+                  }
+                ],
+                "ActionTag": 1159225655,
+                "Size": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Name": "priceBoughtNode",
+                "ctype": "SingleNodeObjectData"
+              },
+              {
+                "AnchorPoint": {},
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": true,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Tag": 510,
+                "Children": [
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "btn_result_shop.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": -155.0,
+                    "RightMargin": -155.0,
+                    "TopMargin": -30.0,
+                    "BottomMargin": -30.0,
+                    "Tag": 818,
+                    "ActionTag": 287351182,
+                    "Size": {
+                      "X": 310.0,
+                      "Y": 60.0
+                    },
+                    "Name": "Sprite_13",
+                    "ctype": "SpriteObjectData"
+                  },
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "cj_jl5.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "Scale9Width": 15,
+                    "Scale9Height": 16,
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": -2.0,
+                      "Y": 0.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": -9.5,
+                    "RightMargin": -5.5,
+                    "TopMargin": -8.0,
+                    "BottomMargin": -8.0,
+                    "Tag": 57,
+                    "ActionTag": 1562879696,
+                    "Size": {
+                      "X": 15.0,
+                      "Y": 16.0
+                    },
+                    "Name": "Image_7",
+                    "ctype": "ImageViewObjectData"
+                  },
+                  {
+                    "IsCustomSize": true,
+                    "FontSize": 20,
+                    "LabelText": "18888",
+                    "HorizontalAlignmentType": "HT_Center",
+                    "VerticalAlignmentType": "VT_Center",
+                    "OutlineSize": 0,
+                    "OutlineColor": {
+                      "G": 0,
+                      "B": 0
+                    },
+                    "ShadowColor": {
+                      "G": 127,
+                      "B": 80
+                    },
+                    "ShadowOffsetX": 0,
+                    "ShadowOffsetY": 0,
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 32.7203,
+                      "Y": 0.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {
+                      "G": 160,
+                      "B": 42
+                    },
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 2.7203,
+                    "RightMargin": -62.7203,
+                    "TopMargin": -14.5,
+                    "BottomMargin": -14.5,
+                    "Tag": 514,
+                    "ActionTag": -1310013477,
+                    "Size": {
+                      "X": 60.0,
+                      "Y": 29.0
+                    },
+                    "Name": "planePriceLab",
+                    "ctype": "TextObjectData"
+                  },
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "gold_icon_shop.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "BlendFunc": {
+                      "Src": 1,
+                      "Dst": 771
+                    },
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": -29.4919,
+                      "Y": 0.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": -43.4919,
+                    "RightMargin": 15.4919,
+                    "TopMargin": -14.5,
+                    "BottomMargin": -14.5,
+                    "Tag": 486,
+                    "ActionTag": 49907865,
+                    "Size": {
+                      "X": 28.0,
+                      "Y": 29.0
+                    },
+                    "Name": "Sprite_4",
+                    "ctype": "SpriteObjectData"
+                  },
+                  {
+                    "FileData": {
+                      "Type": "PlistSubImage",
+                      "Path": "btn_buy_role.png",
+                      "Plist": "mainui.plist"
+                    },
+                    "Scale9Width": 94,
+                    "Scale9Height": 56,
+                    "TouchEnable": true,
+                    "AnchorPoint": {
+                      "ScaleX": 0.5,
+                      "ScaleY": 0.5
+                    },
+                    "Position": {
+                      "X": 104.1628,
+                      "Y": 0.0
+                    },
+                    "Scale": {
+                      "ScaleX": 1.0,
+                      "ScaleY": 1.0
+                    },
+                    "CColor": {},
+                    "IconVisible": false,
+                    "PrePosition": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "PreSize": {
+                      "X": 0.0,
+                      "Y": 0.0
+                    },
+                    "LeftMargin": 65.1628,
+                    "RightMargin": -143.1628,
+                    "TopMargin": -20.0,
+                    "BottomMargin": -20.0,
+                    "Tag": 31,
+                    "ActionTag": -962921559,
+                    "Size": {
+                      "X": 78.0,
+                      "Y": 40.0
+                    },
+                    "Name": "buyPlaneBtn",
+                    "ctype": "ImageViewObjectData"
+                  }
+                ],
+                "ActionTag": 1473463266,
+                "Size": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Name": "priceBuyNode",
+                "ctype": "SingleNodeObjectData"
+              }
+            ],
+            "ActionTag": -1790962995,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "priceNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 0.0,
+              "Y": 550.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.0,
+              "Y": 0.9683
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "RightMargin": 320.0,
+            "TopMargin": 18.0,
+            "BottomMargin": 550.0,
+            "Tag": 86,
+            "Children": [
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "game_hp_bk.png",
+                  "Plist": "mainui.plist"
+                },
+                "BlendFunc": {
+                  "Src": 1,
+                  "Dst": 771
+                },
+                "AnchorPoint": {
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "RightMargin": -140.0,
+                "TopMargin": -11.0,
+                "BottomMargin": -11.0,
+                "Tag": 81,
+                "ActionTag": 869824427,
+                "Size": {
+                  "X": 140.0,
+                  "Y": 22.0
+                },
+                "Name": "LoadingBg",
+                "ctype": "SpriteObjectData"
+              },
+              {
+                "ProgressInfo": 100,
+                "ImageFileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "game_hp.png",
+                  "Plist": "mainui.plist"
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 87.5,
+                  "Y": -4.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.2937,
+                  "Y": 0.0141
+                },
+                "LeftMargin": 40.5,
+                "RightMargin": -134.5,
+                "BottomMargin": -8.0,
+                "Tag": 78,
+                "ActionTag": 1703020370,
+                "Size": {
+                  "X": 94.0,
+                  "Y": 8.0
+                },
+                "Name": "planeLevelLoadingBar",
+                "ctype": "LoadingBarObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 12,
+                "LabelText": "LV.2",
+                "HorizontalAlignmentType": "HT_Center",
+                "OutlineSize": 0,
+                "OutlineColor": {
+                  "G": 0,
+                  "B": 0
+                },
+                "ShadowColor": {
+                  "G": 127,
+                  "B": 80
+                },
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 20.5,
+                  "Y": -4.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0969,
+                  "Y": 0.0229
+                },
+                "LeftMargin": 5.0,
+                "RightMargin": -36.0,
+                "TopMargin": -2.5,
+                "BottomMargin": -10.5,
+                "Tag": 79,
+                "ActionTag": -808052843,
+                "Size": {
+                  "X": 31.0,
+                  "Y": 13.0
+                },
+                "Name": "planeLevelLab",
+                "ctype": "TextObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 11,
+                "LabelText": "EXP",
+                "HorizontalAlignmentType": "HT_Center",
+                "VerticalAlignmentType": "VT_Center",
+                "OutlineSize": 0,
+                "OutlineColor": {
+                  "G": 0,
+                  "B": 0
+                },
+                "ShadowColor": {
+                  "G": 127,
+                  "B": 80
+                },
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 82.0547,
+                  "Y": -4.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0875,
+                  "Y": 0.0246
+                },
+                "LeftMargin": 68.0547,
+                "RightMargin": -96.0547,
+                "TopMargin": -3.0,
+                "BottomMargin": -11.0,
+                "Tag": 80,
+                "ActionTag": 464871216,
+                "Size": {
+                  "X": 28.0,
+                  "Y": 14.0
+                },
+                "Name": "Text_1",
+                "ctype": "TextObjectData"
+              }
+            ],
+            "ActionTag": -76501244,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "expNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "AnchorPoint": {},
+            "Position": {
+              "X": 246.5,
+              "Y": 568.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": true,
+            "PrePosition": {
+              "X": 0.7703,
+              "Y": 1.0
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 246.5,
+            "RightMargin": 73.5,
+            "BottomMargin": 568.0,
+            "Tag": 87,
+            "Children": [
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "game_df.png",
+                  "Plist": "mainui.plist"
+                },
+                "BlendFunc": {
+                  "Src": 1,
+                  "Dst": 771
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 1.0
+                },
+                "Position": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.2
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -73.0,
+                "RightMargin": -73.0,
+                "BottomMargin": -42.0,
+                "Tag": 81,
+                "ActionTag": 1054010141,
+                "Size": {
+                  "X": 146.0,
+                  "Y": 42.0
+                },
+                "Name": "distanceBg",
+                "ctype": "SpriteObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 15,
+                "LabelText": "最远距离:10000M",
+                "HorizontalAlignmentType": "HT_Center",
+                "VerticalAlignmentType": "VT_Center",
+                "OutlineSize": 0,
+                "OutlineColor": {
+                  "G": 0,
+                  "B": 0
+                },
+                "ShadowColor": {
+                  "G": 127,
+                  "B": 80
+                },
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 0.0,
+                  "Y": -21.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {
+                  "R": 124,
+                  "G": 208,
+                  "B": 243
+                },
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "HorizontalEdge": "RightEdge",
+                "LeftMargin": -62.0,
+                "RightMargin": -62.0,
+                "TopMargin": 11.0,
+                "BottomMargin": -31.0,
+                "Tag": 82,
+                "ActionTag": -838401504,
+                "Size": {
+                  "X": 124.0,
+                  "Y": 20.0
+                },
+                "Name": "maxDistance",
+                "ctype": "TextObjectData"
+              },
+              {
+                "IsCustomSize": true,
+                "FontSize": 13,
+                "LabelText": "100",
+                "HorizontalAlignmentType": "HT_Center",
+                "VerticalAlignmentType": "VT_Center",
+                "OutlineSize": 0,
+                "OutlineColor": {
+                  "G": 0,
+                  "B": 0
+                },
+                "ShadowColor": {
+                  "G": 127,
+                  "B": 80
+                },
+                "ShadowOffsetX": 0,
+                "ShadowOffsetY": 0,
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": 11.0,
+                  "Y": -39.0
+                },
+                "Scale": {
+                  "ScaleX": 1.0,
+                  "ScaleY": 1.0
+                },
+                "CColor": {
+                  "R": 237,
+                  "G": 215,
+                  "B": 36
+                },
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -21.5,
+                "RightMargin": -43.5,
+                "TopMargin": 31.0,
+                "BottomMargin": -47.0,
+                "Tag": 84,
+                "ActionTag": -1145093453,
+                "Size": {
+                  "X": 65.0,
+                  "Y": 16.0
+                },
+                "Name": "moneyLab",
+                "ctype": "TextObjectData"
+              },
+              {
+                "FileData": {
+                  "Type": "PlistSubImage",
+                  "Path": "game_g.png",
+                  "Plist": "mainui.plist"
+                },
+                "BlendFunc": {
+                  "Src": 1,
+                  "Dst": 771
+                },
+                "AnchorPoint": {
+                  "ScaleX": 0.5,
+                  "ScaleY": 0.5
+                },
+                "Position": {
+                  "X": -36.0,
+                  "Y": -39.0
+                },
+                "Scale": {
+                  "ScaleX": 0.9,
+                  "ScaleY": 0.9
+                },
+                "CColor": {},
+                "IconVisible": false,
+                "PrePosition": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "PreSize": {
+                  "X": 0.0,
+                  "Y": 0.0
+                },
+                "LeftMargin": -44.0,
+                "RightMargin": 28.0,
+                "TopMargin": 31.0,
+                "BottomMargin": -47.0,
+                "Tag": 83,
+                "ActionTag": -405715744,
+                "Size": {
+                  "X": 16.0,
+                  "Y": 16.0
+                },
+                "Name": "gold_icon_shop_1",
+                "ctype": "SpriteObjectData"
+              }
+            ],
+            "ActionTag": -1245671458,
+            "Size": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "Name": "diAdMonNode",
+            "ctype": "SingleNodeObjectData"
+          },
+          {
+            "FileData": {
+              "Type": "PlistSubImage",
+              "Path": "btn_back.png",
+              "Plist": "mainui.plist"
+            },
+            "Scale9Width": 48,
+            "Scale9Height": 47,
+            "TouchEnable": true,
+            "AnchorPoint": {
+              "ScaleX": 0.5,
+              "ScaleY": 0.5
+            },
+            "Position": {
+              "X": 33.0,
+              "Y": 40.0
+            },
+            "Scale": {
+              "ScaleX": 1.0,
+              "ScaleY": 1.0
+            },
+            "CColor": {},
+            "IconVisible": false,
+            "PrePosition": {
+              "X": 0.1031,
+              "Y": 0.0704
+            },
+            "PreSize": {
+              "X": 0.0,
+              "Y": 0.0
+            },
+            "LeftMargin": 10.0,
+            "RightMargin": 264.0,
+            "TopMargin": 505.0,
+            "BottomMargin": 17.0,
+            "Tag": 82,
+            "ActionTag": -158559861,
+            "Size": {
+              "X": 46.0,
+              "Y": 46.0
+            },
+            "Name": "backBtn",
+            "ctype": "ImageViewObjectData"
+          }
+        ],
+        "Size": {
+          "X": 320.0,
+          "Y": 568.0
+        },
+        "Name": "Layer",
+        "ctype": "LayerObjectData"
+      },
+      "ctype": "GameProjectData"
+    }
+  },
+  "Type": "Layer"
+}

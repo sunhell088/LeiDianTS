@@ -194,7 +194,26 @@ export class DifficultConfig {
     };
 
     //福利飞机数组
-    public static blessEnemys = [EnemyConfig.enemyConfig.enemyBox, EnemyConfig.enemyConfig.enemyBomb];
+    public static blessEnemyArr = [EnemyConfig.enemyConfig.enemyBox, EnemyConfig.enemyConfig.enemyBomb];
     //停留飞机数组
-    public static stayEnemys = [EnemyConfig.enemyConfig.enemyStay1, EnemyConfig.enemyConfig.enemyStay2, EnemyConfig.enemyConfig.enemyFollow];
+    public static stayEnemyArr = [EnemyConfig.enemyConfig.enemyStay1, EnemyConfig.enemyConfig.enemyStay2, EnemyConfig.enemyConfig.enemyFollow];
+
+    public static createSpecialEnemyDrop(enemySprite){
+        var dropArray = [];
+        if(enemySprite._enemyConfig == EnemyConfig.enemyConfig.enemyBox){
+            dropArray.push(ItemConfig.itemConfig.item_green);
+            dropArray.push(ItemConfig.itemConfig.item_green);
+        }
+        if(!Player.player._itemDropArr || Player.player._itemDropArr.length==0){
+            Player.player._itemDropArr = [];
+            for(var k in ItemConfig){
+                if(ItemConfig[k].gold) continue;
+                Player.player._itemDropArr.push(ItemConfig[k]);
+            }
+            Player.player._itemDropArr.sort(function(){return Math.random()>0.5?-1:1;});
+        }
+        var item = Player.player._itemDropArr.shift();
+        dropArray.push(item);
+        return dropArray;
+    };
 }

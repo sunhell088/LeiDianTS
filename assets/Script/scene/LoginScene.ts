@@ -30,8 +30,11 @@ export default class LoginScene extends cc.Component implements IMediator{
 
     protected onLoad(): void {
         GameUtil.playMusic(SoundConfig.mainMusic_mp3);
-        FormationConfig.formationConfig = FormationConfig.transformToPixel(CommonConfig.ENEMY_WIDTH, CommonConfig.ENEMY_HEIGHT,
-            FormationConfig.formationConfig)
+        //因为transformToPixel会把相对标识改为绝对坐标
+        if(!(FormationConfig.formationConfig[0][0] instanceof cc.Vec2)){
+            FormationConfig.formationConfig = FormationConfig.transformToPixel(CommonConfig.ENEMY_WIDTH, CommonConfig.ENEMY_HEIGHT,
+                FormationConfig.formationConfig)
+        }
         Player.player = new Player();
         Player.player.createPlayer();
         this.initLoginScene();

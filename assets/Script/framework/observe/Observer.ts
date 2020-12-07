@@ -4,8 +4,14 @@
 export class Observer {
     //所有被监听的方法
     private _registerObservers:Object = {};
+    private ObserverList:string[] = [];
 
     public registerObserverFun(observer:any):void {
+        var observerClassName:string = Observer.getQualifiedClassName(observer);
+        if (this.ObserverList.indexOf(observerClassName) != -1) {
+            return;
+        }
+        this.ObserverList.push(observerClassName);
         var medCommands:string[] = observer.getCommands();
         if (!medCommands) return;
         var observerList:any[];
@@ -43,5 +49,25 @@ export class Observer {
             else
                 fun.apply(oneObserver, arg);
         }
+    }
+
+    public static getQualifiedClassName(value:any):string {
+        let type = typeof value;
+        if (!value || (type != "object"&&!value.prototype)) {
+            return type;
+        }
+        let prototype:any = value.prototype ? value.prototype : Object.getPrototypeOf(value);
+        if (prototype.hasOwnProperty("__class__")) {
+            return prototype["__class__"];
+        }
+        let constructorString:string = prototype.constructor.toString().trim();
+        let index:number = constructorString.indexOf("(");
+        let className:string = constructorString.substring(9, index);
+        Object.defineProperty(prototype, "__class__", {
+            value: className,
+            enumerable: false,
+            writable: true
+        });
+        return className;
     }
 }

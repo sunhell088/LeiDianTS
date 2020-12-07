@@ -75,31 +75,37 @@ export default class FightUI extends cc.Component implements IMediator{
         this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, function (event) {
             cc.director.loadScene('loginScene');
         });
+        this.bombBtn.node.on(cc.Node.EventType.TOUCH_END, function (event) {
+            Player.player.addExp(100);
+        });
     }
 
+    onDestroy():void {
+        console.log("fightUI onDestroy")
+    }
     onAddBomb(count:number){
-        console.log("onAddBomb "+count);
+        console.log("fightUI onAddBomb "+count);
         // g_FightUILayer.setBombCount(this.bomb);
     }
 
     onAddExp(grade:number, expPersents:number){
-        console.log("onAddExp "+grade+"=="+expPersents);
+        console.log("fightUI onAddExp "+grade+"=="+expPersents);
         // g_FightUILayer.setGradeLable(this.getGrade());
         // g_FightUILayer.setExpBar();
     }
 
     onUpGrade(grade:number){
-        console.log("onUpGrade "+grade);
+        console.log("fightUI onUpGrade "+grade);
         // g_FightUILayer.setGradeLable(this.getGrade(planeID));
     }
 
     onUseBomb(bombCount:number) {
-        console.log("onUseBomb ");
+        console.log("fightUI onUseBomb ");
         // g_FightUILayer.setBombCount(this.bomb);
     }
 
     onAddCurrentRewardGold(currentRewardGold:number) {
-        console.log("onAddCurrentRewardGold ");
+        console.log("fightUI onAddCurrentRewardGold ");
         // g_FightUILayer.setGoldLabel(this.currentRewardGold);
     }
 

@@ -47,7 +47,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     onUpGrade(grade:number){
-        console.log("onUpGrade "+grade);
+        console.log("ShipSprite onUpGrade "+grade);
         // g_sharedGameLayer._ship.levelUpAction();
     }
 

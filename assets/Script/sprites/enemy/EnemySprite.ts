@@ -3,6 +3,8 @@ import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
 import {FLY_STATE} from "../../common/enum/FlyStateEnum";
+import FlexEnemySprite from "./FlexEnemySprite";
+import {Observer} from "../../framework/observe/Observer";
 
 
 const {ccclass, property} = cc._decorator;
@@ -44,6 +46,7 @@ export default class EnemySprite extends cc.Component {
     }
 
     destroySprite () {
+        console.log("destroySprite :"+Observer.getQualifiedClassName(this._enemyConfig.classType));
         this._spritePool.put(this._spriteNode);
         this.resetBloodBar();
         this.flyState = FLY_STATE.ENTER;

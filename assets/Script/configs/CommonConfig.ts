@@ -44,7 +44,7 @@ export class CommonConfig {
     //产生福利飞机的间隔
     public static BLESS_PLANE_DELAY = 6;
     //产生停留飞机的间隔
-    public static STAY_ENEMY_DELAY = 11;
+    public static STAY_ENEMY_DELAY = 5;
     //产生冲刺敌机的间隔
     public static ENEMY_SPURT_DELAY = 0.3;
     //同一批陨石出现的间隔时间

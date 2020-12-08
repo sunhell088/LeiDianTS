@@ -16,11 +16,14 @@ import Game = cc.Game;
 import RockLineSprite from "../sprites/RockLineSprite";
 import RockSprite from "../sprites/RockSprite";
 import {ItemConfig} from "../configs/ItemConfig";
+import {Observer} from "../framework/observe/Observer";
+import BossEnemySprite from "../sprites/enemy/BossEnemySprite";
+import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
 
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class FightScene extends cc.Component implements IMediator{
+export default class FightScene extends cc.Component implements IMediator {
 
     @property(cc.Sprite)
     background0: cc.Sprite = null;
@@ -51,15 +54,20 @@ export default class FightScene extends cc.Component implements IMediator{
 
     bulletPool: cc.NodePool = new cc.NodePool();
     enemyPool: cc.NodePool = new cc.NodePool();
+    enemyFlexPool: cc.NodePool = new cc.NodePool();
+    enemyBossPool: cc.NodePool = new cc.NodePool();
+    enemyFollowPool: cc.NodePool = new cc.NodePool();
+    enemyStayPool: cc.NodePool = new cc.NodePool();
+
     rockLinePool: cc.NodePool = new cc.NodePool();
     rockPool: cc.NodePool = new cc.NodePool();
 
-    getCommands():string[] {
+    getCommands(): string[] {
         return [GameEvent.SPURT_ACTION, GameEvent.DOUBLE_FIRE_ACTION, GameEvent.XTS_ACTION, GameEvent.EAT_ITEM,
-        GameEvent.STORE_REVIVE, GameEvent.STORE_SPURT, GameEvent.STORE_DEATH, GameEvent.STORE_CHANGE_PLANE];
+            GameEvent.STORE_REVIVE, GameEvent.STORE_SPURT, GameEvent.STORE_DEATH, GameEvent.STORE_CHANGE_PLANE];
     }
 
-    onSpurtAction(){
+    onSpurtAction() {
         // if(g_sharedGameLayer._spurt||g_sharedGameLayer._spurtReadying) return;
         // //吃道具效果
         // VVV.eatItemEffect(ItemConfig.item_cc);
@@ -153,7 +161,8 @@ export default class FightScene extends cc.Component implements IMediator{
         //     spurtOverAction
         // ));
     }
-    onDoubleFireAction(){
+
+    onDoubleFireAction() {
         // //升级状态 无效
         // if(g_sharedGameLayer._ship._invincible||g_sharedGameLayer._ship._levelUpIng) return;
         // if(g_sharedGameLayer._ship.planeID!=PlaneConfig.plane2.id){
@@ -173,7 +182,8 @@ export default class FightScene extends cc.Component implements IMediator{
         //     //ItemConfig.item_double.itemFunction();
         // }
     }
-    onXTSAction(){
+
+    onXTSAction() {
         // //if(true) return;
         // if(g_sharedGameLayer._ship.planeID==PlaneConfig.plane1.id){
         //     return;
@@ -192,7 +202,8 @@ export default class FightScene extends cc.Component implements IMediator{
         // //特效
         // VVV.eatItemEffect(ItemConfig.item_xts);
     }
-    onEatItem(itemConfig){
+
+    onEatItem(itemConfig) {
         // var eatEffect = GameUtil.getEatEffectPreset();
         // if(eatEffect!=null){
         //     eatEffect.setPosition(g_sharedGameLayer._ship.x, g_sharedGameLayer._ship.y - 10);
@@ -229,7 +240,8 @@ export default class FightScene extends cc.Component implements IMediator{
         //     GameUtil.playEffect(SoundConfig.get_item);
         // }
     }
-    onStoreRevive(){
+
+    onStoreRevive() {
         // //从未拥有飞机中随机一架，如果都拥有了，则随机非当前飞机
         // var randomArr = []
         // for(var p in PlaneConfig){
@@ -248,7 +260,8 @@ export default class FightScene extends cc.Component implements IMediator{
         //     g_sharedGameLayer._revivePlaneID = randomArr[0];
         // }
     }
-    onStoreSpurt(){
+
+    onStoreSpurt() {
         // //出现道具图标
         // var storeItemIcon = g_FightUILayer._storeItemSpurt;
         // storeItemIcon.setPosition(VVV.WIDTH_HALF, VVV.HEIGHT_HALF);
@@ -273,7 +286,8 @@ export default class FightScene extends cc.Component implements IMediator{
         //     VVV.getHideSelfCallFun(storeItemIcon)
         // ));
     }
-    onStoreDeath(){
+
+    onStoreDeath() {
         // g_sharedGameLayer._ship.death();
         // //出现道具图标
         // var storeItemIcon = g_FightUILayer._storeItemDeath;
@@ -302,7 +316,8 @@ export default class FightScene extends cc.Component implements IMediator{
         // ));
 
     }
-    onStoreChangePlane(){
+
+    onStoreChangePlane() {
         // g_sharedGameLayer._ship._changePlaneIng = true;
         // //出现道具图标
         // var storeItemIcon = g_FightUILayer._storeItemChange;
@@ -338,6 +353,7 @@ export default class FightScene extends cc.Component implements IMediator{
         //     })
         // ));
     }
+
     onLoad(): void {
         //切换背景音乐
         GameUtil.playMusic(SoundConfig.fightMusic_mp3);
@@ -350,12 +366,13 @@ export default class FightScene extends cc.Component implements IMediator{
         this.initPlayer();
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        // this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
         this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
-        // this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
     }
 
     update(dt) {
+        this.checkCollide();
         this.moveBackground(dt);
     }
 
@@ -424,8 +441,8 @@ export default class FightScene extends cc.Component implements IMediator{
     }
 
     //根据飞行距离加速敌机速度
-    public addEnemySpeed(distanceStage){
-        switch (distanceStage){
+    public addEnemySpeed(distanceStage) {
+        switch (distanceStage) {
             case 7:
                 Player.player._enemyAddSpeed = 50;
                 break;
@@ -446,6 +463,7 @@ export default class FightScene extends cc.Component implements IMediator{
                 break;
         }
     }
+
     shoot() {
         let bullet = this.createBullet();
         bullet.x = this.ship.node.x;
@@ -466,11 +484,29 @@ export default class FightScene extends cc.Component implements IMediator{
         bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getGrade(Player.player.data.currentPlaneID));
         return bullet;
     }
-    createEnemy(enemyConfig:any): EnemySprite {
-        let spriteNode:cc.Node = null;
-        let enemySprite:EnemySprite = null;
-        if (this.enemyPool.size() > 0) {
-            spriteNode = this.enemyPool.get();
+
+    createEnemy(enemyConfig: any): EnemySprite {
+        let spriteNode: cc.Node = null;
+        let enemySprite: EnemySprite = null;
+        let pool: cc.NodePool = this.enemyPool;
+        let classNameStr:string = Observer.getQualifiedClassName(enemyConfig.classType);
+        switch (classNameStr) {
+            case "FlexEnemySprite":
+                pool = this.enemyFlexPool;
+                break;
+            case "StayEnemySprite":
+                pool = this.enemyStayPool;
+                break;
+            case "BossEnemySprite":
+                pool = this.enemyBossPool;
+                break;
+            case "FollowEnemySprite":
+                pool = this.enemyFollowPool;
+                break;
+        }
+
+        if (pool.size() > 0) {
+            spriteNode = pool.get();
             enemySprite = spriteNode.getComponent(enemyConfig.classType);
         } else {
             spriteNode = cc.instantiate(this.enemyPrefab);
@@ -478,10 +514,11 @@ export default class FightScene extends cc.Component implements IMediator{
         }
         this.node.addChild(spriteNode);
         enemySprite.bloodBar = spriteNode.children[0].getComponent(cc.ProgressBar);
-        enemySprite.initSprite(spriteNode, this.enemyAtlas, this.enemyPool, enemyConfig);
+        enemySprite.initSprite(spriteNode, this.enemyAtlas, pool, enemyConfig);
         enemySprite.setSpriteFrame();
         return enemySprite;
     }
+
     createRockLineSprite(): RockLineSprite {
         let spritePrefab = null;
         if (this.rockLinePool.size() > 0) {
@@ -490,7 +527,7 @@ export default class FightScene extends cc.Component implements IMediator{
             spritePrefab = cc.instantiate(this.rockLinePrefab);
         }
         this.node.addChild(spritePrefab);
-        let rockLineSprite:RockLineSprite = spritePrefab.getComponent('RockLineSprite');
+        let rockLineSprite: RockLineSprite = spritePrefab.getComponent('RockLineSprite');
         rockLineSprite.initSprite(spritePrefab, this.rockLinePool);
         return rockLineSprite;
     }
@@ -503,65 +540,65 @@ export default class FightScene extends cc.Component implements IMediator{
             spritePrefab = cc.instantiate(this.rockPrefab);
         }
         this.node.addChild(spritePrefab);
-        let rockSprite:RockSprite = spritePrefab.getComponent('RockSprite');
+        let rockSprite: RockSprite = spritePrefab.getComponent('RockSprite');
         return rockSprite;
     }
 
-    moveBackground(dt){
-        if(Player.player._changePlaneIng) return;
-        if(Player.player._death) return;
+    moveBackground(dt) {
+        if (Player.player._changePlaneIng) return;
+        if (Player.player._death) return;
         GameUtil.bgMove(dt, this.background0.node, this.background1.node);
 
         //记录飞行距离
-        var showSpeed = Player.player._spurt?CommonConfig.DISTANCE_SPURT_SPEED:CommonConfig.DISTANCE_SPEED;
-        Player.player.currentDistance += showSpeed*dt;
+        var showSpeed = Player.player._spurt ? CommonConfig.DISTANCE_SPURT_SPEED : CommonConfig.DISTANCE_SPEED;
+        Player.player.currentDistance += showSpeed * dt;
         var tempForRound = Math.round(Player.player.currentDistance);
         ObserverManager.sendNotification(GameEvent.MOVE_BG, tempForRound);
         //每500M报数
-        if(Player.player.getDistanceStage()>Player.player._preDistanceStage){
+        if (Player.player.getDistanceStage() > Player.player._preDistanceStage) {
             Player.player._preDistanceStage = Player.player.getDistanceStage();
             //普通飞机速度变快
             this.addEnemySpeed(Player.player._preDistanceStage);
             //创建BOSS
-            // this.createBoos(Player.player._preDistanceStage);TODO
+            this.createBoos(Player.player._preDistanceStage);
             //创建新飞机预设
             // EnemySprite.presetDynamic(this._preDistanceStage);
         }
     }
 
     //定时创建普通飞机
-    scheduleNormalEnemy(){
+    scheduleNormalEnemy() {
         //升级状态中 不创建
-        if(Player.player._levelUpIng) return;
-        var formation = FormationConfig.formationConfig[CommonUtil.random(0, FormationConfig.formationConfig.length-1)];
+        if (Player.player._levelUpIng) return;
+        var formation = FormationConfig.formationConfig[CommonUtil.random(0, FormationConfig.formationConfig.length - 1)];
         var dropItemArray = DifficultConfig.getDropItemArray(formation.length);
         //五架飞机中必有一个最低级飞机
-        var worstEnemyIndex = CommonUtil.random(0, formation.length-1);
+        var worstEnemyIndex = CommonUtil.random(0, formation.length - 1);
         //一定几率出现两个最低级飞机(如果重复，这这次只有一架)
-        var worstEnemyIndex2 = CommonUtil.random(0, formation.length-1);
+        var worstEnemyIndex2 = CommonUtil.random(0, formation.length - 1);
         //一定几率创建自爆飞机
         var bombEnemyIndex = -1;
-        if(Player.player._createBombEnemy){
-            bombEnemyIndex = CommonUtil.random(0, formation.length-1);
+        if (Player.player._createBombEnemy) {
+            bombEnemyIndex = CommonUtil.random(0, formation.length - 1);
         }
-        for(var i=0; i<formation.length; i++){
+        for (var i = 0; i < formation.length; i++) {
             var enemyConfig = DifficultConfig.getEnemyConfigByStage(Player.player.getDistanceStage());
-            var enemy:EnemySprite = null;
-            if(bombEnemyIndex==i){
+            var enemy: EnemySprite = null;
+            if (bombEnemyIndex == i) {
                 enemyConfig = EnemyConfig.enemyConfig.enemyBomb;
                 Player.player._createBombEnemy = false;
-            }else if(worstEnemyIndex==i || worstEnemyIndex2==i){
+            } else if (worstEnemyIndex == i || worstEnemyIndex2 == i) {
                 enemyConfig = DifficultConfig.getEnemyConfigByStage(0);
             }
             enemy = this.createEnemy(enemyConfig);
-            if(enemy){
+            if (enemy) {
                 //设置坐标
-                let point:cc.Vec2 = formation[i];
+                let point: cc.Vec2 = formation[i];
                 enemy.node.x = point.x;
-                enemy.node.y = point.y + this.node.height/2 + CommonConfig.ENEMY_HEIGHT*3;
+                enemy.node.y = point.y + this.node.height / 2 + CommonConfig.ENEMY_HEIGHT * 3;
                 //设置血量、经验和掉落
                 let dropItem = dropItemArray[i];
-                if(Player.player._spurt&&Math.random()<0.9){
+                if (Player.player._spurt && Math.random() < 0.9) {
                     dropItem = null;
                 }
                 enemy.setDynamicData(DifficultConfig.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
@@ -569,102 +606,217 @@ export default class FightScene extends cc.Component implements IMediator{
         }
     }
 
-    scheduleRockGroup(){
+    scheduleRockGroup() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
-        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng||Player.player._bossIng) return;
+        if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
         var rockList = DifficultConfig.getRockConfigByStage();
         var actionList = [];
-        for(var i=0; i<rockList.length; i++){
+        for (var i = 0; i < rockList.length; i++) {
             var createRockAction = cc.callFunc(
-                function(){
-                    for(var k=0; k<this.list.length; k++){
+                function () {
+                    for (var k = 0; k < this.list.length; k++) {
                         var bornIndex = this.list[k];
                         var bFollow = false;
-                        if(typeof(bornIndex)=="string") bFollow = true;
-                        let fightScene = cc.find("Canvas").getComponent(FightScene);
+                        if (typeof (bornIndex) == "string") bFollow = true;
+                        let fightScene = FightScene.getFightScene().getComponent(FightScene);
                         fightScene.createRock(bFollow, bornIndex);
                     }
                     //在同一批次的陨石给音效
                     GameUtil.playEffect(SoundConfig.alert_big);
                 },
-                {list:rockList[i]}
+                {list: rockList[i]}
             );
             actionList.push(cc.delayTime(CommonConfig.ROCK_DELAY));
             actionList.push(createRockAction);
         }
         this.node.runAction(cc.sequence(actionList));
     }
+
     //创建陨石
-    createRock(bFollow, bornIndex){
+    createRock(bFollow, bornIndex) {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
-        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng) return;
-        var line:RockLineSprite = this.createRockLineSprite();
-        if(!line) return;
+        if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng) return;
+        var line: RockLineSprite = this.createRockLineSprite();
+        if (!line) return;
         line._bFollow = bFollow;
-        var bornX = -CommonConfig.WIDTH_HALF+line.node.width/2 + bornIndex*line.node.width;
-        line.node.setPosition(bornX, this.node.height/2);
+        var bornX = -CommonConfig.WIDTH_HALF + line.node.width / 2 + bornIndex * line.node.width;
+        line.node.setPosition(bornX, this.node.height / 2);
         //重新设置line宽，和警告标识为可见
         line.node.scaleX = 1;
         line.warningSprite.node.active = true;
         // line.warningSprite.node.setPosition(line.node.x, line.node.y - line.warningSprite.node.height*2);
-        var lineAction = cc.callFunc(function(){
+        var lineAction = cc.callFunc(function () {
                 //创建陨石的动作
-                var createRockAction = cc.callFunc(function(sender){
-                    let fightScene:FightScene = cc.find("Canvas").getComponent(FightScene);
-                    var rock:RockSprite = fightScene.createRockSprite();
-                    if(rock){
-                        rock.node.setPosition(sender.x, sender.y + rock.node.height);
+                var createRockAction = cc.callFunc(function (sender) {
+                        let fightScene: FightScene = FightScene.getFightScene().getComponent(FightScene);
+                        var rock: RockSprite = fightScene.createRockSprite();
+                        if (rock) {
+                            rock.node.setPosition(sender.x, sender.y + rock.node.height);
+                        }
+                        sender.active = false;
+                        //警告消失，陨石落下的时候，给音效
+                        GameUtil.playEffect(SoundConfig.meteor);
                     }
-                    sender.active = false;
-                    //警告消失，陨石落下的时候，给音效
-                    GameUtil.playEffect(SoundConfig.meteor);
-                }
                 );
                 //line宽 缩小到0
                 this.node.runAction(cc.sequence(
                     cc.scaleTo(0.5, 0, this.scaleY),
                     createRockAction
                 ));
-            },line
+            }, line
         );
 
         line.warningSprite.node.runAction(cc.sequence(
-            cc.blink(1,3),
-            cc.callFunc(function(sender){
-                sender.active = false;}),
+            cc.blink(1, 3),
+            cc.callFunc(function (sender) {
+                sender.active = false;
+            }),
             lineAction
         ));
     }
 
     //定时创建特殊飞机
-    scheduleBlessEnemy(){
+    scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
-        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng||Player.player._bossIng) return;
-        var enemyConfigObj:any = DifficultConfig.blessEnemyArr[CommonUtil.random(0,DifficultConfig.blessEnemyArr.length-1)];
-        if(enemyConfigObj.id==EnemyConfig.enemyConfig.enemyBomb.id){
+        if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
+        var enemyConfigObj: any = DifficultConfig.blessEnemyArr[CommonUtil.random(0, DifficultConfig.blessEnemyArr.length - 1)];
+        if (enemyConfigObj.id == EnemyConfig.enemyConfig.enemyBomb.id) {
             Player.player._createBombEnemy = true;
-        }else if(enemyConfigObj.id==EnemyConfig.enemyConfig.enemyBox.id){
-            let enemy:EnemySprite = this.createEnemy(enemyConfigObj);
+        } else if (enemyConfigObj.id == EnemyConfig.enemyConfig.enemyBox.id) {
+            let enemy: EnemySprite = this.createEnemy(enemyConfigObj);
             //设置坐标
             var startPosition = enemy["getStartPosition"](enemy)
             enemy.node.setPosition(startPosition);
             //设置血量、经验和掉落
-            var hp = enemy._enemyConfig.HPArray[Player.player.getGrade()-1]*CommonConfig.BULLET_COUNT_PER;
+            var hp = enemy._enemyConfig.HPArray[Player.player.getGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
             enemy.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(enemy));
         }
     }
+
     //定时创建特殊飞机
-    scheduleStayEnemy(){
+    scheduleStayEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
-        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng||Player.player._bossIng) return;
-        var enemy = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0,DifficultConfig.stayEnemyArr.length-1)]);
-        if(!enemy) return;
+        if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
+        var enemy = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0, DifficultConfig.stayEnemyArr.length - 1)]);
+        if (!enemy) return;
         //设置坐标
-        var startPosition = new cc.Vec2(CommonUtil.random(enemy.node.width/2,CommonConfig.WIDTH-enemy.node.width/2),
-            CommonConfig.HEIGHT+enemy.node.height);
+        var startPosition = new cc.Vec2(CommonUtil.random(-this.node.width/2+enemy.node.width/2, this.node.width/2 - enemy.node.width/2),
+            this.node.height/2 + enemy.node.height);
         enemy.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = enemy._enemyConfig.HPArray[Player.player.getGrade()-1]*CommonConfig.BULLET_COUNT_PER;
+        var hp = enemy._enemyConfig.HPArray[Player.player.getGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
         enemy.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(enemy));
+    }
+
+    public static getFightScene(): FightScene {
+        return cc.find("Canvas").getComponent(FightScene);
+    }
+
+    //根据飞行距离创建BOSS
+    createBoos(distanceStage){
+        let boss:BossEnemySprite = null;
+        switch (distanceStage){
+            case 1:
+                boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss1);
+                break;
+            case 12:
+                boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss2);
+                break;
+            case 16:
+                boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss3);
+                break;
+            case 20:
+                boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss1);
+                break;
+            case 25:
+                boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss2);
+                break;
+            case 30:
+                boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss3);
+                break;
+        }
+        if(!boss) return;
+        //设置坐标
+        var startPosition = new cc.Vec2(0, this.node.height/2-boss.node.height/2);
+        boss.node.setPosition(startPosition);
+        //设置血量、经验和掉落
+        var hp = boss._enemyConfig.HPArray[Player.player.getGrade()-1]*CommonConfig.BULLET_COUNT_PER;
+        boss.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(boss));
+        Player.player._bossIng = true;
+    }
+
+    //检测碰撞
+    checkCollide(){
+        //敌机
+        for(var e= 0, len = VVV.CONTAINER.ENEMYS_CHECK_COLLIDE.length; e<len; e++){
+            var enemy = VVV.CONTAINER.ENEMYS_CHECK_COLLIDE[e];
+            if(!enemy.visible) continue;
+            //敌机在屏幕内才做判断
+            if(enemy.y > VVV.HEIGHT) continue;
+            //敌机与子弹碰撞
+            for(var i=0; i<VVV.CONTAINER.BULLETS.length; i++){
+                var bullet = VVV.CONTAINER.BULLETS[i];
+                if(!bullet.visible) continue;
+                if(cc.rectIntersectsRect(hlx.getPresetCollideRect(bullet), hlx.getPresetCollideRect(enemy))){
+                    bullet.destroy(true);
+                    enemy.hurt(g_player.getBulletPower(), true);
+                }
+            }
+
+            //敌机与玩家的碰撞
+            if(this._ship!=null&&this._ship.visible){
+                //冲刺阶段
+                var rect = hlx.getPresetCollideRect(this._ship);
+                //缩小
+                hlx.scaleHalfRect(rect);
+                if(this._spurt){
+                    rect.x = 0;
+                    rect.y = 0;
+                    rect.width = VVV.WIDTH;
+                    rect.height = hlx.random(0,VVV.HEIGHT*0.65);
+                }
+                if(cc.rectIntersectsRect(rect, hlx.getPresetCollideRect(enemy))){
+                    if(!this._spurt&&!this._bomb){
+                        this._ship.hurt();
+                    }
+                    enemy.hurt(-1,true);
+                }
+            }
+            //敌机与玩家炸弹碰撞
+            for(var i=0; i<VVV.CONTAINER.BOMBS_CHECK_COLLIDE.length; i++){
+                var bombEffect = VVV.CONTAINER.BOMBS_CHECK_COLLIDE[i];
+                if(!bombEffect.visible) continue;
+                if(cc.rectIntersectsRect(hlx.getCollideRect(bombEffect), hlx.getPresetCollideRect(enemy))){
+                    enemy.hurt(-1,true);
+                }
+            }
+        }
+
+        //玩家与金币等的碰撞
+        for(var e= 0,len=VVV.CONTAINER.ITEMS_CHECK_COLLIDE.length; e<len; e++){
+            var item = VVV.CONTAINER.ITEMS_CHECK_COLLIDE[e];
+            if(!item.visible||this._ship==null||!this._ship.visible) continue;
+            var rect = hlx.getPresetCollideRect(this._ship);
+            if(this._ship._magnet){
+                hlx.scaleFullRect(rect);
+                if(cc.rectIntersectsRect(rect, hlx.getPresetCollideRect(item))){
+                    this._ship.attractItem(item);
+                }
+            }else{
+                if(cc.rectIntersectsRect(rect, hlx.getPresetCollideRect(item))){
+                    this._ship.eatItem(item);
+                    item.destroy();
+                }
+            }
+        }
+        //玩家与陨石碰撞
+        for(var i=0; i<VVV.CONTAINER.ROCKS.length; i++){
+            var rock = VVV.CONTAINER.ROCKS[i];
+            if(!rock.visible||this._ship==null||!this._ship.visible||this._spurt) continue;
+            if(cc.rectIntersectsRect(hlx.getPresetCollideRect(this._ship), rock.getCollideRect())){
+                this._ship.hurt();
+            }
+        }
+
     }
 }

@@ -3,7 +3,6 @@ import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
 import {FLY_STATE} from "../../common/enum/FlyStateEnum";
 import EnemySprite from "./EnemySprite";
-import Vec2 = cc.Vec2;
 import {CommonUtil} from "../../common/CommonUtil";
 
 
@@ -29,6 +28,7 @@ export default class FlexEnemySprite extends EnemySprite {
             }
             var action1 = cc.catmullRomTo(5, array);
             this.node.runAction(cc.sequence(
+                cc.fadeIn(0.5),
                 cc.blink(0.7, 5),
                 cc.delayTime(0.5),
                 action1,

@@ -4,14 +4,16 @@ import {CommonConfig} from "../../configs/CommonConfig";
 import {FLY_STATE} from "../../common/enum/FlyStateEnum";
 import EnemySprite from "./EnemySprite";
 import {Player} from "../../classes/Player";
+import FightScene from "../../scene/FightScene";
 
 
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class BossEnemySprite extends EnemySprite {
     update(dt){
+        let fightScene:FightScene = FightScene.getFightScene().getComponent(FightScene)
         if(this.flyState==FLY_STATE.ENTER){
-            if(this.node.y>CommonConfig.HEIGHT-this.node.width/3){
+            if(this.node.y > fightScene.node.height / 2){
                 this.node.y -= CommonConfig.ENEMY_SPEED/3*dt;
             }else{
                 this.flyState = FLY_STATE.RUN;
@@ -27,7 +29,7 @@ export default class BossEnemySprite extends EnemySprite {
 
         }else if(this.flyState==FLY_STATE.EXIT){
             this.node.y -= CommonConfig.BIG_BOSS_SPEED*dt;
-            if(this.node.y < -this.node.height) this.destroySprite();
+            if(this.node.y < -fightScene.node.height/2-this.node.height) this.destroySprite();
         }
     }
     destroySprite(){

@@ -24,7 +24,7 @@ export default class RockLineSprite extends cc.Component {
 
     update(dt) {
         if (!this._bFollow) return;
-        let ship:ShipSprite = cc.find("Canvas").getComponent(FightScene).ship;
+        let ship:ShipSprite = FightScene.getFightScene().getComponent(FightScene).ship;
         if (ship == null || !ship.node.active) return;
         if (ship.node.x > this.node.x + 1) {
             this.node.x += CommonConfig.ROCK_FOLLOW_SPEED * dt;

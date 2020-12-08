@@ -195,8 +195,10 @@ export class DifficultConfig {
 
     //福利飞机数组
     public static blessEnemyArr = [EnemyConfig.enemyConfig.enemyBox, EnemyConfig.enemyConfig.enemyBomb];
+    // public static blessEnemyArr = [EnemyConfig.enemyConfig.enemyBox];
     //停留飞机数组
     public static stayEnemyArr = [EnemyConfig.enemyConfig.enemyStay1, EnemyConfig.enemyConfig.enemyStay2, EnemyConfig.enemyConfig.enemyFollow];
+    // public static stayEnemyArr = [EnemyConfig.enemyConfig.enemyFollow];
 
     public static createSpecialEnemyDrop(enemySprite){
         var dropArray = [];

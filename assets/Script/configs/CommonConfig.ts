@@ -6,9 +6,6 @@ export class CommonConfig {
     public static WIDTH = 320;
     public static HEIGHT = 568;
 
-    public static WIDTH_HALF = CommonConfig.WIDTH/2;
-    public static HEIGHT_HALF = CommonConfig.HEIGHT/2;
-
     //子弹速度
     public static BULLET_SPEED = 1500;
     //敌机速度
@@ -44,7 +41,7 @@ export class CommonConfig {
     //产生福利飞机的间隔
     public static BLESS_PLANE_DELAY = 6;
     //产生停留飞机的间隔
-    public static STAY_ENEMY_DELAY = 5;
+    public static STAY_ENEMY_DELAY = 11;
     //产生冲刺敌机的间隔
     public static ENEMY_SPURT_DELAY = 0.3;
     //同一批陨石出现的间隔时间

@@ -10,8 +10,8 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class FlexEnemySprite extends EnemySprite {
     getStartPosition(self:FlexEnemySprite) {
-        var randomX:number = CommonUtil.random(-CommonConfig.WIDTH_HALF+self.node.width / 2, CommonConfig.WIDTH_HALF - self.node.width / 2);
-        var randomY:number = CommonUtil.random(0, CommonConfig.HEIGHT_HALF - self.node.height / 2);
+        var randomX:number = CommonUtil.random(-CommonConfig.WIDTH/2+self.node.width / 2, CommonConfig.WIDTH/2 - self.node.width / 2);
+        var randomY:number = CommonUtil.random(0, CommonConfig.HEIGHT/2 - self.node.height / 2);
         return new cc.Vec2(randomX, randomY);
     }
 
@@ -22,8 +22,8 @@ export default class FlexEnemySprite extends EnemySprite {
             var array = [];
             array.push(new cc.Vec2(this.node.x, this.node.y));
             for (var i = 0; i < 10; i++) {
-                var x = CommonUtil.random(-CommonConfig.WIDTH_HALF, CommonConfig.WIDTH_HALF);
-                var y = CommonUtil.random(0, CommonConfig.HEIGHT_HALF);
+                var x = CommonUtil.random(-CommonConfig.WIDTH/2, CommonConfig.WIDTH/2);
+                var y = CommonUtil.random(0, CommonConfig.HEIGHT/2);
                 array.push(new cc.Vec2(x, y));
             }
             var action1 = cc.catmullRomTo(5, array);

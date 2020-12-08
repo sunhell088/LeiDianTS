@@ -13,8 +13,8 @@ export default class BossEnemySprite extends EnemySprite {
     update(dt){
         let fightScene:FightScene = FightScene.getFightScene().getComponent(FightScene)
         if(this.flyState==FLY_STATE.ENTER){
-            if(this.node.y > fightScene.node.height / 2){
-                this.node.y -= CommonConfig.ENEMY_SPEED/3*dt;
+            if (this.node.y > fightScene.node.height / 2 * 0.75) {
+                this.node.y -= CommonConfig.SMALL_BOSS_SPEED*dt;
             }else{
                 this.flyState = FLY_STATE.RUN;
                 //一定时间后冲刺向玩家

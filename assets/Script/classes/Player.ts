@@ -90,6 +90,9 @@ export class Player {
     //停止发射子弹中
     public _stopBullet:boolean = true;
 
+    //无敌模式
+    public debugMode:boolean = false;
+
     //从本地读取玩家数据
     public loadData(){
         if(localStorage.playerData)

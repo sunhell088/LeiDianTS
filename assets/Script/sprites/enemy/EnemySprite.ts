@@ -2,9 +2,12 @@ import {Player} from "../../classes/Player";
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
-import {FLY_STATE} from "../../common/enum/FlyStateEnum";
+import {CLEAN_TYPE, FLY_STATE} from "../../common/enum/FlyStateEnum";
 import FlexEnemySprite from "./FlexEnemySprite";
 import {Observer} from "../../framework/observe/Observer";
+import BulletSprite from "../BulletSprite";
+import FightScene from "../../scene/FightScene";
+import {EnemyConfig} from "../../configs/EnemyConfig";
 
 
 const {ccclass, property} = cc._decorator;
@@ -46,7 +49,6 @@ export default class EnemySprite extends cc.Component {
     }
 
     destroySprite () {
-        console.log("destroySprite :"+Observer.getQualifiedClassName(this._enemyConfig.classType));
         this._spritePool.put(this._spriteNode);
         this.resetBloodBar();
         this.flyState = FLY_STATE.ENTER;
@@ -68,38 +70,33 @@ export default class EnemySprite extends cc.Component {
             this.death(bDrop);
         }else{
             //设置血条长度
-            this.bloodBar.progress = Math.round(this._HP / this._MAX_HP * 100)
+            let progress = this._HP / this._MAX_HP;
+            this.bloodBar.progress = progress;
         }
     }
     //死亡
     death(bDrop){
-        // this.destroy();
-        // if(bDrop){
-        //     g_sharedGameLayer.killEnemyAward(this);
-        // }
-        // //冲刺阶段一半几率显示爆炸效果
-        // if(!g_sharedGameLayer._spurt||Math.random()>0.5){
-        //     //音效
-        //     this.playDeathSound();
-        //     var effect = null;
-        //     //自爆飞机
-        //     if(this._enemyConfig==EnemyConfig.enemyBomb){
-        //         effect = EffectSprite.getEffect(EffectConfig.bomb_efx1.name);
-        //         if(effect){
-        //             effect.setScale(3);
-        //         }
-        //         g_sharedGameLayer.cleanEnemy(3, true);
-        //     }else{
-        //         effect = EffectSprite.getEffect(EffectConfig.efx_bomb2.name);
-        //         if(effect){
-        //             effect.setScale(2);
-        //         }
-        //     }
-        //     if(effect){
-        //         effect.x = this.x;
-        //         effect.y = this.y;
-        //     }
-        // }
+        this.destroySprite();
+        let fightScene:FightScene = FightScene.getFightScene();
+        if(bDrop){
+            fightScene.killEnemyAward(this);
+        }
+        //冲刺阶段一半几率显示爆炸效果
+        if(!Player.player._spurt||Math.random()>0.5){
+            //音效
+            this.playDeathSound();
+            var effectNode:cc.Node = fightScene.createDeadEffectEnemySprite();
+            //自爆飞机
+            if(this._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
+                fightScene.cleanEnemy(CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL, true);
+            }
+            effectNode.setPosition(this.node.getPosition())
+            var effectAnimation:cc.Animation = effectNode.getComponent(cc.Animation);
+            effectAnimation.play();
+            this.scheduleOnce(function() {
+                fightScene.deadEffectPool.put(effectNode);
+            }, 0.15);
+        }
     }
 
     //动态设置敌机的血量、经验和掉落物品
@@ -118,7 +115,12 @@ export default class EnemySprite extends cc.Component {
     }
     //死亡音效（子类重载）
     playDeathSound(){
-        //音效
         GameUtil.playEffect(SoundConfig.mon_die);
+    }
+    onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
+        let bulletSprite:BulletSprite = other.getComponent(BulletSprite);
+        if(bulletSprite){
+            this.hurt(Player.player.getBulletPower(), true);
+        }
     }
 }

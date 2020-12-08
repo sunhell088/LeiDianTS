@@ -1,0 +1,43 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "planeDead",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.5166666666666667,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "f81da5bf-1875-4ca9-90ad-56c2e15f2a8f"
+            }
+          },
+          {
+            "frame": 0.16666666666666666,
+            "value": {
+              "__uuid__": "3e982afe-5c8c-4eba-ae0e-ac180a3e6e48"
+            }
+          },
+          {
+            "frame": 0.3333333333333333,
+            "value": {
+              "__uuid__": "a68dc15d-b25b-4f18-8c5d-eb5268a6638b"
+            }
+          },
+          {
+            "frame": 0.5,
+            "value": {
+              "__uuid__": "45540fa9-d3bf-4239-af7b-80a0c98224b1"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "events": []
+}

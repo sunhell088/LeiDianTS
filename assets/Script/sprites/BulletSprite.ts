@@ -1,15 +1,16 @@
 import {CommonConfig} from "../configs/CommonConfig";
+import FightScene from "../scene/FightScene";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class BulletSprite extends cc.Component {
 
-    bulletPrefab:cc.Node = null;
+    spriteNode:cc.Node = null;
     bulletAtlas:cc.SpriteAtlas = null;
     bulletPool:cc.NodePool = null;
 
-    initBullet(bulletPrefab:cc.Node, bulletAtlas:cc.SpriteAtlas, bulletPool:cc.NodePool){
-        this.bulletPrefab = bulletPrefab;
+    initSprite(spriteNode:cc.Node, bulletAtlas:cc.SpriteAtlas, bulletPool:cc.NodePool){
+        this.spriteNode = spriteNode;
         this.bulletAtlas = bulletAtlas;
         this.bulletPool = bulletPool;
     }
@@ -20,11 +21,16 @@ export default class BulletSprite extends cc.Component {
     }
 
     update (dt) {
+        let fightScene:FightScene = FightScene.getFightScene();
         this.node.y += CommonConfig.BULLET_SPEED * dt;
-        if (this.node.y > CommonConfig.HEIGHT + this.node.height * 2) this.destroyBullet();
+        if (this.node.y > fightScene.node.height/2) this.destroyBullet();
     }
 
     destroyBullet () {
-        this.bulletPool.put(this.bulletPrefab);
+        this.bulletPool.put(this.spriteNode);
+    }
+
+    onCollisionEnter(other, self) {
+        this.destroyBullet();
     }
 }

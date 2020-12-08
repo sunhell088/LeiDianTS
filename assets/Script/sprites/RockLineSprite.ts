@@ -7,7 +7,7 @@ import ShipSprite from "./ShipSprite";
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class RockLineSprite extends cc.Component {
-    _spritePrefab: cc.Node = null;
+    _spriteNode: cc.Node = null;
     _spritePool: cc.NodePool = null;
 
     //是否追踪玩家
@@ -17,9 +17,12 @@ export default class RockLineSprite extends cc.Component {
     warningSprite: cc.Sprite = null;
 
 
-    initSprite(prefab:cc.Node, pool:cc.NodePool){
-        this._spritePrefab = prefab;
+    initSprite(node:cc.Node, pool:cc.NodePool){
+        this._spriteNode = node;
         this._spritePool = pool;
+        //重新设置line宽，和警告标识为可见
+        this.node.scaleX = 1;
+        this.warningSprite.node.active = true;
     }
 
     update(dt) {
@@ -31,10 +34,9 @@ export default class RockLineSprite extends cc.Component {
         } else if (ship.node.x < this.node.x - 1) {
             this.node.x -= CommonConfig.ROCK_FOLLOW_SPEED * dt;
         }
-        // this.warningSprite.node.x = this.node.x
     }
 
-    destroyBullet () {
-        this._spritePool.put(this._spritePrefab);
+    destroySprite () {
+        this._spritePool.put(this._spriteNode);
     }
 }

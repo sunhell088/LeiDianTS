@@ -5,7 +5,7 @@ import {ItemConfig} from "../configs/ItemConfig";
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class ItemSprite extends cc.Component {
-    _spritePrefab: cc.Node = null;
+    _spriteNode: cc.Node = null;
     _spriteAtlas: cc.SpriteAtlas = null;
     _spritePool: cc.NodePool = null;
 
@@ -14,14 +14,26 @@ export default class ItemSprite extends cc.Component {
     //是否处于被吸引状态，如果是，则不判断碰撞了
     _bAttracting: boolean = false;
 
+    initSprite(node:cc.Node, atlas:cc.SpriteAtlas, pool:cc.NodePool, itemConfig:any){
+        this._spriteNode = node;
+        this._spriteAtlas = atlas;
+        this._spritePool = pool;
+        this._itemConfig = itemConfig;
+    }
+
+    setSpriteFrame(){
+        let frame = this._spriteAtlas.getSpriteFrame(this._itemConfig.textureName);
+        this.getComponent(cc.Sprite).spriteFrame = frame;
+    }
+
     destroySprite() {
-        this.destroy();
+        this._spritePool.put(this._spriteNode);
         this._bAttracting = false;
     }
 
     drop() {
-        CommonUtil.pClamp(this);
-        let offset = this.node.x > CommonConfig.WIDTH_HALF ? -CommonConfig.WIDTH / 3 : CommonConfig.WIDTH / 3;
+        CommonUtil.pClamp(this.node);
+        let offset = this.node.x > CommonConfig.WIDTH/2 ? -CommonConfig.WIDTH / 3 : CommonConfig.WIDTH / 3;
         offset = Math.random() * offset;
         var bezier = [new cc.Vec2(this.node.x + offset / 3, this.node.y + 100),
             new cc.Vec2(this.node.x + offset / 2, this.node.y + 60), new cc.Vec2(this.node.x + offset, -CommonConfig.HEIGHT * 2)];

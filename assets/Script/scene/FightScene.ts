@@ -12,13 +12,15 @@ import {GameUtil} from "../common/GameUtil";
 import ShipSprite from "../sprites/ShipSprite";
 import {GameEvent} from "../common/GameEvent";
 import {ObserverManager} from "../framework/observe/ObserverManager";
-import Game = cc.Game;
 import RockLineSprite from "../sprites/RockLineSprite";
 import RockSprite from "../sprites/RockSprite";
-import {ItemConfig} from "../configs/ItemConfig";
 import {Observer} from "../framework/observe/Observer";
 import BossEnemySprite from "../sprites/enemy/BossEnemySprite";
 import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
+import {CLEAN_TYPE} from "../common/enum/FlyStateEnum";
+import {StoreItemConfig} from "../configs/StoreItemConfig";
+import FightUI from "./ui/FightUI";
+import ItemSprite from "../sprites/ItemSprite";
 
 
 const {ccclass, property} = cc._decorator;
@@ -44,6 +46,10 @@ export default class FightScene extends cc.Component implements IMediator {
 
     @property(cc.Prefab)
     enemyPrefab: cc.Prefab = null;
+    @property(cc.Prefab)
+    enemyStayPrefab: cc.Prefab = null;
+    @property(cc.Prefab)
+    enemyBossPrefab: cc.Prefab = null;
     @property(cc.SpriteAtlas)
     enemyAtlas: cc.SpriteAtlas = null;
 
@@ -52,17 +58,38 @@ export default class FightScene extends cc.Component implements IMediator {
     @property(cc.Prefab)
     rockPrefab: cc.Prefab = null;
 
+    @property(cc.Prefab)
+    itemPrefab: cc.Prefab = null;
+    @property(cc.SpriteAtlas)
+    itemAtlas: cc.SpriteAtlas = null;
+
+    @property(cc.Prefab)
+    deadEffectPlayerPrefab:cc.Prefab = null;
+    @property(cc.Prefab)
+    deadEffectEnemyPrefab:cc.Prefab = null;
+
     bulletPool: cc.NodePool = new cc.NodePool();
     enemyPool: cc.NodePool = new cc.NodePool();
     enemyFlexPool: cc.NodePool = new cc.NodePool();
     enemyBossPool: cc.NodePool = new cc.NodePool();
     enemyFollowPool: cc.NodePool = new cc.NodePool();
     enemyStayPool: cc.NodePool = new cc.NodePool();
-
     rockLinePool: cc.NodePool = new cc.NodePool();
     rockPool: cc.NodePool = new cc.NodePool();
+    itemPool: cc.NodePool = new cc.NodePool();
+    deadEffectPool: cc.NodePool = new cc.NodePool();
+
+    public static getFightScene(): FightScene {
+        return cc.find("Canvas").getComponent(FightScene);
+    }
 
     getCommands(): string[] {
+        //开启碰撞
+        var manager = cc.director.getCollisionManager();
+        manager.enabled = true;
+        // manager.enabledDebugDraw = true;
+        // manager.enabledDrawBoundingBox = true;
+
         return [GameEvent.SPURT_ACTION, GameEvent.DOUBLE_FIRE_ACTION, GameEvent.XTS_ACTION, GameEvent.EAT_ITEM,
             GameEvent.STORE_REVIVE, GameEvent.STORE_SPURT, GameEvent.STORE_DEATH, GameEvent.STORE_CHANGE_PLANE];
     }
@@ -366,13 +393,12 @@ export default class FightScene extends cc.Component implements IMediator {
         this.initPlayer();
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
-        this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
-        this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        // this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        // this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
+        // this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
     }
 
     update(dt) {
-        this.checkCollide();
         this.moveBackground(dt);
     }
 
@@ -391,42 +417,43 @@ export default class FightScene extends cc.Component implements IMediator {
         //重置和战斗相关的数据
         Player.player.resetFightData();
 
-        // this.storeItemEffect("start");
-        //
-        //
-        // //初始化战斗UI
-        // g_FightUILayer.initUI();
-        // //登场
-        // this._ship.comeOnStage();
+        this.storeItemEffect("start");
+
+
+        //初始化战斗UI
+        FightUI.getFightUI().initUI();
+        //登场
+        this.ship.comeOnStage();
     }
 
-    // //商城道具效果(开局时)
-    // storeItemEffect(state):boolean {
-    //     let triggerSuccess = false;
-    //     //随机道具
-    //     let item = VVV.getStoreItemConfig(g_player.randomItemID);
-    //     if(item&&item.trigger==state){
-    //         item.itemFunction();
-    //         g_player.randomItemID = 0;
-    //         triggerSuccess = true;
-    //     }
-    //     //购买的道具
-    //     for(var i=0; i<g_player.data.storeItemPackage.length; i++){
-    //         var itemObj = g_player.data.storeItemPackage[i];
-    //         item = VVV.getStoreItemConfig(itemObj.itemID);
-    //         if(item.trigger==state){
-    //             if(g_player.useStoreItem(itemObj.itemID)){
-    //                 triggerSuccess = true;
-    //             }
-    //         }
-    //     }
-    //     return triggerSuccess;
-    // }
+    //商城道具效果(开局时)
+    storeItemEffect(state):boolean {
+        let triggerSuccess = false;
+        //随机道具
+        let item = StoreItemConfig.getStoreItemConfig(Player.player.randomItemID);
+        if(item&&item.trigger==state){
+            item.itemFunction();
+            Player.player.randomItemID = "0";
+            triggerSuccess = true;
+        }
+        //购买的道具
+        for(var i=0; i<Player.player.data.storeItemPackage.length; i++){
+            var itemObj = Player.player.data.storeItemPackage[i];
+            item = StoreItemConfig.getStoreItemConfig(itemObj.itemID);
+            if(item.trigger==state){
+                if(Player.player.useStoreItem(itemObj.itemID)){
+                    triggerSuccess = true;
+                }
+            }
+        }
+        return triggerSuccess;
+    }
 
     onTouchBegan(event) {
     }
 
     onTouchMoved(event) {
+        if(!this.ship.node.active) return;
         let target = this.ship.node;
         let touch = event.currentTouch;
         let delta = touch.getDelta();
@@ -465,30 +492,58 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     shoot() {
+        if(Player.player._stopBullet) return;
+        if(Player.player._changePlaneIng) return;
+        if(Player.player._death) return;
+        if(Player.player._spurt) return;
+        if(Player.player._levelUpIng) return;
         let bullet = this.createBullet();
         bullet.x = this.ship.node.x;
         bullet.y = this.ship.node.y + this.ship.node.width / 2;
+        bullet.setScale(1);
+        //升级时子弹不双倍和变大
+        if(!Player.player._levelUpIng&&!Player.player._invincible){
+            //二条
+            var bullet2 = null;
+            if(Player.player._doubleFire){
+                var scaleRatio = Player.player._doublePower?1.6:1.1;
+
+                bullet2 = this.createBullet();
+                if(!bullet2) return;
+                bullet2.x = this.ship.node.x + bullet2.width*scaleRatio/2;
+                bullet2.y = bullet.y;
+                bullet2.setScale(1);
+
+                bullet.x = this.node.x - bullet.width*scaleRatio/2;
+            }
+            //加粗
+            if(Player.player._doublePower){
+                bullet.setScale(1.5);
+                if(bullet2) bullet2.setScale(1.5);
+            }
+        }
     }
 
     createBullet(): cc.Node {
-        let bullet = null;
+        let spriteNode:cc.Node = null;
         if (this.bulletPool.size() > 0) {
-            bullet = this.bulletPool.get();
+            spriteNode = this.bulletPool.get();
         } else {
-            bullet = cc.instantiate(this.bulletPrefab);
+            spriteNode = cc.instantiate(this.bulletPrefab);
         }
-        this.node.addChild(bullet);
-        let bulletSprite = bullet.getComponent('BulletSprite');
-        bulletSprite.initBullet(bullet, this.bulletAtlas, this.bulletPool);
+        this.node.addChild(spriteNode);
+        let bulletSprite = spriteNode.getComponent('BulletSprite');
+        bulletSprite.initSprite(spriteNode, this.bulletAtlas, this.bulletPool);
         let planeConfig = PlaneConfig.getPlaneConfig(Player.player.data.currentPlaneID);
         bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getGrade(Player.player.data.currentPlaneID));
-        return bullet;
+        return spriteNode;
     }
 
     createEnemy(enemyConfig: any): EnemySprite {
         let spriteNode: cc.Node = null;
         let enemySprite: EnemySprite = null;
         let pool: cc.NodePool = this.enemyPool;
+        let enemyPrefab:cc.Prefab = this.enemyPrefab;
         let classNameStr:string = Observer.getQualifiedClassName(enemyConfig.classType);
         switch (classNameStr) {
             case "FlexEnemySprite":
@@ -496,9 +551,11 @@ export default class FightScene extends cc.Component implements IMediator {
                 break;
             case "StayEnemySprite":
                 pool = this.enemyStayPool;
+                enemyPrefab = this.enemyStayPrefab;
                 break;
             case "BossEnemySprite":
                 pool = this.enemyBossPool;
+                enemyPrefab = this.enemyBossPrefab;
                 break;
             case "FollowEnemySprite":
                 pool = this.enemyFollowPool;
@@ -509,7 +566,7 @@ export default class FightScene extends cc.Component implements IMediator {
             spriteNode = pool.get();
             enemySprite = spriteNode.getComponent(enemyConfig.classType);
         } else {
-            spriteNode = cc.instantiate(this.enemyPrefab);
+            spriteNode = cc.instantiate(enemyPrefab);
             enemySprite = spriteNode.addComponent(enemyConfig.classType);
         }
         this.node.addChild(spriteNode);
@@ -520,28 +577,53 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     createRockLineSprite(): RockLineSprite {
-        let spritePrefab = null;
+        let spriteNode:cc.Node = null;
         if (this.rockLinePool.size() > 0) {
-            spritePrefab = this.rockLinePool.get();
+            spriteNode = this.rockLinePool.get();
         } else {
-            spritePrefab = cc.instantiate(this.rockLinePrefab);
+            spriteNode = cc.instantiate(this.rockLinePrefab);
         }
-        this.node.addChild(spritePrefab);
-        let rockLineSprite: RockLineSprite = spritePrefab.getComponent('RockLineSprite');
-        rockLineSprite.initSprite(spritePrefab, this.rockLinePool);
+        this.node.addChild(spriteNode);
+        let rockLineSprite: RockLineSprite = spriteNode.getComponent('RockLineSprite');
+        rockLineSprite.initSprite(spriteNode, this.rockLinePool);
         return rockLineSprite;
     }
 
     createRockSprite(): RockSprite {
-        let spritePrefab = null;
+        let spriteNode:cc.Node = null;
         if (this.rockPool.size() > 0) {
-            spritePrefab = this.rockPool.get();
+            spriteNode = this.rockPool.get();
         } else {
-            spritePrefab = cc.instantiate(this.rockPrefab);
+            spriteNode = cc.instantiate(this.rockPrefab);
         }
-        this.node.addChild(spritePrefab);
-        let rockSprite: RockSprite = spritePrefab.getComponent('RockSprite');
+        this.node.addChild(spriteNode);
+        let rockSprite: RockSprite = spriteNode.getComponent('RockSprite');
+        rockSprite.initSprite(spriteNode, this.rockPool);
         return rockSprite;
+    }
+
+    createItemSprite(itemConfig:any): ItemSprite {
+        let spriteNode = null;
+        if (this.itemPool.size() > 0) {
+            spriteNode = this.itemPool.get();
+        } else {
+            spriteNode = cc.instantiate(this.itemPrefab);
+        }
+        this.node.addChild(spriteNode);
+        let itemSprite: ItemSprite = spriteNode.getComponent('ItemSprite');
+        itemSprite.initSprite(spriteNode,this.itemAtlas, this.rockPool, itemConfig);
+        return itemSprite;
+    }
+
+    createDeadEffectEnemySprite(): cc.Node {
+        let spriteNode:cc.Node = null;
+        if (this.itemPool.size() > 0) {
+            spriteNode = this.deadEffectPool.get();
+        } else {
+            spriteNode = cc.instantiate(this.deadEffectEnemyPrefab);
+        }
+        this.node.addChild(spriteNode);
+        return spriteNode;
     }
 
     moveBackground(dt) {
@@ -637,14 +719,9 @@ export default class FightScene extends cc.Component implements IMediator {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng) return;
         var line: RockLineSprite = this.createRockLineSprite();
-        if (!line) return;
         line._bFollow = bFollow;
-        var bornX = -CommonConfig.WIDTH_HALF + line.node.width / 2 + bornIndex * line.node.width;
+        var bornX = -CommonConfig.WIDTH/2 + line.node.width / 2 + bornIndex * line.node.width;
         line.node.setPosition(bornX, this.node.height / 2);
-        //重新设置line宽，和警告标识为可见
-        line.node.scaleX = 1;
-        line.warningSprite.node.active = true;
-        // line.warningSprite.node.setPosition(line.node.x, line.node.y - line.warningSprite.node.height*2);
         var lineAction = cc.callFunc(function () {
                 //创建陨石的动作
                 var createRockAction = cc.callFunc(function (sender) {
@@ -661,7 +738,8 @@ export default class FightScene extends cc.Component implements IMediator {
                 //line宽 缩小到0
                 this.node.runAction(cc.sequence(
                     cc.scaleTo(0.5, 0, this.scaleY),
-                    createRockAction
+                    createRockAction,
+                    cc.callFunc(line.destroySprite, line)
                 ));
             }, line
         );
@@ -708,10 +786,6 @@ export default class FightScene extends cc.Component implements IMediator {
         enemy.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(enemy));
     }
 
-    public static getFightScene(): FightScene {
-        return cc.find("Canvas").getComponent(FightScene);
-    }
-
     //根据飞行距离创建BOSS
     createBoos(distanceStage){
         let boss:BossEnemySprite = null;
@@ -737,86 +811,103 @@ export default class FightScene extends cc.Component implements IMediator {
         }
         if(!boss) return;
         //设置坐标
-        var startPosition = new cc.Vec2(0, this.node.height/2-boss.node.height/2);
+        var startPosition = new cc.Vec2(0, this.node.height/2+boss.node.height*2);
         boss.node.setPosition(startPosition);
         //设置血量、经验和掉落
         var hp = boss._enemyConfig.HPArray[Player.player.getGrade()-1]*CommonConfig.BULLET_COUNT_PER;
         boss.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(boss));
         Player.player._bossIng = true;
     }
-
-    //检测碰撞
-    checkCollide(){
-        //敌机
-        for(var e= 0, len = VVV.CONTAINER.ENEMYS_CHECK_COLLIDE.length; e<len; e++){
-            var enemy = VVV.CONTAINER.ENEMYS_CHECK_COLLIDE[e];
-            if(!enemy.visible) continue;
-            //敌机在屏幕内才做判断
-            if(enemy.y > VVV.HEIGHT) continue;
-            //敌机与子弹碰撞
-            for(var i=0; i<VVV.CONTAINER.BULLETS.length; i++){
-                var bullet = VVV.CONTAINER.BULLETS[i];
-                if(!bullet.visible) continue;
-                if(cc.rectIntersectsRect(hlx.getPresetCollideRect(bullet), hlx.getPresetCollideRect(enemy))){
-                    bullet.destroy(true);
-                    enemy.hurt(g_player.getBulletPower(), true);
+    /*
+   清屏（清除陨石，所有敌机、子弹、陨石爆炸）
+    cleanType: 清理类型----不传参数为所有都清理1为只清理岩石，2为只清理敌机，3为只清理普通敌机（不清理特殊飞机）
+    drop：是否掉落----不传参数为 不掉落，传参数true为掉落
+    */
+    cleanEnemy(cleanType:CLEAN_TYPE, bDrop:boolean){
+        var childrenArray:cc.Node[] = this.node.children;
+        let rockLineSprite:RockLineSprite = null;
+        let rockSprite:RockSprite = null;
+        let enemy:EnemySprite = null;
+        for(let key in childrenArray){
+            if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ROCK){
+                rockLineSprite = childrenArray[key].getComponent(RockLineSprite);
+                if(rockLineSprite){
+                    rockLineSprite.destroySprite();
+                }
+                rockSprite = childrenArray[key].getComponent(RockSprite);
+                if(rockSprite){
+                    rockSprite.destroySprite();
                 }
             }
-
-            //敌机与玩家的碰撞
-            if(this._ship!=null&&this._ship.visible){
-                //冲刺阶段
-                var rect = hlx.getPresetCollideRect(this._ship);
-                //缩小
-                hlx.scaleHalfRect(rect);
-                if(this._spurt){
-                    rect.x = 0;
-                    rect.y = 0;
-                    rect.width = VVV.WIDTH;
-                    rect.height = hlx.random(0,VVV.HEIGHT*0.65);
-                }
-                if(cc.rectIntersectsRect(rect, hlx.getPresetCollideRect(enemy))){
-                    if(!this._spurt&&!this._bomb){
-                        this._ship.hurt();
+            if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ENEMY||cleanType==CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL){
+                enemy = childrenArray[key].getComponent(EnemySprite);
+                if(enemy){
+                    if(enemy._enemyConfig.classType==EnemySprite){
+                        enemy.hurt(-1, bDrop)
+                        enemy.destroySprite();
+                    }else {
+                        if(cleanType==CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL){
+                            enemy.hurt(-1, bDrop)
+                            enemy.destroySprite();
+                        }
                     }
-                    enemy.hurt(-1,true);
                 }
             }
-            //敌机与玩家炸弹碰撞
-            for(var i=0; i<VVV.CONTAINER.BOMBS_CHECK_COLLIDE.length; i++){
-                var bombEffect = VVV.CONTAINER.BOMBS_CHECK_COLLIDE[i];
-                if(!bombEffect.visible) continue;
-                if(cc.rectIntersectsRect(hlx.getCollideRect(bombEffect), hlx.getPresetCollideRect(enemy))){
-                    enemy.hurt(-1,true);
-                }
+        }
+    }
+
+    onGameOver(){
+        // cc.audioEngine.stopAllEffects();
+        // g_sharedGameLayer._ship.stopAllActions();
+        // g_sharedGameLayer.stopAllActions();
+        // cc.director.runScene(new cc.TransitionFade(0.5, ResultLayer.scene()));
+    }
+
+    //杀敌奖励
+    killEnemyAward(enemySprite){
+        var exp = enemySprite._expValue;
+        //冲刺等阶段 经验降低
+        if(Player.player._spurt||Player.player._bomb||Player.player._spurtReadying){
+            exp = enemySprite._expValue/3;
+            if(Player.player._startSpurtDuration||Player.player._deathSpurtDuration){
+                exp = 0;
+            }
+        }
+        let fightUI:FightUI = FightUI.getFightUI();
+        if(exp>0){
+            //获得经验
+            Player.player.addExp(exp);
+            //经验球
+            var expBall = GameUtil.getEnemyExp();
+            if(expBall){
+                expBall.x = enemySprite.x;
+                expBall.y = enemySprite.y;
+                expBall.scale = 1;
+                var x = 40.5 + fightUI.expBar.progress / 100 * fightUI.expBar.node.width;
+                var moveTo = cc.moveTo(0.7, new cc.Vec2(x, 540));
+                var scaleTo = cc.scaleTo(0.7, 0.4);
+                expBall.runAction(cc.sequence(
+                    cc.delayTime(0.3),
+                    cc.spawn(scaleTo, moveTo),
+                    cc.callFunc(function(){
+                        expBall.setVisible(false);
+                    })
+                ));
             }
         }
 
-        //玩家与金币等的碰撞
-        for(var e= 0,len=VVV.CONTAINER.ITEMS_CHECK_COLLIDE.length; e<len; e++){
-            var item = VVV.CONTAINER.ITEMS_CHECK_COLLIDE[e];
-            if(!item.visible||this._ship==null||!this._ship.visible) continue;
-            var rect = hlx.getPresetCollideRect(this._ship);
-            if(this._ship._magnet){
-                hlx.scaleFullRect(rect);
-                if(cc.rectIntersectsRect(rect, hlx.getPresetCollideRect(item))){
-                    this._ship.attractItem(item);
-                }
-            }else{
-                if(cc.rectIntersectsRect(rect, hlx.getPresetCollideRect(item))){
-                    this._ship.eatItem(item);
-                    item.destroy();
-                }
+        //掉落物品
+        for(var i=0;i<enemySprite._dropItems.length;i++){
+            var item = this.createItemSprite(enemySprite._dropItems[i]);
+            if(!item) continue;
+            item.node.x = enemySprite.x;
+            item.node.y = enemySprite.y;
+            //多个暴落物的话，散开
+            if(i!=0){
+                item.node.x += CommonUtil.random(-100,100);
+                item.node.y += CommonUtil.random(0,100);
             }
+            item.drop();
         }
-        //玩家与陨石碰撞
-        for(var i=0; i<VVV.CONTAINER.ROCKS.length; i++){
-            var rock = VVV.CONTAINER.ROCKS[i];
-            if(!rock.visible||this._ship==null||!this._ship.visible||this._spurt) continue;
-            if(cc.rectIntersectsRect(hlx.getPresetCollideRect(this._ship), rock.getCollideRect())){
-                this._ship.hurt();
-            }
-        }
-
     }
 }

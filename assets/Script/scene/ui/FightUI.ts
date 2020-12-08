@@ -65,9 +65,26 @@ export default class FightUI extends cc.Component implements IMediator{
     @property(cc.Sprite)
     storeItemChange:cc.Sprite = null;
 
+    public static getFightUI(): FightUI {
+        return cc.find("Canvas/fightUI").getComponent(FightUI);
+    }
+
     getCommands():string[] {
         return [GameEvent.ADD_BOMB, GameEvent.ADD_EXP, GameEvent.UP_GRADE, GameEvent.USE_BOMB, GameEvent.ADD_CURRENT_REWARD_GOLD,
         GameEvent.MOVE_BG, GameEvent.NEW_RECORD];
+    }
+
+    //初始化玩家UI信息
+    initUI(){
+        // if(this.debugMode) return;
+        // this.setGradeLable(g_player.getGrade());
+        // this.setBombCount(g_player.bomb);
+        // this._expBar.setPercent(Math.round(g_player.getExp() / VVV.getExpByLevel(g_player.getGrade()) * 100));
+        // this._goldCount.setString(0);
+        // this._bombBtn.addTouchEventListener(this.OnBombBtn, this);
+        // this._pauseBtn.addTouchEventListener(this.OnPauseGame, this);
+        // this._backBtn.addTouchEventListener(this.OnBackGame, this);
+        // this._restartBtn.addTouchEventListener(this.OnRestartGame, this);
     }
 
     protected onLoad(): void {
@@ -89,7 +106,7 @@ export default class FightUI extends cc.Component implements IMediator{
     }
 
     onAddExp(grade:number, expPersents:number){
-        console.log("fightUI onAddExp "+grade+"=="+expPersents);
+        // console.log("fightUI onAddExp "+grade+"=="+expPersents);
         // g_FightUILayer.setGradeLable(this.getGrade());
         // g_FightUILayer.setExpBar();
     }

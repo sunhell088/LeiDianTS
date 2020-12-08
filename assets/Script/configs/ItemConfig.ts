@@ -12,7 +12,7 @@ export class ItemConfig {
         //冲刺
         item_cc:{
             name:"item_cc",
-            textureName:"#item_cc.png",
+            textureName:"item_cc",
             presetCount:2,
             effectTexture:"#fly_buff0.png",
             itemFunction:function(){
@@ -22,7 +22,7 @@ export class ItemConfig {
         //二条
         item_doubleFire:{
             name:"item_doubleFire",
-            textureName:"#item_up_skill.png",
+            textureName:"item_up_skill",
             presetCount:2,
             effectTexture:"#fly_buff4.png",
             itemFunction:function(){
@@ -32,7 +32,7 @@ export class ItemConfig {
         //磁铁
         item_xts:{
             name:"item_xts",
-            textureName:"#item_xts.png",
+            textureName:"item_xts",
             presetCount:2,
             effectTexture:"#fly_buff1.png",
             itemFunction:function(){
@@ -42,7 +42,7 @@ export class ItemConfig {
         //炸弹
         item_down_skill:{
             name:"item_down_skill",
-            textureName:"#item_down_skill.png",
+            textureName:"item_down_skill",
             presetCount:2,
             effectTexture:"#fly_buff5.png",
             itemFunction:function(){
@@ -54,7 +54,7 @@ export class ItemConfig {
         //10金币
         item_coin:{
             name:"item_coin",
-            textureName:"#item_coin.png",
+            textureName:"item_coin",
             presetCount:20,
             gold:10,
             itemFunction:function(){
@@ -65,7 +65,7 @@ export class ItemConfig {
         //50金币
         item_red:{
             name:"item_red",
-            textureName:"#item_red.png",
+            textureName:"item_red",
             presetCount:7,
             gold:50,
             itemFunction:function(){
@@ -76,7 +76,7 @@ export class ItemConfig {
         //100金币
         item_green:{
             name:"item_green",
-            textureName:"#item_green.png",
+            textureName:"item_green",
             presetCount:5,
             gold:100,
             itemFunction:function(){

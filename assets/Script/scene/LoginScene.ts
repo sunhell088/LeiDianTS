@@ -29,6 +29,8 @@ export default class LoginScene extends cc.Component implements IMediator{
     }
 
     protected onLoad(): void {
+        CommonConfig.WIDTH = this.node.width;
+        CommonConfig.HEIGHT = this.node.height;
         GameUtil.playMusic(SoundConfig.mainMusic_mp3);
         //因为transformToPixel会把相对标识改为绝对坐标
         if(!(FormationConfig.formationConfig[0][0] instanceof cc.Vec2)){

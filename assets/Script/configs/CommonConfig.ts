@@ -71,4 +71,7 @@ export class CommonConfig {
     public static NEW_RECORD_DISTANCE = 50;
     //飞行距离对应的难度等级
     public static DISTANCE_STAGE_UNIT = 500;
+
+    //-------------------
+    public static PRESET_COUNT_BOMB = 10;
 }

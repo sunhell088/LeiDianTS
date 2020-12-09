@@ -1,11 +1,9 @@
 import {PlaneConfig} from "../configs/PlaneConfig";
 import {CommonConfig} from "../configs/CommonConfig";
-import {ObserverManager} from "../framework/observe/ObserverManager";
-import LoginScene from "../scene/LoginScene";
-import {GameEvent} from "../common/GameEvent";
 import {StoreItemConfig} from "../configs/StoreItemConfig";
-import {GameUtil} from "../common/GameUtil";
 import {CommonUtil} from "../common/CommonUtil";
+import FightUI from "../scene/ui/FightUI";
+import ShipSprite from "../sprites/ShipSprite";
 
 export class Player {
     public static player: Player;
@@ -159,13 +157,15 @@ export class Player {
             this.upGrade(currentPlaneID);
         }
         //刷新战斗界面
-        ObserverManager.sendNotification(GameEvent.ADD_EXP, this.getGrade(),
-            Math.round(this.getExp() / PlaneConfig.getExpByLevel(this.getGrade()) * 100));
+        FightUI.getFightUI().setGradeLabel(this.getGrade());
+        FightUI.getFightUI().setExpBar(this.getExp() / PlaneConfig.getExpByLevel(this.getGrade()));
     }
 
     //升级
     public upGrade(planeID){
-        ObserverManager.sendNotification(GameEvent.UP_GRADE, this.getGrade(planeID));
+        let grade:number = this.getGrade(planeID);
+        FightUI.getFightUI().setGradeLabel(grade);
+        ShipSprite.getShipSprite().levelUpAction()
     }
 
     //加金币
@@ -187,13 +187,13 @@ export class Player {
         if(this.bomb >= CommonConfig.BOMB_MAX_COUNT){
             this.bomb = CommonConfig.BOMB_MAX_COUNT;
         }
-        ObserverManager.sendNotification(GameEvent.ADD_BOMB, this.bomb);
+        FightUI.getFightUI().setBombCount(this.bomb);
     }
     //使用炸弹
     public useBomb():boolean{
         if(this.bomb <= 0) return false;
         this.bomb--;
-        ObserverManager.sendNotification(GameEvent.USE_BOMB, this.bomb);
+        FightUI.getFightUI().setBombCount(this.bomb)
         return true;
     }
     //增加本局金币数量
@@ -201,7 +201,7 @@ export class Player {
         if(value<=0) return;
         this.currentRewardGold += value;
         //动画
-        ObserverManager.sendNotification(GameEvent.ADD_CURRENT_REWARD_GOLD, this.currentRewardGold);
+        FightUI.getFightUI().setGoldLabel(this.currentRewardGold);
     }
     //刷新最远飞行距离(返回是否创记录)
     public updateMaxDistance():boolean{

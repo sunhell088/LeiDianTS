@@ -1,15 +1,13 @@
 import {Player} from "../classes/Player";
 import {GameUtil} from "../common/GameUtil";
 import {PlaneConfig} from "../configs/PlaneConfig";
-import {ObserverManager} from "../framework/observe/ObserverManager";
-import {IMediator} from "../framework/mvc/IMediator";
 import {FormationConfig} from "../configs/FormationConfig";
 import {CommonConfig} from "../configs/CommonConfig";
 import {SoundConfig} from "../configs/SoundConfig";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class LoginScene extends cc.Component implements IMediator{
+export default class LoginScene extends cc.Component{
 
     @property(cc.Sprite)
     planeSpt: cc.Sprite = null;
@@ -24,11 +22,13 @@ export default class LoginScene extends cc.Component implements IMediator{
     @property(cc.Sprite)
     startHint:cc.Sprite = null;
 
-    getCommands():string[] {
-        return [];
-    }
-
     protected onLoad(): void {
+        //开启碰撞
+        var manager = cc.director.getCollisionManager();
+        manager.enabled = true;
+        // manager.enabledDebugDraw = true;
+        // manager.enabledDrawBoundingBox = true;
+
         CommonConfig.WIDTH = this.node.width;
         CommonConfig.HEIGHT = this.node.height;
         GameUtil.playMusic(SoundConfig.mainMusic_mp3);

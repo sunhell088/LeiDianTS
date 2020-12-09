@@ -1,8 +1,5 @@
-import {ItemConfig} from "./ItemConfig";
 import {Player} from "../classes/Player";
-import {PlaneConfig} from "./PlaneConfig";
-import {ObserverManager} from "../framework/observe/ObserverManager";
-import {GameEvent} from "../common/GameEvent";
+import FightScene from "../scene/FightScene";
 
 export class StoreItemConfig {
     public static storeItemConfig:any = {
@@ -41,7 +38,7 @@ export class StoreItemConfig {
             textureName:"#shop_icon4.png",
             sortValue:0,
             itemFunction:function(){
-                ObserverManager.sendNotification(GameEvent.STORE_REVIVE);
+                FightScene.getFightScene().onStoreRevive();
             },
             trigger:"start",
             description:"死亡后，使用其他战机接力作战",
@@ -55,7 +52,7 @@ export class StoreItemConfig {
             textureName:"#shop_icon2.png",
             sortValue:0,
             itemFunction:function(){
-                ObserverManager.sendNotification(GameEvent.STORE_SPURT);
+                FightScene.getFightScene().onStoreSpurt();
             },
             trigger:"start",
             description:"开局冲刺3000米",
@@ -69,7 +66,7 @@ export class StoreItemConfig {
             textureName:"#shop_icon8.png",
             sortValue:0,
             itemFunction:function(){
-                ObserverManager.sendNotification(GameEvent.STORE_DEATH);
+                FightScene.getFightScene().onStoreDeath();
             },
             trigger:"death",
             description:"拥有死亡后再冲刺1000米的能力",
@@ -83,7 +80,7 @@ export class StoreItemConfig {
             textureName:"#shop_icon9.png",
             sortValue:1,
             itemFunction:function(){
-                ObserverManager.sendNotification(GameEvent.STORE_CHANGE_PLANE);
+                FightScene.getFightScene().onStoreChangePlane();
             },
             trigger:"start",
             description:"开局可选择随机使用未拥有新战机一次",

@@ -1,6 +1,9 @@
 import {CommonUtil} from "../common/CommonUtil";
 import {CommonConfig} from "../configs/CommonConfig";
 import {ItemConfig} from "../configs/ItemConfig";
+import EnemySprite from "./enemy/EnemySprite";
+import {Player} from "../classes/Player";
+import ShipSprite from "./ShipSprite";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -41,6 +44,20 @@ export default class ItemSprite extends cc.Component {
         this.node.runAction(action);
         if (this._itemConfig != ItemConfig.itemConfig.item_coin) {
             this.node.runAction(cc.rotateBy(1, Math.random() > 0.5 ? 360 : -360).repeatForever());
+        }
+    }
+
+    //玩家与金币等的碰撞
+    onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
+        //我机
+        let shipSprite: ShipSprite = other.getComponent(ShipSprite);
+        if (shipSprite) {
+            if (Player.player._magnet) {
+                ShipSprite.getShipSprite().attractItem(this);
+            } else {
+                ShipSprite.getShipSprite().eatItem(this);
+                this.destroySprite();
+            }
         }
     }
 }

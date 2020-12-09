@@ -78,14 +78,15 @@ export class GameUtil {
     };
 
     //获得一个执行后隐藏sender的事件
-    public static getHideSelfCallFun():cc.Tween {
-        return cc.tween().hide();
+    public static getHideSelfCallFun(obj:cc.Node):cc.ActionInstant {
+        return cc.callFunc(function(){ this.active = false}, obj);
     }
 
-    public static shakeBy(duration, shakeCount, strength):cc.Tween {
-        duration = duration/2/shakeCount;
-        return cc.tween().repeat(shakeCount,
-            cc.tween().to(duration, {angle: strength}).to(duration, {angle: -strength}));
+    public static shakeBy(duration, shakeCount, strength):cc.ActionInterval {
+        return new cc.ActionInterval();
+        // duration = duration/2/shakeCount;
+        // return cc.tween().repeat(shakeCount,
+        //     cc.tween().to(duration, {angle: strength}).to(duration, {angle: -strength}));
     };
 
     //播放背景音乐

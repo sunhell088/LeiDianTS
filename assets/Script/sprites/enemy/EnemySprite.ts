@@ -3,11 +3,10 @@ import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
 import {CLEAN_TYPE, FLY_STATE} from "../../common/enum/FlyStateEnum";
-import FlexEnemySprite from "./FlexEnemySprite";
-import {Observer} from "../../framework/observe/Observer";
 import BulletSprite from "../BulletSprite";
 import FightScene from "../../scene/FightScene";
 import {EnemyConfig} from "../../configs/EnemyConfig";
+import ShipSprite from "../ShipSprite";
 
 
 const {ccclass, property} = cc._decorator;
@@ -118,9 +117,23 @@ export default class EnemySprite extends cc.Component {
         GameUtil.playEffect(SoundConfig.mon_die);
     }
     onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
+        //子弹
         let bulletSprite:BulletSprite = other.getComponent(BulletSprite);
         if(bulletSprite){
             this.hurt(Player.player.getBulletPower(), true);
         }
+        //玩家
+        let shipSprite:ShipSprite = other.getComponent(ShipSprite);
+        if(shipSprite){
+            //冲刺 TODO
+            // if(Player.player._spurt){
+            //     self.size.width = CommonConfig.WIDTH;
+            // }
+            if(!Player.player._spurt&&!Player.player._bomb){
+                shipSprite.hurt();
+            }
+            this.hurt(-1,true);
+        }
+        //敌机与玩家炸弹碰撞 TODO
     }
 }

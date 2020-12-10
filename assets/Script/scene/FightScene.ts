@@ -1,6 +1,5 @@
 import {CommonUtil} from "../common/CommonUtil";
 import {Player} from "../classes/Player";
-import {PlaneConfig} from "../configs/PlaneConfig";
 import {EnemyConfig} from "../configs/EnemyConfig";
 import {SoundConfig} from "../configs/SoundConfig";
 import {CommonConfig} from "../configs/CommonConfig";
@@ -13,26 +12,26 @@ import RockLineSprite from "../sprites/RockLineSprite";
 import RockSprite from "../sprites/RockSprite";
 import BossEnemySprite from "../sprites/enemy/BossEnemySprite";
 import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
-import {CLEAN_TYPE} from "../common/enum/FlyStateEnum";
-import {StoreItemConfig} from "../configs/StoreItemConfig";
-import FightUI from "./ui/FightUI";
 import ItemSprite from "../sprites/ItemSprite";
+import {IMediator} from "../framework/mvc/IMediator";
+import {CLEAN_TYPE} from "../common/GameEnum";
+import {ConfigUtil} from "../common/ConfigUtil";
+import {GameEvent} from "../common/GameEvent";
+import {ObserverManager} from "../framework/observe/ObserverManager";
 
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class FightScene extends cc.Component{
+export default class FightScene extends cc.Component implements IMediator {
 
-    @property(cc.Sprite)
-    bombEffect:cc.Sprite = null;
-    @property(cc.Sprite)
-    darkSprite:cc.Sprite = null;
-    @property(cc.Node)
-    canvas: cc.Node = null;
     @property(cc.Sprite)
     background0: cc.Sprite = null;
     @property(cc.Sprite)
     background1: cc.Sprite = null;
+    @property(cc.Sprite)
+    bombEffect:cc.Sprite = null;
+    @property(cc.Sprite)
+    darkSprite:cc.Sprite = null;
     @property([cc.SpriteFrame])
     bgSptArr: cc.SpriteFrame[] = [];
 
@@ -66,34 +65,32 @@ export default class FightScene extends cc.Component{
     itemAtlas: cc.SpriteAtlas = null;
 
     @property(cc.Prefab)
-    deadEffectEnemyPrefab:cc.Prefab = null;
+    enemyExplodePrefab:cc.Prefab = null;
+    @property(cc.Prefab)
+    enemyExplode2Prefab:cc.Prefab = null;
+    @property(cc.Sprite)
+    playerDeadExplodeSprite:cc.Sprite = null;
 
-    bulletPool: cc.NodePool = new cc.NodePool();
-    enemyPool: cc.NodePool = new cc.NodePool();
-    enemyFlexPool: cc.NodePool = new cc.NodePool();
-    enemyBossPool: cc.NodePool = new cc.NodePool();
-    enemyFollowPool: cc.NodePool = new cc.NodePool();
-    enemyStayPool: cc.NodePool = new cc.NodePool();
-    rockLinePool: cc.NodePool = new cc.NodePool();
-    rockPool: cc.NodePool = new cc.NodePool();
-    itemPool: cc.NodePool = new cc.NodePool();
-    deadEffectPool: cc.NodePool = new cc.NodePool();
+    private bulletPool: cc.NodePool = new cc.NodePool();
+    private enemyPool: cc.NodePool = new cc.NodePool();
+    private enemyFlexPool: cc.NodePool = new cc.NodePool();
+    private enemyBossPool: cc.NodePool = new cc.NodePool();
+    private enemyFollowPool: cc.NodePool = new cc.NodePool();
+    private enemyStayPool: cc.NodePool = new cc.NodePool();
+    private rockLinePool: cc.NodePool = new cc.NodePool();
+    private rockPool: cc.NodePool = new cc.NodePool();
+    private itemPool: cc.NodePool = new cc.NodePool();
+    private enemyExplodePool: cc.NodePool = new cc.NodePool();
 
-    public static getFightScene(): FightScene {
-        return cc.find("Canvas/fightScene").getComponent(FightScene);
+    getCommands(): string[] {
+        return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB, GameEvent.GAME_OVER
+            ,GameEvent.UP_GRADE];
     }
 
-    onLoad(): void {
-        //切换背景音乐
-        GameUtil.playMusic(SoundConfig.fightMusic_mp3);
-
-        this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
-        this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
-
+    protected onLoad(): void {
+        this.init();
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
-
-        this.initPlayer();
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
         this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
@@ -101,10 +98,29 @@ export default class FightScene extends cc.Component{
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
     }
 
-    update(dt) {
+    protected onDestroy():void {
+        this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
+        this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
+        this.unschedule(this.shoot);
+        this.unschedule(this.scheduleNormalEnemy);
+        this.unschedule(this.scheduleRockGroup);
+        this.unschedule(this.scheduleBlessEnemy);
+        this.unschedule(this.scheduleStayEnemy);
+    }
+
+    protected update(dt) {
         this.moveBackground(dt);
     }
-    moveBackground(dt) {
+
+    private init(){
+        ObserverManager.registerObserverFun(this);
+        //切换背景音乐
+        GameUtil.playMusic(SoundConfig.fightMusic_mp3);
+        this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
+        this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
+        this.initPlayer();
+    }
+    private moveBackground(dt) {
         if (Player.player._changePlaneIng) return;
         if (Player.player._death) return;
         GameUtil.bgMove(dt, this.background0.node, this.background1.node);
@@ -112,25 +128,22 @@ export default class FightScene extends cc.Component{
         //记录飞行距离
         var showSpeed = Player.player._spurt ? CommonConfig.DISTANCE_SPURT_SPEED : CommonConfig.DISTANCE_SPEED;
         Player.player.currentDistance += showSpeed * dt;
-        var tempForRound = Math.round(Player.player.currentDistance);
-        FightUI.getFightUI().setDistanceLabel(tempForRound)
-        //每500M报数
+        ObserverManager.sendNotification(GameEvent.MOVE_BG, Math.round(Player.player.currentDistance));
+        //每500M报数 TODO
         if (Player.player.getDistanceStage() > Player.player._preDistanceStage) {
             Player.player._preDistanceStage = Player.player.getDistanceStage();
             //普通飞机速度变快
             this.addEnemySpeed(Player.player._preDistanceStage);
             //创建BOSS
             this.createBoos(Player.player._preDistanceStage);
-            //创建新飞机预设
-            // EnemySprite.presetDynamic(this._preDistanceStage);
         }
     }
     //定时创建普通飞机
-    scheduleNormalEnemy() {
+    private scheduleNormalEnemy() {
         //升级状态中 不创建
         if (Player.player._levelUpIng) return;
         var formation = FormationConfig.formationConfig[CommonUtil.random(0, FormationConfig.formationConfig.length - 1)];
-        var dropItemArray = DifficultConfig.getDropItemArray(formation.length);
+        var dropItemArray = ConfigUtil.getDropItemArray(formation.length);
         //五架飞机中必有一个最低级飞机
         var worstEnemyIndex = CommonUtil.random(0, formation.length - 1);
         //一定几率出现两个最低级飞机(如果重复，这这次只有一架)
@@ -141,13 +154,13 @@ export default class FightScene extends cc.Component{
             bombEnemyIndex = CommonUtil.random(0, formation.length - 1);
         }
         for (var i = 0; i < formation.length; i++) {
-            var enemyConfig = DifficultConfig.getEnemyConfigByStage(Player.player.getDistanceStage());
+            var enemyConfig = ConfigUtil.getEnemyConfigByStage(Player.player.getDistanceStage());
             var enemy: EnemySprite = null;
             if (bombEnemyIndex == i) {
                 enemyConfig = EnemyConfig.enemyConfig.enemyBomb;
                 Player.player._createBombEnemy = false;
             } else if (worstEnemyIndex == i || worstEnemyIndex2 == i) {
-                enemyConfig = DifficultConfig.getEnemyConfigByStage(0);
+                enemyConfig = ConfigUtil.getEnemyConfigByStage(0);
             }
             enemy = this.createEnemy(enemyConfig);
             if (enemy) {
@@ -160,12 +173,12 @@ export default class FightScene extends cc.Component{
                 if (Player.player._spurt && Math.random() < 0.9) {
                     dropItem = null;
                 }
-                enemy.setDynamicData(DifficultConfig.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
+                enemy.setDynamicData(ConfigUtil.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
             }
         }
     }
     //定时创建特殊飞机
-    scheduleBlessEnemy() {
+    private scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
         var enemyConfigObj: any = DifficultConfig.blessEnemyArr[CommonUtil.random(0, DifficultConfig.blessEnemyArr.length - 1)];
@@ -178,11 +191,11 @@ export default class FightScene extends cc.Component{
             enemy.node.setPosition(startPosition);
             //设置血量、经验和掉落
             var hp = enemy._enemyConfig.HPArray[Player.player.getGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
-            enemy.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(enemy));
+            enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
         }
     }
     //定时创建特殊飞机
-    scheduleStayEnemy() {
+    private scheduleStayEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
         var enemy = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0, DifficultConfig.stayEnemyArr.length - 1)]);
@@ -193,28 +206,26 @@ export default class FightScene extends cc.Component{
         enemy.node.setPosition(startPosition);
         //设置血量、经验和掉落
         var hp = enemy._enemyConfig.HPArray[Player.player.getGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
-        enemy.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(enemy));
+        enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
     }
     //定时创建陨石掉落组
-    scheduleRockGroup() {
+    private scheduleRockGroup() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
-        var rockList = DifficultConfig.getRockConfigByStage();
+        var rockList = ConfigUtil.getRockConfigByStage();
         var actionList = [];
         for (var i = 0; i < rockList.length; i++) {
             var createRockAction = cc.callFunc(
-                function () {
-                    for (var k = 0; k < this.list.length; k++) {
-                        var bornIndex = this.list[k];
+                function (list) {
+                    for (var k = 0; k < list.length; k++) {
+                        var bornIndex = list[k];
                         var bFollow = false;
                         if (typeof (bornIndex) == "string") bFollow = true;
-                        let fightScene = FightScene.getFightScene().getComponent(FightScene);
-                        fightScene.createRock(bFollow, bornIndex);
+                        this.createRock(bFollow, bornIndex);
                     }
                     //在同一批次的陨石给音效
-                    GameUtil.playEffect(SoundConfig.alert_big);
-                },
-                {list: rockList[i]}
+                    GameUtil.playSound(SoundConfig.alert_big);
+                },this,{list: rockList[i]}
             );
             actionList.push(cc.delayTime(CommonConfig.ROCK_DELAY));
             actionList.push(createRockAction);
@@ -222,7 +233,7 @@ export default class FightScene extends cc.Component{
         this.node.runAction(cc.sequence(actionList));
     }
     //根据飞行距离创建BOSS
-    createBoos(distanceStage){
+    private createBoos(distanceStage){
         let boss:BossEnemySprite = null;
         switch (distanceStage){
             case 1:
@@ -250,11 +261,11 @@ export default class FightScene extends cc.Component{
         boss.node.setPosition(startPosition);
         //设置血量、经验和掉落
         var hp = boss._enemyConfig.HPArray[Player.player.getGrade()-1]*CommonConfig.BULLET_COUNT_PER;
-        boss.setDynamicData(hp, 1, DifficultConfig.createSpecialEnemyDrop(boss));
+        boss.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(boss));
         Player.player._bossIng = true;
     }
     //根据飞行距离加速敌机速度
-    public addEnemySpeed(distanceStage) {
+    private addEnemySpeed(distanceStage) {
         switch (distanceStage) {
             case 7:
                 Player.player._enemyAddSpeed = 50;
@@ -277,7 +288,7 @@ export default class FightScene extends cc.Component{
         }
     }
     //发射子弹
-    shoot() {
+    private shoot() {
         if(Player.player._stopBullet) return;
         if(Player.player._changePlaneIng) return;
         if(Player.player._death) return;
@@ -310,20 +321,17 @@ export default class FightScene extends cc.Component{
         }
     }
     //根据player信息初始化显示对象
-    initPlayer() {
-        let planeConfig = PlaneConfig.getPlaneConfig(Player.player.data.currentPlaneID);
+    private initPlayer() {
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
         this.ship.shipSprite.spriteFrame = this.shipAtlas.getSpriteFrame(planeConfig.fightTextureName);
         this.ship.node.setPosition(0, 0);
-        planeConfig.planeFunction(this.ship);
+        // planeConfig.planeFunction(this.ship); TODO
 
         //重置和战斗相关的数据
         Player.player.resetFightData();
 
         this.storeItemEffect("start");
 
-
-        //初始化战斗UI
-        FightUI.getFightUI().initUI();
         //登场
         this.ship.comeOnStage();
     }
@@ -331,16 +339,16 @@ export default class FightScene extends cc.Component{
     storeItemEffect(state):boolean {
         let triggerSuccess = false;
         //随机道具
-        let item = StoreItemConfig.getStoreItemConfig(Player.player.randomItemID);
+        let item = ConfigUtil.getStoreItemConfig(Player.player.randomItemID);
         if(item&&item.trigger==state){
-            item.itemFunction();
+            // item.itemFunction(); TODO
             Player.player.randomItemID = "0";
             triggerSuccess = true;
         }
         //购买的道具
         for(var i=0; i<Player.player.data.storeItemPackage.length; i++){
             var itemObj = Player.player.data.storeItemPackage[i];
-            item = StoreItemConfig.getStoreItemConfig(itemObj.itemID);
+            item = ConfigUtil.getStoreItemConfig(itemObj.itemID);
             if(item.trigger==state){
                 if(Player.player.useStoreItem(itemObj.itemID)){
                     triggerSuccess = true;
@@ -350,7 +358,7 @@ export default class FightScene extends cc.Component{
         return triggerSuccess;
     }
     //创建陨石
-    createRockLineSprite(): RockLineSprite {
+    private createRockLineSprite(): RockLineSprite {
         let spriteNode:cc.Node = null;
         if (this.rockLinePool.size() > 0) {
             spriteNode = this.rockLinePool.get();
@@ -362,7 +370,7 @@ export default class FightScene extends cc.Component{
         rockLineSprite.initSprite(spriteNode, this.rockLinePool);
         return rockLineSprite;
     }
-    createRockSprite(): RockSprite {
+    private createRockSprite(): RockSprite {
         let spriteNode:cc.Node = null;
         if (this.rockPool.size() > 0) {
             spriteNode = this.rockPool.get();
@@ -376,7 +384,7 @@ export default class FightScene extends cc.Component{
     }
 
     //清屏（清除陨石，所有敌机、子弹、陨石爆炸）
-    cleanEnemy(cleanType:CLEAN_TYPE=CLEAN_TYPE.ALL, bDrop:boolean=true){
+    private cleanEnemy(cleanType:CLEAN_TYPE=CLEAN_TYPE.ALL, bDrop:boolean=true){
         var childrenArray:cc.Node[] = this.node.children;
         let rockLineSprite:RockLineSprite = null;
         let rockSprite:RockSprite = null;
@@ -397,11 +405,9 @@ export default class FightScene extends cc.Component{
                 if(enemy){
                     if(enemy._enemyConfig.classType==EnemySprite){
                         enemy.hurt(-1, bDrop)
-                        enemy.destroySprite();
                     }else {
                         if(cleanType==CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL){
                             enemy.hurt(-1, bDrop)
-                            enemy.destroySprite();
                         }
                     }
                 }
@@ -409,9 +415,9 @@ export default class FightScene extends cc.Component{
         }
     }
     //创建炸弹效果
-    createBomb(){
+    private createBomb(){
         //音效
-        GameUtil.playEffect(SoundConfig.useBomb);
+        GameUtil.playSound(SoundConfig.useBomb);
         Player.player._bomb = true;
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
         var actionArray = [];
@@ -424,13 +430,13 @@ export default class FightScene extends cc.Component{
         this.bombEffect.node.runAction(cc.scaleBy(0.6,30));
         //创建炸弹效果
         var createBombAction = cc.callFunc(
-            function(){
-                var bomb:cc.Node = GameUtil.getBombEffect(Player.player.data.currentPlaneID);
-                bomb.setPosition(GameUtil.randomWidth(bomb), -bomb.height);
-                bomb.runAction(cc.sequence(
-                    cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT*1.5)),
-                    cc.callFunc(function(sender){sender.active = false})
-                ));
+            function(){ //TODO
+                // var bomb:cc.Node = GameUtil.getBombEffect(Player.player.data.currentPlaneID);
+                // bomb.setPosition(GameUtil.randomWidth(bomb), -bomb.height);
+                // bomb.runAction(cc.sequence(
+                //     cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT/2*1.5)),
+                //     cc.callFunc(function(sender){sender.active = false})
+                // ));
             }
         );
         for(var i=0; i<CommonConfig.PRESET_COUNT_BOMB; i++){
@@ -448,7 +454,7 @@ export default class FightScene extends cc.Component{
         this.bombEffect.node.runAction(cc.sequence(actionArray));
     }
     //杀敌奖励
-    killEnemyAward(enemySprite:EnemySprite){
+    private doKillEnemyAward(enemySprite:EnemySprite){
         var exp = enemySprite._expValue;
         //冲刺等阶段 经验降低
         if(Player.player._spurt||Player.player._bomb||Player.player._spurtReadying){
@@ -457,28 +463,8 @@ export default class FightScene extends cc.Component{
                 exp = 0;
             }
         }
-        let fightUI:FightUI = FightUI.getFightUI();
-        if(exp>0){
-            //获得经验
-            Player.player.addExp(exp);
-            //经验球
-            var expBall = GameUtil.getEnemyExp();
-            if(expBall){
-                expBall.x = enemySprite.node.x;
-                expBall.y = enemySprite.node.y;
-                expBall.scale = 1;
-                var x = 40.5 + fightUI.expBar.progress / 100 * fightUI.expBar.node.width;
-                var moveTo = cc.moveTo(0.7, new cc.Vec2(x, 540));
-                var scaleTo = cc.scaleTo(0.7, 0.4);
-                expBall.runAction(cc.sequence(
-                    cc.delayTime(0.3),
-                    cc.spawn(scaleTo, moveTo),
-                    cc.callFunc(function(){
-                        expBall.setVisible(false);
-                    })
-                ));
-            }
-        }
+        //获得经验
+        Player.player.addExp(exp);
 
         //掉落物品
         for(var i=0;i<enemySprite._dropItems.length;i++){
@@ -492,33 +478,20 @@ export default class FightScene extends cc.Component{
                 item.node.y += CommonUtil.random(0,100);
             }
             item.drop();
-            console.log(i+"===="+item.node.x+":"+item.node.y)
         }
     }
-    //设置冲刺状态
-    setSpurt(state:boolean){
-        Player.player._spurt = state;
-        //冲刺状态飞机自身特效
-        ShipSprite.getShipSprite().spurtSprite.node.active = state;
-    }
-    onGameOver(){
-        cc.audioEngine.stopAllEffects();
-        ShipSprite.getShipSprite().node.stopAllActions();
-        FightScene.getFightScene().node.stopAllActions();
-        cc.director.loadScene('LoginScene');
-    }
 
-    onTouchBegan(event) {
+    private onTouchBegan(event) {
         if(Player.player._clicked){
-            ShipSprite.getShipSprite().onDoubleClick();
+            ObserverManager.sendNotification(GameEvent.DOUBLE_CLICK);
         }else{
             Player.player._clicked = true;
-            ShipSprite.getShipSprite().scheduleOnce(function(){ Player.player._clicked = false; }, 0.25);
+            this.scheduleOnce(function(){ Player.player._clicked = false; }, 0.25);
         }
         return true
     }
 
-    onTouchMoved(event) {
+    private onTouchMoved(event) {
         if(!this.ship.node.active) return;
         let target = this.ship.node;
         let touch = event.currentTouch;
@@ -534,7 +507,7 @@ export default class FightScene extends cc.Component{
     }
 
     //创建子弹复用对象
-    createBullet(): cc.Node {
+    private createBullet(): cc.Node {
         let spriteNode:cc.Node = null;
         if (this.bulletPool.size() > 0) {
             spriteNode = this.bulletPool.get();
@@ -544,17 +517,17 @@ export default class FightScene extends cc.Component{
         this.node.addChild(spriteNode);
         let bulletSprite = spriteNode.getComponent('BulletSprite');
         bulletSprite.initSprite(spriteNode, this.bulletAtlas, this.bulletPool);
-        let planeConfig = PlaneConfig.getPlaneConfig(Player.player.data.currentPlaneID);
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
         bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getGrade(Player.player.data.currentPlaneID));
         return spriteNode;
     }
     //创建敌机复用对象
-    createEnemy(enemyConfig: any): EnemySprite {
+    private createEnemy(enemyConfig: any): EnemySprite {
         let spriteNode: cc.Node = null;
-        let enemySprite: EnemySprite = null;
-        let pool: cc.NodePool = this.enemyPool;
+        let enemySprite: EnemySprite = null;;
         let enemyPrefab:cc.Prefab = this.enemyPrefab;
         let classNameStr:string = CommonUtil.getQualifiedClassName(enemyConfig.classType);
+        let pool:cc.NodePool = this.enemyPool;
         switch (classNameStr) {
             case "FlexEnemySprite":
                 pool = this.enemyFlexPool;
@@ -586,7 +559,7 @@ export default class FightScene extends cc.Component{
         return enemySprite;
     }
     //创建爆落复用对象
-    createItemSprite(itemConfig:any): ItemSprite {
+    private createItemSprite(itemConfig:any): ItemSprite {
         let spriteNode = null;
         if (this.itemPool.size() > 0) {
             spriteNode = this.itemPool.get();
@@ -595,11 +568,11 @@ export default class FightScene extends cc.Component{
         }
         this.node.addChild(spriteNode);
         let itemSprite: ItemSprite = spriteNode.getComponent('ItemSprite');
-        itemSprite.initSprite(spriteNode,this.itemAtlas, this.rockPool, itemConfig);
+        itemSprite.initSprite(spriteNode,this.itemAtlas, this.itemPool, itemConfig);
         return itemSprite;
     }
     //创建陨石复用对象
-    createRock(bFollow, bornIndex) {
+    private createRock(bFollow, bornIndex) {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng) return;
         var line: RockLineSprite = this.createRockLineSprite();
@@ -609,15 +582,14 @@ export default class FightScene extends cc.Component{
         var lineAction = cc.callFunc(function () {
                 //创建陨石的动作
                 var createRockAction = cc.callFunc(function (sender) {
-                        let fightScene: FightScene = FightScene.getFightScene().getComponent(FightScene);
-                        var rock: RockSprite = fightScene.createRockSprite();
+                        var rock: RockSprite = this.createRockSprite();
                         if (rock) {
                             rock.node.setPosition(sender.x, sender.y + rock.node.height);
                         }
                         sender.active = false;
                         //警告消失，陨石落下的时候，给音效
-                        GameUtil.playEffect(SoundConfig.meteor);
-                    }
+                        GameUtil.playSound(SoundConfig.meteor);
+                    },this
                 );
                 //line宽 缩小到0
                 this.node.runAction(cc.sequence(
@@ -637,14 +609,61 @@ export default class FightScene extends cc.Component{
         ));
     }
     //创建敌机爆炸复用对象
-    createDeadEffectEnemySprite(): cc.Node {
-        let spriteNode:cc.Node = null;
-        if (this.itemPool.size() > 0) {
-            spriteNode = this.deadEffectPool.get();
+    private playEnemyExplodeAnimation(enemyNode:cc.Node, enemySprite:EnemySprite) {
+        let explodeNode:cc.Node = null;
+        if (this.enemyExplodePool.size() > 0) {
+            explodeNode = this.enemyExplodePool.get();
         } else {
-            spriteNode = cc.instantiate(this.deadEffectEnemyPrefab);
+            explodeNode = cc.instantiate(this.enemyExplodePrefab);
         }
-        this.node.addChild(spriteNode);
-        return spriteNode;
+        this.node.addChild(explodeNode);
+
+        explodeNode.setPosition(enemyNode.getPosition())
+        let effectAnimation:cc.Animation = explodeNode.getComponent(cc.Animation);
+        effectAnimation.on(cc.Animation.EventType.FINISHED, function () {
+            this.enemyExplodePool.put(explodeNode);
+            enemySprite.destroySprite();
+        }, this)
+        effectAnimation.play();
+    }
+
+    //-----------------------------------------
+    private onKillEnemy(enemySprite:EnemySprite, bDrop:boolean){
+        //自爆飞机将全屏其他飞机炸开
+        if(enemySprite._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
+            this.cleanEnemy(CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL, true);
+        }else {
+            if(bDrop){
+                this.doKillEnemyAward(enemySprite);
+            }
+        }
+        this.playEnemyExplodeAnimation(this.node, enemySprite);
+    }
+
+    private onChangePlane(){
+        this.createBomb();
+    }
+
+    private onProtectEffect(){
+        this.cleanEnemy(CLEAN_TYPE.ALL, true);
+    }
+
+    private onUseBomb(){
+        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng) return;
+        if(!Player.player.useBomb()){
+            this.node.runAction(GameUtil.shakeBy(0.2,5,5));
+            return;
+        }
+        this.createBomb();
+    }
+
+    private onGameOver(){
+        cc.audioEngine.stopAllEffects();
+        this.node.stopAllActions();
+        cc.director.loadScene('LoginScene');
+    }
+
+    private onUpGrade(){
+        this.cleanEnemy(CLEAN_TYPE.ALL, true);
     }
 }

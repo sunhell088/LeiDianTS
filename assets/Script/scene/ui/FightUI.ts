@@ -3,13 +3,17 @@ import {PlaneConfig} from "../../configs/PlaneConfig";
 import ShipSprite from "../../sprites/ShipSprite";
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
-import {CommonConfig} from "../../configs/CommonConfig";
 import {CommonUtil} from "../../common/CommonUtil";
 import {ItemConfig} from "../../configs/ItemConfig";
+import {IMediator} from "../../framework/mvc/IMediator";
+import {ObserverManager} from "../../framework/observe/ObserverManager";
+import {GameEvent} from "../../common/GameEvent";
+import {ConfigUtil} from "../../common/ConfigUtil";
+import CanvasNode from "../CanvasNode";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class FightUI extends cc.Component{
+export default class FightUI extends cc.Component implements IMediator{
     //当前等级
     @property(cc.Label)
     gradeLabel :cc.Label =  null;
@@ -49,7 +53,7 @@ export default class FightUI extends cc.Component{
     newRecordSpt:cc.Sprite = null;
     //刷新记录图片
     @property(cc.Sprite)
-    updateRecordSpt:cc.Sprite = null
+    updateRecordSpt:cc.Sprite = null;
 
     //升级特效—特效字图片
     @property(cc.Sprite)
@@ -75,35 +79,48 @@ export default class FightUI extends cc.Component{
     @property(cc.Sprite)
     showEatItemName:cc.Sprite = null;
 
-    public static getFightUI(): FightUI {
-        return cc.find("Canvas/fightUI").getComponent(FightUI);
+    getCommands():string[] {
+        return [GameEvent.ADD_EXP, GameEvent.UP_GRADE, GameEvent.SET_BOMB, GameEvent.SET_CURRENT_REWARD_GOLD,
+            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT];
     }
 
-    //初始化玩家UI信息
-    initUI(){
-        this.setGradeLabel(Player.player.getGrade());
-        this.setBombCount(Player.player.bomb);
-        this.expBar.progress = Player.player.getExp() / PlaneConfig.getExpByLevel(Player.player.getGrade());
-        this.goldCount.string = "0";
-        this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBombBtn);
+    protected onLoad(): void {
+        this.init();
+        this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick);
         this.bombBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame);
         this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame);
         this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame);
     }
 
+    protected onDestroy():void {
+        this.pauseBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick);
+        this.bombBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnPauseGame);
+        this.backBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBackGame);
+        this.restartBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnRestartGame);
+    }
+
+    //初始化玩家UI信息
+    private init(){
+        ObserverManager.registerObserverFun(this);
+        this.setGradeLabel(Player.player.getGrade());
+        this.setBombCount(Player.player.bomb);
+        this.expBar.progress = Player.player.getExp() / ConfigUtil.getExpByLevel(Player.player.getGrade());
+        this.goldCount.string = "0";
+    }
+
     //刷新玩家等级
-    setGradeLabel(grade){
+    private setGradeLabel(grade){
         this.gradeLabel.string = "LV." + grade;
     }
     //刷新飞行距离
-    setDistanceLabel(distance){
+    private setDistanceLabel(distance){
         this.distanceLabel.string = distance+"M";
     }
 
 
     //刷新拥有炸弹数目
-    setBombCount(count){
-        for (var k in this.bombList){
+    private setBombCount(count){
+        for (let k in this.bombList){
             if (k < count){
                 this.bombList[k].node.active = true;
             }
@@ -113,16 +130,8 @@ export default class FightUI extends cc.Component{
         }
     }
 
-    //刷新经验条
-    setExpBar(percent){
-        this.expBar.progress = percent;
-    }
-    //刷新金币数量
-    setGoldLabel(count){
-        this.goldCount.string = ""+count;
-    }
     //刷新每500M报数
-    setDistanceStage(distance,bNewRecord){
+    private setDistanceStage(distance,bNewRecord){
         this.distanceStage.node.active = true;
         this.distanceStage.string = distance+"M";
         this.distanceStage.node.runAction(cc.sequence(
@@ -134,7 +143,7 @@ export default class FightUI extends cc.Component{
         }
     }
     //显示刷新记录图片
-    showUpdateRecord(){
+    private showUpdateRecord(){
         this.updateRecordSpt.node.scale = 8;
         this.updateRecordSpt.node.active = true;
         this.updateRecordSpt.node.runAction(cc.sequence(
@@ -145,13 +154,13 @@ export default class FightUI extends cc.Component{
         ));
     }
     //炸弹按钮
-    OnBombBtn (sender,type){
-        ShipSprite.getShipSprite().onDoubleClick();
+    private OnBombBtnClick (sender, type){
+        ObserverManager.sendNotification(GameEvent.USE_BOMB);
     }
 
     //暂停游戏
-    OnPauseGame(sender,type){
-        GameUtil.playEffect(SoundConfig.OnclickEffect_mp3);
+    private OnPauseGame(sender,type){
+        GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         //游戏暂停
         cc.director.pause();
         //暂停界面显示
@@ -159,23 +168,23 @@ export default class FightUI extends cc.Component{
         cc.audioEngine.pauseAllEffects();
     }
     //返回游戏
-    OnBackGame (sender,type) {
-        GameUtil.playEffect(SoundConfig.OnclickEffect_mp3);
+    private OnBackGame (sender,type) {
+        GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         this.pauseNode.active = false;
         cc.director.resume();
         cc.audioEngine.resumeAllEffects();
     }
     //重新开始
-    OnRestartGame (sender,type) {
-        GameUtil.playEffect(SoundConfig.OnclickEffect_mp3);
+    private OnRestartGame (sender,type) {
+        ObserverManager.sendNotification(GameEvent.RESTART_GAME);
+        GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         cc.director.resume();
-        ShipSprite.getShipSprite().node.stopAllActions();
-        FightUI.getFightUI().node.stopAllActions();
+        this.node.stopAllActions();
         cc.director.loadScene('loginScene');
     }
 
     //吃道具飘名字
-    playShowEatItemName(itemName:string){
+    private playShowEatItemName(itemName:string){
         var itemName:string = null;
         switch (itemName) {
             case ItemConfig.itemConfig.item_cc.name:
@@ -194,16 +203,71 @@ export default class FightUI extends cc.Component{
         this.showEatItemName.spriteFrame = this.showEatItemNameAtlas.getSpriteFrame(itemName);
         this.showEatItemName.node.active = true;
         this.showEatItemName.node.scaleX = 2;
-        var playerPos:cc.Vec2 = ShipSprite.getShipSprite().node.getPosition();
+        var playerPos:cc.Vec2 = CanvasNode.getCanvasNode().getShipNodePos();
         this.showEatItemName.node.setPosition(playerPos.x, playerPos.y + this.showEatItemName.node.height*1.5);
         //超过屏幕边界修正过来
-        CommonUtil.pClamp(this.showEatItemName);
+        CommonUtil.pClamp(this.showEatItemName.node);
         this.showEatItemName.node.runAction(cc.sequence(
             cc.scaleTo(0.1, 1.2),
             cc.scaleTo(0.2, 1),
             cc.delayTime(0.4),
             cc.scaleTo(0.2, 2, 0),
             cc.callFunc(function(sender){ sender.node.active = false;})
+        ));
+    }
+    //升级动画
+    private levelUpAnimation() {
+    }
+
+    //--------游戏事件监听方法---------
+    private onAddExp(grade:number, exp:number) {
+        this.setGradeLabel(grade);
+        this.expBar.progress = exp / ConfigUtil.getExpByLevel(grade);
+    }
+
+    private onUpGrade(grade:number){
+        this.setGradeLabel(grade);
+        this.levelUpAnimation();
+    }
+
+    private onSetBomb(count:number){
+        this.setBombCount(count);
+    }
+
+    private onSetCurrentRewardGold(count:number){
+        this.goldCount.string = ""+count;
+    }
+
+    private onRestartGame(){
+        this.node.stopAllActions();
+    }
+
+    private onMoveBG(currentDistance:number){
+        this.setDistanceLabel(currentDistance)
+    }
+
+    private onStoreItemEffect(storeItemConfig:any, shipSprite:ShipSprite){
+        //出现道具图标
+        var storeItemIcon = this.storeItemRevive;
+        storeItemIcon.node.setPosition(0, 0);
+        storeItemIcon.node.scale = 8;
+        storeItemIcon.node.runAction(cc.sequence(
+            cc.callFunc(function(){
+                storeItemIcon.node.active = true
+            }),
+            cc.scaleTo(0.2,1),
+            GameUtil.shakeBy(0.3,10,5),
+            cc.delayTime(0.5),
+            GameUtil.getHideSelfCallFun(storeItemIcon.node),
+            cc.callFunc(function(){
+                shipSprite.revive();
+                shipSprite.changePlane(ConfigUtil.getPlaneConfig(Player.player._revivePlaneID));
+                Player.player._revivePlaneID = 0;
+            }),
+            cc.delayTime(1),
+            cc.callFunc(function(){
+                Player.player._changePlaneIng = false;
+            })
         ));
     }
 }

@@ -2,11 +2,17 @@ import {PlaneConfig} from "../configs/PlaneConfig";
 import {CommonConfig} from "../configs/CommonConfig";
 import {StoreItemConfig} from "../configs/StoreItemConfig";
 import {CommonUtil} from "../common/CommonUtil";
-import FightUI from "../scene/ui/FightUI";
-import ShipSprite from "../sprites/ShipSprite";
+import {ObserverManager} from "../framework/observe/ObserverManager";
+import {GameEvent} from "../common/GameEvent";
+import {ConfigUtil} from "../common/ConfigUtil";
+import {GameUtil} from "../common/GameUtil";
+import {SoundConfig} from "../configs/SoundConfig";
 
 export class Player {
     public static player: Player;
+
+    //无敌模式
+    public debugMode:boolean = false;
 
     //需要存盘的数据
     public data = {
@@ -28,7 +34,7 @@ export class Player {
         bornTime: 0,
         //拥有的道具
         storeItemPackage: null
-    }
+    };
 
     //当前拥有的炸弹数目
     public bomb:number = 1;
@@ -88,9 +94,6 @@ export class Player {
     //停止发射子弹中
     public _stopBullet:boolean = true;
 
-    //无敌模式
-    public debugMode:boolean = false;
-
     //从本地读取玩家数据
     public loadData(){
         if(localStorage.playerData)
@@ -114,7 +117,7 @@ export class Player {
 
     //第一次登录游戏，创建玩家对象
     public createPlayer() {
-        let bornPlaneID = PlaneConfig.planeConfig[2].id
+        let bornPlaneID = PlaneConfig.planeConfig[2].id;
         this.data.exps = {};
         this.data.grades = {};
         this.data.exps[bornPlaneID] = this.data.exps[bornPlaneID] || 0;
@@ -139,12 +142,13 @@ export class Player {
         this.data.grades[planeID] = this.data.grades[planeID] || 1;
         return this.data.grades[planeID];
     }
+
     //增加当前飞机的经验
     public addExp(value){
         let currentPlaneID = this.data.currentPlaneID;
         if(value<=0) return;
         if(this.getGrade(currentPlaneID) >= PlaneConfig.levelExp.length) return;
-        let offset = (this.getExp(currentPlaneID)+value) - PlaneConfig.getExpByLevel(this.getGrade(currentPlaneID));
+        let offset = (this.getExp(currentPlaneID)+value) - ConfigUtil.getExpByLevel(this.getGrade(currentPlaneID));
         if(offset<0){
             this.data.exps[currentPlaneID] += value;
         }else{
@@ -157,15 +161,17 @@ export class Player {
             this.upGrade(currentPlaneID);
         }
         //刷新战斗界面
-        FightUI.getFightUI().setGradeLabel(this.getGrade());
-        FightUI.getFightUI().setExpBar(this.getExp() / PlaneConfig.getExpByLevel(this.getGrade()));
+        ObserverManager.sendNotification(GameEvent.ADD_EXP, this.getGrade(), this.getExp());
     }
 
     //升级
     public upGrade(planeID){
         let grade:number = this.getGrade(planeID);
-        FightUI.getFightUI().setGradeLabel(grade);
-        ShipSprite.getShipSprite().levelUpAction()
+        //音效
+        GameUtil.playSound(SoundConfig.levelUpReady);
+        Player.player._invincible = true;
+        Player.player._levelUpIng = true;
+        ObserverManager.sendNotification(GameEvent.UP_GRADE, grade);
     }
 
     //加金币
@@ -181,27 +187,25 @@ export class Player {
     }
 
     //增加炸弹
-    public addBomb(count?){
-        if(count==undefined) count = 1;
+    public addBomb(count:number){
         this.bomb += count;
         if(this.bomb >= CommonConfig.BOMB_MAX_COUNT){
             this.bomb = CommonConfig.BOMB_MAX_COUNT;
         }
-        FightUI.getFightUI().setBombCount(this.bomb);
+        ObserverManager.sendNotification(GameEvent.SET_BOMB, this.bomb);
     }
     //使用炸弹
     public useBomb():boolean{
         if(this.bomb <= 0) return false;
         this.bomb--;
-        FightUI.getFightUI().setBombCount(this.bomb)
+        ObserverManager.sendNotification(GameEvent.SET_BOMB, this.bomb);
         return true;
     }
     //增加本局金币数量
     public addCurrentRewardGold(value){
         if(value<=0) return;
         this.currentRewardGold += value;
-        //动画
-        FightUI.getFightUI().setGoldLabel(this.currentRewardGold);
+        ObserverManager.sendNotification(GameEvent.SET_CURRENT_REWARD_GOLD, this.currentRewardGold)
     }
     //刷新最远飞行距离(返回是否创记录)
     public updateMaxDistance():boolean{
@@ -219,16 +223,16 @@ export class Player {
         var onlineTime = date.getTime() - this.data.bornTime;
         return onlineTime;
     }
-    //判断是否拥有指定战机
-    public getPlane(planeID):any{
+    //返回拥有的指定战机
+    public getPlaneConfig(planeID):any{
         if(this.data.planeStorage&planeID){
-            return PlaneConfig.getPlaneConfig(planeID);
+            return ConfigUtil.getPlaneConfig(planeID);
         }
         return null;
     }
     //购买战机
     public buyPlane(planeID):boolean{
-        let planeConfig = PlaneConfig.getPlaneConfig(planeID);
+        let planeConfig = ConfigUtil.getPlaneConfig(planeID);
         if (!planeConfig) return false;
         if(this.data.gold<planeConfig.price) return false;
         this.deductGold(planeConfig.price);
@@ -238,27 +242,27 @@ export class Player {
     }
     //设置当前战机
     public setCurrentPlane(planeID){
-        if(!this.getPlane(planeID)) return;
+        if(!this.getPlaneConfig(planeID)) return;
         this.data.currentPlaneID = planeID;
     }
-    //获得玩家身上指定商城道具的数量
+    //获得玩家身上指定商城道具
     public getStoreItem(itemID):any{
         for(var i=0; i<this.data.storeItemPackage.length; i++){
             if(this.data.storeItemPackage[i].itemID == itemID){
                 return this.data.storeItemPackage[i];
             }
         }
-        var storeItemConfig = StoreItemConfig.getStoreItemConfig(itemID);
+        var storeItemConfig = ConfigUtil.getStoreItemConfig(itemID);
         if(storeItemConfig){
-            var newItme = {itemID:itemID, count:0};
-            this.data.storeItemPackage.push(newItme);
-            return newItme;
+            var newItem = {itemID:itemID, count:0};
+            this.data.storeItemPackage.push(newItem);
+            return newItem;
         }
         return null;
     }
     //购买商城道具
     public buyStoreItem(itemID):boolean{
-        var storeItemConfig = StoreItemConfig.getStoreItemConfig(itemID);
+        var storeItemConfig = ConfigUtil.getStoreItemConfig(itemID);
         if(storeItemConfig==null) return false;
         if(this.data.gold<storeItemConfig.price) return false;
         this.deductGold(storeItemConfig.price);
@@ -267,8 +271,8 @@ export class Player {
         //排序，用于执行时的顺序
         this.data.storeItemPackage.sort(
             function(a,b){
-                var itemConfigA = StoreItemConfig.getStoreItemConfig(a.itemID);
-                var itemConfigB = StoreItemConfig.getStoreItemConfig(b.itemID);
+                var itemConfigA = ConfigUtil.getStoreItemConfig(a.itemID);
+                var itemConfigB = ConfigUtil.getStoreItemConfig(b.itemID);
                 return itemConfigA.sortValue<itemConfigB.sortValue;
             },1);//TODO
         return true;
@@ -278,8 +282,8 @@ export class Player {
         var storeItem = this.getStoreItem(itemID);
         if(storeItem==null||storeItem.count <= 0) return false;
         storeItem.count--;
-        var item = StoreItemConfig.getStoreItemConfig(itemID);
-        item.itemFunction();
+        var storeItemConfig = ConfigUtil.getStoreItemConfig(itemID);
+        ObserverManager.sendNotification(GameEvent.USE_STORE_ITEM, storeItemConfig);
         return true;
     }
     //花一定金币随机获得商城道具
@@ -293,7 +297,7 @@ export class Player {
             if(StoreItemConfig.storeItemConfig[p]==StoreItemConfig.storeItemConfig.changePlane){
                 var haveAllPlane = true;
                 for(var k in PlaneConfig){
-                    if(!this.getPlane(PlaneConfig[k].id)){
+                    if(!this.getPlaneConfig(PlaneConfig[k].id)){
                         haveAllPlane = false;
                         break;
                     }
@@ -320,7 +324,6 @@ export class Player {
     public getDistanceStage():number {
         return parseInt(""+this.currentDistance/CommonConfig.DISTANCE_STAGE_UNIT);
     }
-
     //每次战斗开始时，重置一次相关信息
     public resetFightData(){
         this.bomb = 1;

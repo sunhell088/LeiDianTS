@@ -1,9 +1,9 @@
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
-import {FLY_STATE} from "../../common/enum/FlyStateEnum";
 import EnemySprite from "./EnemySprite";
 import {CommonUtil} from "../../common/CommonUtil";
+import {FLY_STATE} from "../../common/GameEnum";
 
 
 const {ccclass, property} = cc._decorator;
@@ -48,6 +48,6 @@ export default class FlexEnemySprite extends EnemySprite {
     //死亡音效（子类重载）
     playDeathSound() {
         //音效
-        GameUtil.playEffect(SoundConfig.box_dead);
+        GameUtil.playSound(SoundConfig.box_dead);
     }
 }

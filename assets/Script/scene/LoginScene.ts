@@ -1,13 +1,15 @@
 import {Player} from "../classes/Player";
 import {GameUtil} from "../common/GameUtil";
-import {PlaneConfig} from "../configs/PlaneConfig";
 import {FormationConfig} from "../configs/FormationConfig";
 import {CommonConfig} from "../configs/CommonConfig";
 import {SoundConfig} from "../configs/SoundConfig";
+import {ObserverManager} from "../framework/observe/ObserverManager";
+import {ConfigUtil} from "../common/ConfigUtil";
+import {IMediator} from "../framework/mvc/IMediator";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class LoginScene extends cc.Component{
+export default class LoginScene extends cc.Component implements IMediator{
 
     @property(cc.Sprite)
     planeSpt: cc.Sprite = null;
@@ -22,7 +24,12 @@ export default class LoginScene extends cc.Component{
     @property(cc.Sprite)
     startHint:cc.Sprite = null;
 
+    getCommands():string[] {
+        return [];
+    }
+
     protected onLoad(): void {
+        ObserverManager.registerObserverFun(this);
         //开启碰撞
         var manager = cc.director.getCollisionManager();
         manager.enabled = true;
@@ -34,7 +41,7 @@ export default class LoginScene extends cc.Component{
         GameUtil.playMusic(SoundConfig.mainMusic_mp3);
         //因为transformToPixel会把相对标识改为绝对坐标
         if(!(FormationConfig.formationConfig[0][0] instanceof cc.Vec2)){
-            FormationConfig.formationConfig = FormationConfig.transformToPixel(CommonConfig.ENEMY_WIDTH, CommonConfig.ENEMY_HEIGHT,
+            FormationConfig.formationConfig = ConfigUtil.transformToPixel(CommonConfig.ENEMY_WIDTH, CommonConfig.ENEMY_HEIGHT,
                 FormationConfig.formationConfig)
         }
         Player.player = new Player();
@@ -45,16 +52,17 @@ export default class LoginScene extends cc.Component{
         });
     }
 
-    start () {
+    protected onDestroy():void {
+
     }
 
-    update (dt) {
+    protected update (dt) {
         GameUtil.bgMove(dt, this.background0.node, this.background1.node);
     }
 
-    initLoginScene() {
+    private initLoginScene() {
         //加载当前使用战机
-        let planeConfig = PlaneConfig.getPlaneConfig(Player.player.data.currentPlaneID)
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
         this.planeSpt.spriteFrame = this.planeSptArr[planeConfig.bigPngName];
         //随机背景图片
         Player.player.bgIndex = parseInt("" + Math.random() * 3);
@@ -68,7 +76,7 @@ export default class LoginScene extends cc.Component{
         cc.tween(this.startHint.node).then(tween).start()
     }
 
-    setBackground() {
+    private setBackground() {
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
     }

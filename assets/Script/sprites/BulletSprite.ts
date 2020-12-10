@@ -1,7 +1,7 @@
 import {CommonConfig} from "../configs/CommonConfig";
 import FightScene from "../scene/FightScene";
 import EnemySprite from "./enemy/EnemySprite";
-import {Player} from "../classes/Player";
+import CanvasNode from "../scene/CanvasNode";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -27,9 +27,9 @@ export default class BulletSprite extends cc.Component {
     }
 
     update (dt) {
-        let fightScene:FightScene = FightScene.getFightScene();
+        let fightNodeSize:cc.Size = CanvasNode.getCanvasNode().getFightNodeSize();
         this.node.y += CommonConfig.BULLET_SPEED * dt;
-        if (this.node.y > fightScene.node.height/2) this.destroyBullet();
+        if (this.node.y > fightNodeSize.height/2) this.destroyBullet();
     }
 
     destroyBullet () {

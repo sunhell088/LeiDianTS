@@ -2,11 +2,11 @@ import {Player} from "../../classes/Player";
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
-import {CLEAN_TYPE, FLY_STATE} from "../../common/enum/FlyStateEnum";
 import BulletSprite from "../BulletSprite";
-import FightScene from "../../scene/FightScene";
-import {EnemyConfig} from "../../configs/EnemyConfig";
 import ShipSprite from "../ShipSprite";
+import {CLEAN_TYPE, FLY_STATE} from "../../common/GameEnum";
+import {ObserverManager} from "../../framework/observe/ObserverManager";
+import {GameEvent} from "../../common/GameEvent";
 
 
 const {ccclass, property} = cc._decorator;
@@ -21,13 +21,14 @@ export default class EnemySprite extends cc.Component {
     _HP:number = 0;
     _expValue:number = 0;
     _dropItems:any = null;
+
     @property(cc.ProgressBar)
     bloodBar:cc.ProgressBar = null;
 
     //飞行状态
     flyState:FLY_STATE = FLY_STATE.ENTER;
 
-    initSprite(spriteNode:cc.Node, atlas:cc.SpriteAtlas, pool:cc.NodePool, enemyConfig:any){
+    public initSprite(spriteNode:cc.Node, atlas:cc.SpriteAtlas, pool:cc.NodePool, enemyConfig:any){
         this._spriteNode = spriteNode;
         this._spriteAtlas = atlas;
         this._spritePool = pool;
@@ -35,7 +36,7 @@ export default class EnemySprite extends cc.Component {
         this.resetBloodBar();
     }
 
-    setSpriteFrame(){
+    public setSpriteFrame(){
         this.node.setPosition(0, 0);
         let frame = this._spriteAtlas.getSpriteFrame(this._enemyConfig.textureName);
         this.getComponent(cc.Sprite).spriteFrame = frame;
@@ -75,27 +76,8 @@ export default class EnemySprite extends cc.Component {
     }
     //死亡
     death(bDrop){
-        this.destroySprite();
-        let fightScene:FightScene = FightScene.getFightScene();
-        if(bDrop){
-            fightScene.killEnemyAward(this);
-        }
-        //冲刺阶段一半几率显示爆炸效果
-        if(!Player.player._spurt||Math.random()>0.5){
-            //音效
-            this.playDeathSound();
-            var effectNode:cc.Node = fightScene.createDeadEffectEnemySprite();
-            //自爆飞机
-            if(this._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
-                fightScene.cleanEnemy(CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL, true);
-            }
-            effectNode.setPosition(this.node.getPosition())
-            var effectAnimation:cc.Animation = effectNode.getComponent(cc.Animation);
-            effectAnimation.play();
-            this.scheduleOnce(function() {
-                fightScene.deadEffectPool.put(effectNode);
-            }, 0.15);
-        }
+        ObserverManager.sendNotification(GameEvent.KILL_ENEMY, this, bDrop);
+        this.playDeathSound();
     }
 
     //动态设置敌机的血量、经验和掉落物品
@@ -114,7 +96,7 @@ export default class EnemySprite extends cc.Component {
     }
     //死亡音效（子类重载）
     playDeathSound(){
-        GameUtil.playEffect(SoundConfig.mon_die);
+        GameUtil.playSound(SoundConfig.mon_die);
     }
     onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
         //子弹
@@ -127,7 +109,7 @@ export default class EnemySprite extends cc.Component {
         if(shipSprite){
             //冲刺 TODO
             // if(Player.player._spurt){
-            //     self.size.width = CommonConfig.WIDTH;
+            //     self.size.width = CommonConfig.WIDTH/2;
             // }
             if(!Player.player._spurt&&!Player.player._bomb){
                 shipSprite.hurt();

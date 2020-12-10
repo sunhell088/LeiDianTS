@@ -1,8 +1,7 @@
-import {CommonUtil} from "../common/CommonUtil";
 import {CommonConfig} from "../configs/CommonConfig";
-import {ItemConfig} from "../configs/ItemConfig";
 import FightScene from "../scene/FightScene";
 import ShipSprite from "./ShipSprite";
+import CanvasNode from "../scene/CanvasNode";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -27,11 +26,10 @@ export default class RockLineSprite extends cc.Component {
 
     update(dt) {
         if (!this._bFollow) return;
-        let ship:ShipSprite = FightScene.getFightScene().getComponent(FightScene).ship;
-        if (ship == null || !ship.node.active) return;
-        if (ship.node.x > this.node.x + 1) {
+        let shipPos:cc.Vec2 = CanvasNode.getCanvasNode().getShipNodePos();
+        if (shipPos.x > this.node.x + 1) {
             this.node.x += CommonConfig.ROCK_FOLLOW_SPEED * dt;
-        } else if (ship.node.x < this.node.x - 1) {
+        } else if (shipPos.x < this.node.x - 1) {
             this.node.x -= CommonConfig.ROCK_FOLLOW_SPEED * dt;
         }
     }

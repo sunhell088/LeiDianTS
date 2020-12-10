@@ -1,9 +1,11 @@
 import {CommonUtil} from "../common/CommonUtil";
 import {CommonConfig} from "../configs/CommonConfig";
 import {ItemConfig} from "../configs/ItemConfig";
-import EnemySprite from "./enemy/EnemySprite";
 import {Player} from "../classes/Player";
 import ShipSprite from "./ShipSprite";
+import CanvasNode from "../scene/CanvasNode";
+import {ObserverManager} from "../framework/observe/ObserverManager";
+import {GameEvent} from "../common/GameEvent";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -36,10 +38,10 @@ export default class ItemSprite extends cc.Component {
 
     drop() {
         CommonUtil.pClamp(this.node);
-        let offset = this.node.x > CommonConfig.WIDTH/2 ? -CommonConfig.WIDTH / 3 : CommonConfig.WIDTH / 3;
+        let offset = this.node.x > 0 ? -CommonConfig.WIDTH / 3 : CommonConfig.WIDTH / 3;
         offset = Math.random() * offset;
         var bezier = [new cc.Vec2(this.node.x + offset / 3, this.node.y + 100),
-            new cc.Vec2(this.node.x + offset / 2, this.node.y + 60), new cc.Vec2(this.node.x + offset, -CommonConfig.HEIGHT * 2)];
+            new cc.Vec2(this.node.x + offset / 2, this.node.y + 60), new cc.Vec2(this.node.x + offset, -CommonConfig.HEIGHT)];
         var action = cc.sequence(cc.bezierTo(2, bezier), cc.callFunc(this.destroySprite, this));
         this.node.runAction(action);
         if (this._itemConfig != ItemConfig.itemConfig.item_coin) {
@@ -49,15 +51,10 @@ export default class ItemSprite extends cc.Component {
 
     //玩家与金币等的碰撞
     onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
-        //我机
-        let shipSprite: ShipSprite = other.getComponent(ShipSprite);
-        if (shipSprite) {
-            if (Player.player._magnet) {
-                ShipSprite.getShipSprite().attractItem(this);
-            } else {
-                ShipSprite.getShipSprite().eatItem(this);
-                this.destroySprite();
-            }
+        if(other.getComponent(ShipSprite)){
+            let itemSprite:ItemSprite = self.getComponent(ItemSprite);
+            ObserverManager.sendNotification(GameEvent.ITEM_COLLISION_PLAYER, itemSprite)
+            this.destroySprite();
         }
     }
 }

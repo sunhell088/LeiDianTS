@@ -52,11 +52,11 @@ export class CommonUtil {
     };
 
 //控制范围
-    public static pClamp(sprite){
-        let newPos:cc.Vec2 = sprite.getPosition();
-        newPos = newPos.clampf(new cc.Vec2(sprite.width/2, sprite.height/2),
-            new cc.Vec2(CommonConfig.WIDTH-sprite.width/2, CommonConfig.HEIGHT-sprite.height/2));
-        sprite.setPosition(newPos);
+    public static pClamp(node:cc.Node){
+        let newPos:cc.Vec2 = node.getPosition();
+        newPos = newPos.clampf(new cc.Vec2(-CommonConfig.WIDTH/2+node.width/2, node.height/2),
+            new cc.Vec2(CommonConfig.WIDTH/2-node.width/2, CommonConfig.HEIGHT/2-node.height/2));
+        node.setPosition(newPos);
     };
 
     public static getQualifiedClassName(value:any):string {

@@ -1,20 +1,21 @@
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
-import {FLY_STATE} from "../../common/enum/FlyStateEnum";
 import EnemySprite from "./EnemySprite";
 import FightScene from "../../scene/FightScene";
+import {FLY_STATE} from "../../common/GameEnum";
+import CanvasNode from "../../scene/CanvasNode";
 
 
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class StayEnemySprite extends EnemySprite {
     update(dt) {
-        var fightScene: FightScene = FightScene.getFightScene();
+        let fightNodeSize:cc.Size = CanvasNode.getCanvasNode().getFightNodeSize();
         var speed = CommonConfig.SMALL_BOSS_SPEED;
         if (this.flyState == FLY_STATE.ENTER) {
 
-            if (this.node.y > fightScene.node.height / 2 * 0.75) {
+            if (this.node.y > fightNodeSize.height / 2 * 0.75) {
                 this.node.y -= speed * dt;
             } else {
                 this.flyState = FLY_STATE.RUN;
@@ -33,13 +34,13 @@ export default class StayEnemySprite extends EnemySprite {
 
         } else if (this.flyState == FLY_STATE.EXIT) {
             this.node.y -= speed * dt;
-            if (this.node.y < -fightScene.node.height / 2 - this.node.height) this.destroySprite();
+            if (this.node.y < -fightNodeSize.height / 2 - this.node.height) this.destroySprite();
         }
     }
 
     //死亡音效（子类重载）
     playDeathSound() {
         //音效
-        GameUtil.playEffect(SoundConfig.boss_dead);
+        GameUtil.playSound(SoundConfig.boss_dead);
     }
 }

@@ -89,14 +89,16 @@ export default class FightUI extends cc.Component implements IMediator{
     }
 
     protected onLoad(): void {
-        this.init();
+        ObserverManager.registerObserverFun(this);
         this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
         this.bombBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick, this);
         this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
         this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
+        this.init();
     }
 
     protected onDisable():void {
+        ObserverManager.unRegisterObserverFun(this);
         this.pauseBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
         this.bombBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick, this);
         this.backBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
@@ -105,7 +107,6 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //初始化玩家UI信息
     private init(){
-        ObserverManager.registerObserverFun(this);
         this.setGradeLabel(Player.player.getGrade());
         this.setBombCount(Player.player.bomb);
         this.expBar.progress = Player.player.getExp() / ConfigUtil.getExpByLevel(Player.player.getGrade());

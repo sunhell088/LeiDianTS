@@ -53,7 +53,7 @@ export default class LoginScene extends cc.Component implements IMediator{
     }
 
     protected onDisable():void {
-
+        ObserverManager.unRegisterObserverFun(this);
     }
 
     protected update (dt) {

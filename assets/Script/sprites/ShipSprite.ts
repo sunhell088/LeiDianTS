@@ -60,7 +60,9 @@ export default class ShipSprite extends cc.Component implements IMediator{
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
     }
-
+    protected onDisable():void {
+        ObserverManager.unRegisterObserverFun(this);
+    }
     //重置飞机能力
     resetEffect(){
         this.setMagnet(false);

@@ -13,4 +13,8 @@ export class ObserverManager {
     public static registerObserverFun(obj:any) {
         ObserverManager.observer.registerObserverFun(obj);
     }
+
+    public static unRegisterObserverFun(obj:any) {
+        ObserverManager.observer.unRegisterObserverFun(obj);
+    }
 }

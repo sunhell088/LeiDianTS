@@ -6,10 +6,6 @@ import CanvasNode from "../scene/CanvasNode";
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class BulletSprite extends cc.Component {
-
-    @property(cc.Sprite)
-    bulletHit:cc.Sprite = null;
-
     spriteNode:cc.Node = null;
     bulletAtlas:cc.SpriteAtlas = null;
     bulletPool:cc.NodePool = null;
@@ -23,7 +19,6 @@ export default class BulletSprite extends cc.Component {
     setBulletSpriteFrame(bulletType, level){
         let frame = this.bulletAtlas.getSpriteFrame(bulletType + '_' + level);
         this.getComponent(cc.Sprite).spriteFrame = frame;
-        this.bulletHit.node.active = false;
     }
 
     update (dt) {
@@ -38,7 +33,6 @@ export default class BulletSprite extends cc.Component {
 
     onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
         if(other.node.getComponent(EnemySprite)){
-            this.bulletHit.node.active = true;
             this.destroyBullet();
         }
     }

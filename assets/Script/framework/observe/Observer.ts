@@ -6,14 +6,8 @@ import {CommonUtil} from "../../common/CommonUtil";
 export class Observer {
     //所有被监听的方法
     private _registerObservers:Object = {};
-    private ObserverList:string[] = [];
 
     public registerObserverFun(observer:any):void {
-        var observerClassName:string = CommonUtil.getQualifiedClassName(observer);
-        if (this.ObserverList.indexOf(observerClassName) != -1) {
-            return;
-        }
-        this.ObserverList.push(observerClassName);
         var medCommands:string[] = observer.getCommands();
         if (!medCommands) return;
         var observerList:any[];
@@ -24,7 +18,22 @@ export class Observer {
             observerList = this._registerObservers[medCommands[i]];
             if (observerList.indexOf(observer) == -1) {
                 observerList.push(observer);
-                console.log(observer)
+            }
+        }
+    }
+
+    public unRegisterObserverFun(observer:any):void {
+        var medCommands:string[] = observer.getCommands();
+        if (!medCommands) return;
+        var observerList:any[];
+        for (var i:number = 0; i < medCommands.length; i++) {
+            if (!this._registerObservers.hasOwnProperty(medCommands[i])) {
+                continue;
+            }
+            observerList = this._registerObservers[medCommands[i]];
+            let index = observerList.indexOf(observer);
+            if (index != -1) {
+                observerList.splice(index,1);
             }
         }
     }

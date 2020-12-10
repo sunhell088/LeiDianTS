@@ -138,6 +138,7 @@ export class Player {
 
     //获得指定飞机的等级(不传参数则为当前出战飞机)
     public getGrade(planeID?):number {
+        return 30;
         if (planeID == undefined) planeID = this.data.currentPlaneID;
         this.data.grades[planeID] = this.data.grades[planeID] || 1;
         return this.data.grades[planeID];

@@ -19,6 +19,7 @@ import {ConfigUtil} from "../common/ConfigUtil";
 import {GameEvent} from "../common/GameEvent";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import FightUI from "./ui/FightUI";
+import {ItemConfig} from "../configs/ItemConfig";
 
 
 const {ccclass, property} = cc._decorator;
@@ -89,7 +90,7 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     protected onLoad(): void {
-        this.init();
+        ObserverManager.registerObserverFun(this);
         this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
@@ -97,9 +98,11 @@ export default class FightScene extends cc.Component implements IMediator {
         // this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
         // this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
         // this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        this.init();
     }
 
     protected onDisable():void {
+        ObserverManager.unRegisterObserverFun(this);
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.unschedule(this.shoot);
@@ -114,7 +117,6 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private init(){
-        ObserverManager.registerObserverFun(this);
         //切换背景音乐
         GameUtil.playMusic(SoundConfig.fightMusic_mp3);
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
@@ -130,14 +132,13 @@ export default class FightScene extends cc.Component implements IMediator {
         var showSpeed = Player.player._spurt ? CommonConfig.DISTANCE_SPURT_SPEED : CommonConfig.DISTANCE_SPEED;
         Player.player.currentDistance += showSpeed * dt;
         ObserverManager.sendNotification(GameEvent.MOVE_BG, Math.round(Player.player.currentDistance));
-        // FightUI.getFightUI().MOVE_BG(Math.round(Player.player.currentDistance));
         //每500M报数 TODO
         if (Player.player.getDistanceStage() > Player.player._preDistanceStage) {
             Player.player._preDistanceStage = Player.player.getDistanceStage();
             //普通飞机速度变快
             this.addEnemySpeed(Player.player._preDistanceStage);
             //创建BOSS
-            this.createBoos(Player.player._preDistanceStage);
+            // this.createBoos(Player.player._preDistanceStage);//TODO
         }
     }
     //定时创建普通飞机
@@ -565,6 +566,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let spriteNode = null;
         if (this.itemPool.size() > 0) {
             spriteNode = this.itemPool.get();
+            spriteNode.stopAllActions();
         } else {
             spriteNode = cc.instantiate(this.itemPrefab);
         }

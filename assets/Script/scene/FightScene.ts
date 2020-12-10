@@ -18,6 +18,7 @@ import {CLEAN_TYPE} from "../common/GameEnum";
 import {ConfigUtil} from "../common/ConfigUtil";
 import {GameEvent} from "../common/GameEvent";
 import {ObserverManager} from "../framework/observe/ObserverManager";
+import FightUI from "./ui/FightUI";
 
 
 const {ccclass, property} = cc._decorator;
@@ -93,19 +94,19 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
-        this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
-        this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        // this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        // this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
+        // this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
     }
 
-    protected onDestroy():void {
+    protected onDisable():void {
         this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.unschedule(this.shoot);
         this.unschedule(this.scheduleNormalEnemy);
-        this.unschedule(this.scheduleRockGroup);
-        this.unschedule(this.scheduleBlessEnemy);
-        this.unschedule(this.scheduleStayEnemy);
+        // this.unschedule(this.scheduleRockGroup);
+        // this.unschedule(this.scheduleBlessEnemy);
+        // this.unschedule(this.scheduleStayEnemy);
     }
 
     protected update(dt) {
@@ -129,6 +130,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var showSpeed = Player.player._spurt ? CommonConfig.DISTANCE_SPURT_SPEED : CommonConfig.DISTANCE_SPEED;
         Player.player.currentDistance += showSpeed * dt;
         ObserverManager.sendNotification(GameEvent.MOVE_BG, Math.round(Player.player.currentDistance));
+        // FightUI.getFightUI().MOVE_BG(Math.round(Player.player.currentDistance));
         //每500M报数 TODO
         if (Player.player.getDistanceStage() > Player.player._preDistanceStage) {
             Player.player._preDistanceStage = Player.player.getDistanceStage();
@@ -609,7 +611,7 @@ export default class FightScene extends cc.Component implements IMediator {
         ));
     }
     //创建敌机爆炸复用对象
-    private playEnemyExplodeAnimation(enemyNode:cc.Node, enemySprite:EnemySprite) {
+    private playEnemyExplodeAnimation(enemySprite:EnemySprite) {
         let explodeNode:cc.Node = null;
         if (this.enemyExplodePool.size() > 0) {
             explodeNode = this.enemyExplodePool.get();
@@ -618,17 +620,16 @@ export default class FightScene extends cc.Component implements IMediator {
         }
         this.node.addChild(explodeNode);
 
-        explodeNode.setPosition(enemyNode.getPosition())
+        explodeNode.setPosition(enemySprite.node.getPosition())
         let effectAnimation:cc.Animation = explodeNode.getComponent(cc.Animation);
         effectAnimation.on(cc.Animation.EventType.FINISHED, function () {
             this.enemyExplodePool.put(explodeNode);
-            enemySprite.destroySprite();
-        }, this)
+        }, this);
         effectAnimation.play();
     }
 
     //-----------------------------------------
-    private onKillEnemy(enemySprite:EnemySprite, bDrop:boolean){
+    private KILL_ENEMY(enemySprite:EnemySprite, bDrop:boolean){
         //自爆飞机将全屏其他飞机炸开
         if(enemySprite._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
             this.cleanEnemy(CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL, true);
@@ -637,18 +638,18 @@ export default class FightScene extends cc.Component implements IMediator {
                 this.doKillEnemyAward(enemySprite);
             }
         }
-        this.playEnemyExplodeAnimation(this.node, enemySprite);
+        this.playEnemyExplodeAnimation(enemySprite);
     }
 
-    private onChangePlane(){
+    private CHANGE_PLANE(){
         this.createBomb();
     }
 
-    private onProtectEffect(){
+    private PROTECT_EFFECT(){
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
     }
 
-    private onUseBomb(){
+    private USE_BOMB(){
         if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng) return;
         if(!Player.player.useBomb()){
             this.node.runAction(GameUtil.shakeBy(0.2,5,5));
@@ -657,13 +658,18 @@ export default class FightScene extends cc.Component implements IMediator {
         this.createBomb();
     }
 
-    private onGameOver(){
-        cc.audioEngine.stopAllEffects();
-        this.node.stopAllActions();
-        cc.director.loadScene('LoginScene');
+    private GAME_OVER(){
+        this.node.runAction(cc.sequence(
+            cc.delayTime(2),
+            cc.callFunc(function () {
+                cc.audioEngine.stopAllEffects();
+                this.node.stopAllActions();
+                cc.director.loadScene('loginScene');
+            }, this)
+        ));
     }
 
-    private onUpGrade(){
+    private UP_GRADE(){
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
     }
 }

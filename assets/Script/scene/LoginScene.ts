@@ -52,7 +52,7 @@ export default class LoginScene extends cc.Component implements IMediator{
         });
     }
 
-    protected onDestroy():void {
+    protected onDisable():void {
 
     }
 

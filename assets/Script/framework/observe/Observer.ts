@@ -24,6 +24,7 @@ export class Observer {
             observerList = this._registerObservers[medCommands[i]];
             if (observerList.indexOf(observer) == -1) {
                 observerList.push(observer);
+                console.log(observer)
             }
         }
     }

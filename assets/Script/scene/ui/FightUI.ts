@@ -79,6 +79,10 @@ export default class FightUI extends cc.Component implements IMediator{
     @property(cc.Sprite)
     showEatItemName:cc.Sprite = null;
 
+    public static getFightUI(): FightUI {
+        return cc.find("Canvas/fightUI").getComponent(FightUI);
+    }
+
     getCommands():string[] {
         return [GameEvent.ADD_EXP, GameEvent.UP_GRADE, GameEvent.SET_BOMB, GameEvent.SET_CURRENT_REWARD_GOLD,
             GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT];
@@ -86,17 +90,17 @@ export default class FightUI extends cc.Component implements IMediator{
 
     protected onLoad(): void {
         this.init();
-        this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick);
-        this.bombBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame);
-        this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame);
-        this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame);
+        this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
+        this.bombBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick, this);
+        this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
+        this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
     }
 
-    protected onDestroy():void {
-        this.pauseBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick);
-        this.bombBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnPauseGame);
-        this.backBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBackGame);
-        this.restartBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnRestartGame);
+    protected onDisable():void {
+        this.pauseBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
+        this.bombBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick, this);
+        this.backBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
+        this.restartBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
     }
 
     //初始化玩家UI信息
@@ -220,33 +224,33 @@ export default class FightUI extends cc.Component implements IMediator{
     }
 
     //--------游戏事件监听方法---------
-    private onAddExp(grade:number, exp:number) {
+    private ADD_EXP(grade:number, exp:number) {
         this.setGradeLabel(grade);
         this.expBar.progress = exp / ConfigUtil.getExpByLevel(grade);
     }
 
-    private onUpGrade(grade:number){
+    private UP_GRADE(grade:number){
         this.setGradeLabel(grade);
         this.levelUpAnimation();
     }
 
-    private onSetBomb(count:number){
+    private SET_BOMB(count:number){
         this.setBombCount(count);
     }
 
-    private onSetCurrentRewardGold(count:number){
+    private SET_CURRENT_REWARD_GOLD(count:number){
         this.goldCount.string = ""+count;
     }
 
-    private onRestartGame(){
+    private RESTART_GAME(){
         this.node.stopAllActions();
     }
 
-    private onMoveBG(currentDistance:number){
+    public MOVE_BG(currentDistance:number){
         this.setDistanceLabel(currentDistance)
     }
 
-    private onStoreItemEffect(storeItemConfig:any, shipSprite:ShipSprite){
+    private STORE_ITEM_EFFECT(storeItemConfig:any, shipSprite:ShipSprite){
         //出现道具图标
         var storeItemIcon = this.storeItemRevive;
         storeItemIcon.node.setPosition(0, 0);

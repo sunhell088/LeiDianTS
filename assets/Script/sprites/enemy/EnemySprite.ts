@@ -78,6 +78,7 @@ export default class EnemySprite extends cc.Component {
     death(bDrop){
         ObserverManager.sendNotification(GameEvent.KILL_ENEMY, this, bDrop);
         this.playDeathSound();
+        this.destroySprite();
     }
 
     //动态设置敌机的血量、经验和掉落物品

@@ -191,19 +191,19 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     //--------游戏事件监听方法---------
-    private onUpGrade(grade:number){
+    private UP_GRADE(grade:number){
         this.levelUpAnimation();
     }
 
-    private onRestartGame(){
+    private RESTART_GAME(){
         this.node.stopAllActions();
     }
 
-    private onGameOver(){
+    private GAME_OVER(){
         this.node.stopAllActions();
     }
 
-    private onItemCollisionPlayer(itemSprite:ItemSprite) {
+    private ITEM_COLLISION_PLAYER(itemSprite:ItemSprite) {
         if (Player.player._magnet) {
             this.attractItem(itemSprite);
         } else {
@@ -211,7 +211,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
         }
     }
 
-    private onRockCollisionPlayer(){
+    private ROCK_COLLISION_PLAYER(){
         this.hurt();
     }
 }

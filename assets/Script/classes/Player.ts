@@ -117,7 +117,7 @@ export class Player {
 
     //第一次登录游戏，创建玩家对象
     public createPlayer() {
-        let bornPlaneID = PlaneConfig.planeConfig[2].id;
+        let bornPlaneID = PlaneConfig.planeConfig[0].id;
         this.data.exps = {};
         this.data.grades = {};
         this.data.exps[bornPlaneID] = this.data.exps[bornPlaneID] || 0;

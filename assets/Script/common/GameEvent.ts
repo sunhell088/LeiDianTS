@@ -14,16 +14,18 @@ export class GameEvent {
 
     public static MOVE_BG:string = "MOVE_BG";
 
-    public static DOUBLE_CLICK:string = "DOUBLE_CLICK";
-
     public static KILL_ENEMY:string = "KILL_ENEMY";
     public static CHANGE_PLANE:string = "CHANGE_PLANE";
     public static PROTECT_EFFECT:string = "PROTECT_EFFECT";
-
+    //距离等级刷新
+    public static UPDATE_DISTANCE_STAGE:string = "UPDATE_DISTANCE_STAGE";
     //金币碰到玩家
     public static ITEM_COLLISION_PLAYER:string = "ITEM_COLLISION_PLAYER";
     //陨石碰到玩家
     public static ROCK_COLLISION_PLAYER:string = "ROCK_COLLISION_PLAYER";
     //复活甲
-    public static STORE_ITEM_EFFECT:string = "STORE_ITEM_EFFECT"
+    public static STORE_ITEM_EFFECT:string = "STORE_ITEM_EFFECT";
+    //道具特效
+    public static USE_ITEM_EFFECT:string = "USE_ITEM_EFFECT";
+
 }

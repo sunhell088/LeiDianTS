@@ -10,8 +10,9 @@ export class PlaneConfig {
             levelUpTextureName: "#levelup1.png",
             bigPngName: 0,
             bulletType: "1",
-            bombType: "#1_35.png",
-            price: 0
+            bombType: "1_35",
+            price: 0,
+            planeFunction:function(shipSprite){},
         },
         {
             id: 2,//磁铁（且双倍金币-金币变大）
@@ -21,8 +22,12 @@ export class PlaneConfig {
             levelUpTextureName: "#levelup2.png",
             bigPngName: 1,
             bulletType: "bullet3",
-            bombType: "#bullet3_35.png",
-            price: 5000
+            bombType: "bullet3_35",
+            price: 5000,
+            //磁铁（且双倍金币-金币变大）
+            planeFunction:function(shipSprite){
+                shipSprite.setMagnet(true);
+            },
         },
         {
             id: 4,//自带双倍火力
@@ -32,8 +37,12 @@ export class PlaneConfig {
             levelUpTextureName: "#levelup3.png",
             bigPngName: 2,
             bulletType: "bullet5",
-            bombType: "#bullet5_35.png",
-            price: 10000
+            bombType: "bullet5_35",
+            price: 10000,
+            //自带双倍火力
+            planeFunction:function(shipSprite){
+                shipSprite._doubleFire = true;
+            },
         }
     ];
 }

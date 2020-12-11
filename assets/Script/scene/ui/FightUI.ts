@@ -1,5 +1,4 @@
 import {Player} from "../../classes/Player";
-import {PlaneConfig} from "../../configs/PlaneConfig";
 import ShipSprite from "../../sprites/ShipSprite";
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
@@ -10,6 +9,7 @@ import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
 import {ConfigUtil} from "../../common/ConfigUtil";
 import CanvasNode from "../CanvasNode";
+import {CommonConfig} from "../../configs/CommonConfig";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -79,13 +79,9 @@ export default class FightUI extends cc.Component implements IMediator{
     @property(cc.Sprite)
     showEatItemName:cc.Sprite = null;
 
-    public static getFightUI(): FightUI {
-        return cc.find("Canvas/fightUI").getComponent(FightUI);
-    }
-
     getCommands():string[] {
         return [GameEvent.ADD_EXP, GameEvent.UP_GRADE, GameEvent.SET_BOMB, GameEvent.SET_CURRENT_REWARD_GOLD,
-            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT];
+            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT, GameEvent.UPDATE_DISTANCE_STAGE];
     }
 
     protected onLoad(): void {
@@ -115,7 +111,7 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //刷新玩家等级
     private setGradeLabel(grade){
-        this.gradeLabel.string = "LV." + grade;
+        this.gradeLabel.string = "" + grade;
     }
     //刷新飞行距离
     private setDistanceLabel(distance){
@@ -132,19 +128,6 @@ export default class FightUI extends cc.Component implements IMediator{
             else{
                 this.bombList[k].node.active = false;
             }
-        }
-    }
-
-    //刷新每500M报数
-    private setDistanceStage(distance,bNewRecord){
-        this.distanceStage.node.active = true;
-        this.distanceStage.string = distance+"M";
-        this.distanceStage.node.runAction(cc.sequence(
-            cc.delayTime(3),
-            cc.callFunc(function(sender){sender.node.active = false;})
-        ));
-        if(bNewRecord){
-            this.showUpdateRecord();
         }
     }
     //显示刷新记录图片
@@ -274,5 +257,23 @@ export default class FightUI extends cc.Component implements IMediator{
                 Player.player._changePlaneIng = false;
             })
         ));
+    }
+
+    private UPDATE_DISTANCE_STAGE(){
+        var bNewRecord = Player.player.currentDistance>CommonConfig.NEW_RECORD_DISTANCE
+            &&Player.player.currentDistance>Player.player.data.maxDistance+CommonConfig.DISTANCE_STAGE_UNIT;
+        let distance = Player.player._preDistanceStage*CommonConfig.DISTANCE_STAGE_UNIT
+        //刷新每500M报数
+        this.distanceStage.node.active = true;
+        this.distanceStage.string = distance+"M";
+        this.distanceStage.node.runAction(cc.sequence(
+            cc.delayTime(3),
+            cc.callFunc(function(sender){
+                sender.active = false;
+                },this.distanceStage)
+        ));
+        if(bNewRecord){
+            this.showUpdateRecord();
+        }
     }
 }

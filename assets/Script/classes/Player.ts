@@ -96,7 +96,7 @@ export class Player {
 
     //从本地读取玩家数据
     public loadData(){
-        if(localStorage.playerData)
+        if(!localStorage.playerData)
         {
             this.data = JSON.parse(localStorage.playerData);
         }else{
@@ -117,7 +117,7 @@ export class Player {
 
     //第一次登录游戏，创建玩家对象
     public createPlayer() {
-        let bornPlaneID = PlaneConfig.planeConfig[0].id;
+        let bornPlaneID = PlaneConfig.planeConfig[2].id;
         this.data.exps = {};
         this.data.grades = {};
         this.data.exps[bornPlaneID] = this.data.exps[bornPlaneID] || 0;
@@ -138,7 +138,6 @@ export class Player {
 
     //获得指定飞机的等级(不传参数则为当前出战飞机)
     public getGrade(planeID?):number {
-        return 30;
         if (planeID == undefined) planeID = this.data.currentPlaneID;
         this.data.grades[planeID] = this.data.grades[planeID] || 1;
         return this.data.grades[planeID];
@@ -197,6 +196,7 @@ export class Player {
     }
     //使用炸弹
     public useBomb():boolean{
+        this.bomb = 5;
         if(this.bomb <= 0) return false;
         this.bomb--;
         ObserverManager.sendNotification(GameEvent.SET_BOMB, this.bomb);
@@ -275,7 +275,7 @@ export class Player {
                 var itemConfigA = ConfigUtil.getStoreItemConfig(a.itemID);
                 var itemConfigB = ConfigUtil.getStoreItemConfig(b.itemID);
                 return itemConfigA.sortValue<itemConfigB.sortValue;
-            },1);//TODO
+            },1);
         return true;
     }
     //使用玩家的商城道具

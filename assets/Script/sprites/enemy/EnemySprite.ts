@@ -7,6 +7,7 @@ import ShipSprite from "../ShipSprite";
 import {CLEAN_TYPE, FLY_STATE} from "../../common/GameEnum";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
+import BombRainSprite from "../BombRainSprite";
 
 
 const {ccclass, property} = cc._decorator;
@@ -117,6 +118,10 @@ export default class EnemySprite extends cc.Component {
             }
             this.hurt(-1,true);
         }
-        //敌机与玩家炸弹碰撞 TODO
+        //敌机与玩家炸弹碰撞
+        let bombRainSprite:BombRainSprite = other.getComponent(BombRainSprite);
+        if(bombRainSprite){
+            this.hurt(-1, true);
+        }
     }
 }

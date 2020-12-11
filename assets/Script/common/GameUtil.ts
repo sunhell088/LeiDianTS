@@ -17,14 +17,14 @@ export class GameUtil {
 
     //随机屏幕的宽（减去传入对象的宽一半）
     public static randomWidth(sprite:cc.Node){
-        var min = sprite.width/2;
-        var max = -CommonConfig.WIDTH + sprite.width/2;
+        var min = -CommonConfig.WIDTH/2 + sprite.width/2;
+        var max = CommonConfig.WIDTH/2 - sprite.width/2;
         return CommonUtil.random(min, max);
     };
     //随机屏幕的高（减去传入对象的高一半）
     public static randomHeight(sprite:cc.Node){
-        var min = sprite.height/2;
-        var max = -CommonConfig.HEIGHT - sprite.height/2;
+        var min = -CommonConfig.HEIGHT/2+ sprite.height/2;
+        var max = CommonConfig.HEIGHT/2 - sprite.height/2;
         return CommonUtil.random(min, max);
     };
 

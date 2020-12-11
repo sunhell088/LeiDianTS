@@ -32,6 +32,7 @@ export default class BossEnemySprite extends EnemySprite {
         }
     }
     destroySprite(){
+        super.destroySprite();
         Player.player._bossIng = false;
     }
     //死亡音效（子类重载）

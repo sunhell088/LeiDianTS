@@ -45,15 +45,15 @@ export default class LoginScene extends cc.Component implements IMediator{
                 FormationConfig.formationConfig)
         }
         Player.player = new Player();
-        Player.player.createPlayer();
+        Player.player.loadData();
+        this.schedule(Player.player.saveData, 1);
         this.initLoginScene();
-        this.node.on('touchend', function (event) {
-            cc.director.loadScene('fightScene');
-        });
+        this.node.on(cc.Node.EventType.TOUCH_END, this.openScene, this);
     }
 
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
+        this.node.off(cc.Node.EventType.TOUCH_END, this.openScene);
     }
 
     protected update (dt) {
@@ -79,5 +79,9 @@ export default class LoginScene extends cc.Component implements IMediator{
     private setBackground() {
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
+    }
+
+    private openScene(){
+        cc.director.loadScene('fightScene');
     }
 }

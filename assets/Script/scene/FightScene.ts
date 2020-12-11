@@ -73,6 +73,10 @@ export default class FightScene extends cc.Component implements IMediator {
     @property(cc.Sprite)
     playerDeadExplodeSprite:cc.Sprite = null;
 
+    @property(cc.Prefab)
+    playerBombRainPrefab:cc.Prefab = null;
+
+
     private bulletPool: cc.NodePool = new cc.NodePool();
     private enemyPool: cc.NodePool = new cc.NodePool();
     private enemyFlexPool: cc.NodePool = new cc.NodePool();
@@ -83,6 +87,7 @@ export default class FightScene extends cc.Component implements IMediator {
     private rockPool: cc.NodePool = new cc.NodePool();
     private itemPool: cc.NodePool = new cc.NodePool();
     private enemyExplodePool: cc.NodePool = new cc.NodePool();
+    private playerBombRainPool: cc.NodePool = new cc.NodePool();
 
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB, GameEvent.GAME_OVER
@@ -95,9 +100,9 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        // this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
-        // this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
-        // this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
+        this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
         this.init();
     }
 
@@ -107,9 +112,9 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.unschedule(this.shoot);
         this.unschedule(this.scheduleNormalEnemy);
-        // this.unschedule(this.scheduleRockGroup);
-        // this.unschedule(this.scheduleBlessEnemy);
-        // this.unschedule(this.scheduleStayEnemy);
+        this.unschedule(this.scheduleRockGroup);
+        this.unschedule(this.scheduleBlessEnemy);
+        this.unschedule(this.scheduleStayEnemy);
     }
 
     protected update(dt) {
@@ -132,13 +137,14 @@ export default class FightScene extends cc.Component implements IMediator {
         var showSpeed = Player.player._spurt ? CommonConfig.DISTANCE_SPURT_SPEED : CommonConfig.DISTANCE_SPEED;
         Player.player.currentDistance += showSpeed * dt;
         ObserverManager.sendNotification(GameEvent.MOVE_BG, Math.round(Player.player.currentDistance));
-        //每500M报数 TODO
+        //每500M报数
         if (Player.player.getDistanceStage() > Player.player._preDistanceStage) {
             Player.player._preDistanceStage = Player.player.getDistanceStage();
+            ObserverManager.sendNotification(GameEvent.UPDATE_DISTANCE_STAGE)
             //普通飞机速度变快
             this.addEnemySpeed(Player.player._preDistanceStage);
             //创建BOSS
-            // this.createBoos(Player.player._preDistanceStage);//TODO
+            this.createBoos(Player.player._preDistanceStage);
         }
     }
     //定时创建普通飞机
@@ -328,7 +334,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
         this.ship.shipSprite.spriteFrame = this.shipAtlas.getSpriteFrame(planeConfig.fightTextureName);
         this.ship.node.setPosition(0, 0);
-        // planeConfig.planeFunction(this.ship); TODO
+        planeConfig.planeFunction(this.ship);
 
         //重置和战斗相关的数据
         Player.player.resetFightData();
@@ -344,7 +350,7 @@ export default class FightScene extends cc.Component implements IMediator {
         //随机道具
         let item = ConfigUtil.getStoreItemConfig(Player.player.randomItemID);
         if(item&&item.trigger==state){
-            // item.itemFunction(); TODO
+            ObserverManager.sendNotification(GameEvent.USE_ITEM_EFFECT, item);
             Player.player.randomItemID = "0";
             triggerSuccess = true;
         }
@@ -433,14 +439,16 @@ export default class FightScene extends cc.Component implements IMediator {
         this.bombEffect.node.runAction(cc.scaleBy(0.6,30));
         //创建炸弹效果
         var createBombAction = cc.callFunc(
-            function(){ //TODO
-                // var bomb:cc.Node = GameUtil.getBombEffect(Player.player.data.currentPlaneID);
-                // bomb.setPosition(GameUtil.randomWidth(bomb), -bomb.height);
-                // bomb.runAction(cc.sequence(
-                //     cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT/2*1.5)),
-                //     cc.callFunc(function(sender){sender.active = false})
-                // ));
-            }
+            function(){
+                let bomb:cc.Node = this.createPlayerBombRainSprite(Player.player.data.currentPlaneID);
+                bomb.setPosition(GameUtil.randomWidth(bomb), -CommonConfig.HEIGHT/2-bomb.height);
+                bomb.runAction(cc.sequence(
+                    cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT+bomb.height)),
+                    cc.callFunc(function(sender){
+                        this.playerBombRainPool.put(bomb);
+                    },this)
+                ));
+            },this
         );
         for(var i=0; i<CommonConfig.PRESET_COUNT_BOMB; i++){
             actionArray.push(createBombAction);
@@ -486,7 +494,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
     private onTouchBegan(event) {
         if(Player.player._clicked){
-            ObserverManager.sendNotification(GameEvent.DOUBLE_CLICK);
+            ObserverManager.sendNotification(GameEvent.USE_BOMB);
         }else{
             Player.player._clicked = true;
             this.scheduleOnce(function(){ Player.player._clicked = false; }, 0.25);
@@ -611,6 +619,21 @@ export default class FightScene extends cc.Component implements IMediator {
             }),
             lineAction
         ));
+    }
+    //创建炸弹时炸弹雨复用对象
+    private createPlayerBombRainSprite(planeID): cc.Node {
+        let planeConfig:any = ConfigUtil.getPlaneConfig(planeID);
+        let spriteNode:cc.Node = null;
+        if (this.playerBombRainPool.size() > 0) {
+            spriteNode = this.playerBombRainPool.get();
+            spriteNode.stopAllActions();
+        } else {
+            spriteNode = cc.instantiate(this.playerBombRainPrefab);
+        }
+        let spriteSct:cc.Sprite = spriteNode.getComponent(cc.Sprite);
+        spriteSct.spriteFrame = this.bulletAtlas.getSpriteFrame(planeConfig.bombType);
+        this.node.addChild(spriteNode);
+        return spriteNode;
     }
     //创建敌机爆炸复用对象
     private playEnemyExplodeAnimation(enemySprite:EnemySprite) {

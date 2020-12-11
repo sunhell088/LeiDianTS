@@ -150,7 +150,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     eatItem(itemSprite:ItemSprite){
-        // itemSprite._itemConfig.itemFunction(); TODO
+        ObserverManager.sendNotification(GameEvent.USE_ITEM_EFFECT, itemSprite._itemConfig);
     }
     //道具复活
     storeItemRevive(){

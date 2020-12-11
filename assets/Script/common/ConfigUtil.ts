@@ -102,9 +102,9 @@ export class ConfigUtil {
         }
         if(!Player.player._itemDropArr || Player.player._itemDropArr.length==0){
             Player.player._itemDropArr = [];
-            for(var k in ItemConfig){
-                if(ItemConfig[k].gold) continue;
-                Player.player._itemDropArr.push(ItemConfig[k]);
+            for(var k in ItemConfig.itemConfig){
+                if(ItemConfig.itemConfig[k].gold) continue;
+                Player.player._itemDropArr.push(ItemConfig.itemConfig[k]);
             }
             Player.player._itemDropArr.sort(function(){return Math.random()>0.5?-1:1;});
         }

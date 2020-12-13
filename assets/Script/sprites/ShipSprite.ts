@@ -12,6 +12,8 @@ import {CLEAN_TYPE} from "../common/GameEnum";
 import CanvasNode from "../scene/CanvasNode";
 import ItemSprite from "./ItemSprite";
 import {StoreItemConfig} from "../configs/StoreItemConfig";
+import {ItemConfig} from "../configs/ItemConfig";
+import {ConfigUtil} from "../common/ConfigUtil";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -30,30 +32,17 @@ export default class ShipSprite extends cc.Component implements IMediator{
     shipSprite:cc.Sprite = null;
     //机身
     @property(cc.SpriteAtlas)
-    shipSpriteAtlas:cc.Sprite = null;
-    //升级特效—翅膀
-    @property(cc.Sprite)
-    levelUpWing:cc.Sprite = null;
-    //升级特效—光圈
-    @property(cc.Sprite)
-    levelUpRing:cc.Sprite = null;
-    //升级特效—喷光
-    @property(cc.Sprite)
-    levelUpJet:cc.Sprite = null;
-    //升级特效—爆炸光
-    @property(cc.Sprite)
-    levelUpLight:cc.Sprite = null;
-    //升级特效—飞机图
-    @property(cc.Sprite)
-    levelUpBigPlane:cc.Sprite = null;
-    //冲刺前爆炸动画
-    @property(cc.Sprite)
-    spurtExplodeSprite:cc.Sprite = null;
+    shipSpriteAtlas:cc.SpriteAtlas = null;
     @property(cc.Node)
     eatItemEffect:cc.Node = null;
+    @property(cc.Node)
+    levelUpNode:cc.Node = null;
+    @property(cc.Sprite)
+    bigPlaneShadow:cc.Sprite = null;
+
 
     getCommands():string[] {
-        return [GameEvent.UP_GRADE, GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
+        return [GameEvent.LEVEL_UP_UI_ANIMATION_FINISH, GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
             GameEvent.ROCK_COLLISION_PLAYER];
     }
     
@@ -89,7 +78,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             //更换图片（赋予新飞机的功能）
             cc.callFunc(function(){
                 this.resetEffect();
-                let frame = this._spriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
+                let frame = this.shipSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
                 this.shipSprite.getComponent(cc.Sprite).spriteFrame = frame;
                 Player.player.data.currentPlaneID = planeConfig.id;
                 planeConfig.planeFunction(this);
@@ -148,10 +137,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
         Player.player._stopBullet = true;
         this.destroyShipSprite();
     }
-
-    eatItem(itemSprite:ItemSprite){
-        ObserverManager.sendNotification(GameEvent.USE_ITEM_EFFECT, itemSprite._itemConfig);
-    }
     //道具复活
     storeItemRevive(){
         Player.player._changePlaneIng = true;
@@ -170,8 +155,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
         let moveTo = cc.moveTo(0.1, new cc.Vec2(this.node.x, this.node.y));
         itemSprite.node.runAction(cc.sequence(
             moveTo,
-            cc.callFunc(itemSprite.destroy, itemSprite),
-            cc.callFunc(this.eatItem, this, itemSprite)
+            cc.callFunc(itemSprite.destroy, itemSprite)
         ));
 
         itemSprite._bAttracting = true;
@@ -189,11 +173,38 @@ export default class ShipSprite extends cc.Component implements IMediator{
 
     //升级动画
     private levelUpAnimation() {
-
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
+        let frame = this.shipSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
+        this.bigPlaneShadow.getComponent(cc.Sprite).spriteFrame = frame;
+        this.levelUpNode.active = true;
+        let animation:cc.Animation = this.levelUpNode.getComponent(cc.Animation);
+        animation.on(cc.Animation.EventType.FINISHED, function () {
+            this.levelUpNode.active = false;
+        }, this)
+        animation.play();
     }
-
+    //吃道具闪一下光
+    private eatItemBlink(itemConfig:any){
+        this.eatItemEffect.active = true;
+        this.eatItemEffect.runAction(cc.sequence(
+            cc.scaleTo(0.2, 0, 1),
+            cc.callFunc(function(sender){
+                sender.setScale(1);
+                sender.active = false;
+            },this.eatItemEffect)
+        ));
+        if(itemConfig.gold){
+            if(itemConfig == ItemConfig.itemConfig.item_coin){
+                GameUtil.playSound(SoundConfig.get_coin);
+            }else{
+                GameUtil.playSound(SoundConfig.get_bs);
+            }
+        }else {
+            GameUtil.playSound(SoundConfig.get_item);
+        }
+    }
     //--------游戏事件监听方法---------
-    private UP_GRADE(grade:number){
+    private LEVEL_UP_UI_ANIMATION_FINISH(){
         this.levelUpAnimation();
     }
 
@@ -205,12 +216,8 @@ export default class ShipSprite extends cc.Component implements IMediator{
         this.node.stopAllActions();
     }
 
-    private ITEM_COLLISION_PLAYER(itemSprite:ItemSprite) {
-        if (Player.player._magnet) {
-            this.attractItem(itemSprite);
-        } else {
-            this.eatItem(itemSprite);
-        }
+    private ITEM_COLLISION_PLAYER(itemConfig:any) {
+        this.eatItemBlink(itemConfig);
     }
 
     private ROCK_COLLISION_PLAYER(){

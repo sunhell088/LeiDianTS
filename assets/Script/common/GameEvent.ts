@@ -25,7 +25,8 @@ export class GameEvent {
     public static ROCK_COLLISION_PLAYER:string = "ROCK_COLLISION_PLAYER";
     //复活甲
     public static STORE_ITEM_EFFECT:string = "STORE_ITEM_EFFECT";
-    //道具特效
-    public static USE_ITEM_EFFECT:string = "USE_ITEM_EFFECT";
+
+    //升级UI动画播放完毕
+    public static LEVEL_UP_UI_ANIMATION_FINISH:string = "LEVEL_UP_UI_ANIMATION_FINISH";
 
 }

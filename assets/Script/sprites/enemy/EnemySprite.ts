@@ -68,6 +68,7 @@ export default class EnemySprite extends cc.Component {
             this._HP -= bulletPower;
         }
         if(this._HP<=0){
+            ObserverManager.sendNotification(GameEvent.KILL_ENEMY, this, bDrop);
             this.death(bDrop);
         }else{
             //设置血条长度
@@ -77,7 +78,6 @@ export default class EnemySprite extends cc.Component {
     }
     //死亡
     death(bDrop){
-        ObserverManager.sendNotification(GameEvent.KILL_ENEMY, this, bDrop);
         this.playDeathSound();
         this.destroySprite();
     }

@@ -350,7 +350,6 @@ export default class FightScene extends cc.Component implements IMediator {
         //随机道具
         let item = ConfigUtil.getStoreItemConfig(Player.player.randomItemID);
         if(item&&item.trigger==state){
-            ObserverManager.sendNotification(GameEvent.USE_ITEM_EFFECT, item);
             Player.player.randomItemID = "0";
             triggerSuccess = true;
         }
@@ -409,15 +408,11 @@ export default class FightScene extends cc.Component implements IMediator {
                     rockSprite.destroySprite();
                 }
             }
-            if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ENEMY||cleanType==CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL){
+            if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ENEMY){
                 enemy = childrenArray[key].getComponent(EnemySprite);
                 if(enemy){
                     if(enemy._enemyConfig.classType==EnemySprite){
-                        enemy.hurt(-1, bDrop)
-                    }else {
-                        if(cleanType==CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL){
-                            enemy.hurt(-1, bDrop)
-                        }
+                        enemy.death(bDrop)
                     }
                 }
             }
@@ -657,7 +652,7 @@ export default class FightScene extends cc.Component implements IMediator {
     private KILL_ENEMY(enemySprite:EnemySprite, bDrop:boolean){
         //自爆飞机将全屏其他飞机炸开
         if(enemySprite._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
-            this.cleanEnemy(CLEAN_TYPE.ENEMY_WITHOUT_SPECIAL, true);
+            this.cleanEnemy(CLEAN_TYPE.ALL, true);
         }else {
             if(bDrop){
                 this.doKillEnemyAward(enemySprite);
@@ -697,4 +692,5 @@ export default class FightScene extends cc.Component implements IMediator {
     private UP_GRADE(){
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
     }
+
 }

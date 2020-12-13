@@ -55,9 +55,9 @@ export default class FightUI extends cc.Component implements IMediator{
     @property(cc.Sprite)
     updateRecordSpt:cc.Sprite = null;
 
-    //升级特效—特效字图片
-    @property(cc.Sprite)
-    levelUpTitle:cc.Sprite = null;
+    //升级特效
+    @property(cc.Node)
+    levelUpEffectNode:cc.Node = null;
     //升级特效—人物图片
     @property(cc.Sprite)
     levelUpMan:cc.Sprite = null;
@@ -143,7 +143,8 @@ export default class FightUI extends cc.Component implements IMediator{
     }
     //炸弹按钮
     private OnBombBtnClick (sender, type){
-        ObserverManager.sendNotification(GameEvent.USE_BOMB);
+        ObserverManager.sendNotification(GameEvent.UP_GRADE, 2);
+        // ObserverManager.sendNotification(GameEvent.USE_BOMB);
     }
 
     //暂停游戏
@@ -205,6 +206,13 @@ export default class FightUI extends cc.Component implements IMediator{
     }
     //升级动画
     private levelUpAnimation() {
+        this.levelUpEffectNode.active = true;
+        let animation:cc.Animation = this.levelUpEffectNode.getComponent(cc.Animation);
+        animation.on(cc.Animation.EventType.FINISHED, function () {
+            this.levelUpEffectNode.active = false;
+            ObserverManager.sendNotification(GameEvent.LEVEL_UP_UI_ANIMATION_FINISH);
+        }, this)
+        animation.play();
     }
 
     //--------游戏事件监听方法---------

@@ -53,7 +53,7 @@ export default class ItemSprite extends cc.Component {
     onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
         if(other.getComponent(ShipSprite)){
             let itemSprite:ItemSprite = self.getComponent(ItemSprite);
-            ObserverManager.sendNotification(GameEvent.ITEM_COLLISION_PLAYER, itemSprite)
+            ObserverManager.sendNotification(GameEvent.ITEM_COLLISION_PLAYER, itemSprite._itemConfig)
             this.destroySprite();
         }
     }

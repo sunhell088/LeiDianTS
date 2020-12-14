@@ -2,6 +2,8 @@ import {CommonConfig} from "../configs/CommonConfig";
 import FightScene from "../scene/FightScene";
 import EnemySprite from "./enemy/EnemySprite";
 import CanvasNode from "../scene/CanvasNode";
+import {ObserverManager} from "../framework/observe/ObserverManager";
+import {GameEvent} from "../common/GameEvent";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -34,6 +36,7 @@ export default class BulletSprite extends cc.Component {
     onCollisionEnter(other:cc.BoxCollider, self:cc.BoxCollider) {
         if(other.node.getComponent(EnemySprite)){
             this.destroyBullet();
+            ObserverManager.sendNotification(GameEvent.BULLET_HIT_ENEMY, self.node.getPosition());
         }
     }
 }

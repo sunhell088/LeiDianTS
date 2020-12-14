@@ -1,7 +1,5 @@
 export class GameEvent {
     public static SET_BOMB:string = "SET_BOMB";
-    public static ADD_EXP:string = "ADD_EXP";
-    public static UP_GRADE:string = "UP_GRADE";
     public static SET_CURRENT_REWARD_GOLD:string = "SET_CURRENT_REWARD_GOLD";
 
     public static USE_STORE_ITEM:string = "USE_STORE_ITEM";
@@ -28,5 +26,7 @@ export class GameEvent {
 
     //升级UI动画播放完毕
     public static LEVEL_UP_UI_ANIMATION_FINISH:string = "LEVEL_UP_UI_ANIMATION_FINISH";
+    //子弹击中敌机
+    public static BULLET_HIT_ENEMY:string = "BULLET_HIT_ENEMY";
 
 }

@@ -29,10 +29,12 @@ export class DifficultConfig {
     ];
 
     //爆金币和钻石的概率
-    public static GOLD_DROP_ODDS = [
-        {min:1,max:95, itemConfig:ItemConfig.itemConfig.item_coin},
-        {min:96,max:99, itemConfig:ItemConfig.itemConfig.item_red},
-        {min:100,max:100, itemConfig:ItemConfig.itemConfig.item_green}
+    public static SPECIAL_DROP_ODDS = [
+        {min:1,max:20, itemConfig:ItemConfig.itemConfig.item_cc},
+        {min:21,max:40, itemConfig:ItemConfig.itemConfig.item_xts},
+        {min:41,max:60, itemConfig:ItemConfig.itemConfig.item_protect},
+        {min:61,max:80, itemConfig:ItemConfig.itemConfig.item_shadow},
+        {min:81,max:100, itemConfig:ItemConfig.itemConfig.item_double}
     ];
 
     //初级陨石库

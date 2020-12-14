@@ -33,27 +33,9 @@ export class ConfigUtil {
         //默认0.1，这样非普通飞机的血量参数就是0.1
         let hp = 0.2;
         if(enemyIndex<EnemyConfig.totalHPArr.length){
-            hp = EnemyConfig.totalHPArr[enemyIndex][Player.player.getGrade()-1];
+            hp = EnemyConfig.totalHPArr[enemyIndex][Player.player.getBulletGrade()-1];
         }
         return hp*CommonConfig.BULLET_COUNT_PER;
-    };
-
-    //获得暴落物
-    public static getDropItemArray (amount){
-        var dropArray = [];
-        for(var x=0;x<amount;x++){
-            var random = parseInt(""+CommonUtil.random(1,100));
-            for(var i=0; i<DifficultConfig.GOLD_DROP_ODDS.length; i++){
-                var oddsItem = DifficultConfig.GOLD_DROP_ODDS[i];
-                if(random>=oddsItem.min&&random<=oddsItem.max){
-                    dropArray.push(oddsItem.itemConfig);
-                    break;
-                }
-            }
-        }
-        //最后再乱序
-        dropArray.sort(function(){return Math.random()>0.5?-1:1;});
-        return dropArray;
     };
 
     //根据飞行距离获取陨石库
@@ -94,23 +76,31 @@ export class ConfigUtil {
         return rockLib[CommonUtil.random(0, rockLib.length-1)];
     };
 
-    public static createSpecialEnemyDrop(enemySprite){
+    public static createSpecialEnemyDrop(enemySpriteSct){
         var dropArray = [];
-        if(enemySprite._enemyConfig == EnemyConfig.enemyConfig.enemyBox){
+        if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBox){
             dropArray.push(ItemConfig.itemConfig.item_green);
             dropArray.push(ItemConfig.itemConfig.item_green);
+            dropArray.push(ConfigUtil.getSpecialDropItem());
+        }else {
+            let item = ConfigUtil.getSpecialDropItem();
+            dropArray.push(item);
         }
-        if(!Player.player._itemDropArr || Player.player._itemDropArr.length==0){
-            Player.player._itemDropArr = [];
-            for(var k in ItemConfig.itemConfig){
-                if(ItemConfig.itemConfig[k].gold) continue;
-                Player.player._itemDropArr.push(ItemConfig.itemConfig[k]);
-            }
-            Player.player._itemDropArr.sort(function(){return Math.random()>0.5?-1:1;});
-        }
-        var item = Player.player._itemDropArr.shift();
-        dropArray.push(item);
         return dropArray;
+    };
+
+    //获得暴落物
+    public static getSpecialDropItem():any{
+        var itemConfig = null;
+        var random = parseInt(""+CommonUtil.random(1,100));
+        for(var i=0; i<DifficultConfig.SPECIAL_DROP_ODDS.length; i++){
+            var oddsItem = DifficultConfig.SPECIAL_DROP_ODDS[i];
+            if(random>=oddsItem.min&&random<=oddsItem.max){
+                itemConfig = oddsItem.itemConfig;
+                break;
+            }
+        }
+        return itemConfig;
     };
 
     public static transformToPixel(width, height, formationConfig):any{

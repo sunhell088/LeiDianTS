@@ -117,10 +117,8 @@ export class Player {
 
     //第一次登录游戏，创建玩家对象
     public createPlayer() {
-        let bornPlaneID = PlaneConfig.planeConfig[2].id;
-        this.data.exps = {};
+        let bornPlaneID = PlaneConfig.planeConfig[0].id;
         this.data.grades = {};
-        this.data.exps[bornPlaneID] = this.data.exps[bornPlaneID] || 0;
         this.data.grades[bornPlaneID] = this.data.grades[bornPlaneID] || 1;
         this.data.planeStorage = bornPlaneID;
         this.data.currentPlaneID = bornPlaneID;
@@ -129,49 +127,12 @@ export class Player {
         this.data.storeItemPackage = [];
     }
 
-    //获得指定飞机的经验(不传参数则为当前出战飞机)
-    public getExp(planeID?):number{
-        if(planeID==undefined) planeID = this.data.currentPlaneID;
-        this.data.exps[planeID] = this.data.exps[planeID] || 0;
-        return this.data.exps[planeID];
-    }
-
     //获得指定飞机的等级(不传参数则为当前出战飞机)
-    public getGrade(planeID?):number {
+    public getBulletGrade(planeID?):number {
+        return 20;
         if (planeID == undefined) planeID = this.data.currentPlaneID;
         this.data.grades[planeID] = this.data.grades[planeID] || 1;
         return this.data.grades[planeID];
-    }
-
-    //增加当前飞机的经验
-    public addExp(value){
-        let currentPlaneID = this.data.currentPlaneID;
-        if(value<=0) return;
-        if(this.getGrade(currentPlaneID) >= PlaneConfig.levelExp.length) return;
-        let offset = (this.getExp(currentPlaneID)+value) - ConfigUtil.getExpByLevel(this.getGrade(currentPlaneID));
-        if(offset<0){
-            this.data.exps[currentPlaneID] += value;
-        }else{
-            this.data.grades[currentPlaneID]++;
-            if(this.data.grades[currentPlaneID] == PlaneConfig.levelExp.length){
-                this.data.exps[currentPlaneID] = 0;
-            }else{
-                this.data.exps[currentPlaneID] = offset;
-            }
-            this.upGrade(currentPlaneID);
-        }
-        //刷新战斗界面
-        ObserverManager.sendNotification(GameEvent.ADD_EXP, this.getGrade(), this.getExp());
-    }
-
-    //升级
-    public upGrade(planeID){
-        let grade:number = this.getGrade(planeID);
-        //音效
-        GameUtil.playSound(SoundConfig.levelUpReady);
-        Player.player._invincible = true;
-        Player.player._levelUpIng = true;
-        ObserverManager.sendNotification(GameEvent.UP_GRADE, grade);
     }
 
     //加金币

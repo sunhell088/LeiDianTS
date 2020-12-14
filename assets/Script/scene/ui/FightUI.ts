@@ -23,9 +23,6 @@ export default class FightUI extends cc.Component implements IMediator{
     //炸弹数目
     @property([cc.Sprite])
     bombList:cc.Sprite[] =[];
-    //经验条
-    @property(cc.ProgressBar)
-    expBar :cc.ProgressBar = null;
     //金币数量
     @property(cc.Label)
     goldCount :cc.Label =  null;
@@ -78,10 +75,15 @@ export default class FightUI extends cc.Component implements IMediator{
     showEatItemNameAtlas:cc.SpriteAtlas = null;
     @property(cc.Sprite)
     showEatItemName:cc.Sprite = null;
+    @property(cc.Prefab)
+    eatCoinEffectPrefab:cc.Prefab = null;
+
+    private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
 
     getCommands():string[] {
-        return [GameEvent.ADD_EXP, GameEvent.UP_GRADE, GameEvent.SET_BOMB, GameEvent.SET_CURRENT_REWARD_GOLD,
-            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT, GameEvent.UPDATE_DISTANCE_STAGE];
+        return [GameEvent.SET_BOMB, GameEvent.SET_CURRENT_REWARD_GOLD,
+            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT, GameEvent.UPDATE_DISTANCE_STAGE,
+            GameEvent.ITEM_COLLISION_PLAYER];
     }
 
     protected onLoad(): void {
@@ -103,9 +105,8 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //初始化玩家UI信息
     private init(){
-        this.setGradeLabel(Player.player.getGrade());
+        this.setGradeLabel(Player.player.getBulletGrade());
         this.setBombCount(Player.player.bomb);
-        this.expBar.progress = Player.player.getExp() / ConfigUtil.getExpByLevel(Player.player.getGrade());
         this.goldCount.string = "0";
     }
 
@@ -137,14 +138,13 @@ export default class FightUI extends cc.Component implements IMediator{
         this.updateRecordSpt.node.runAction(cc.sequence(
             cc.scaleTo(0.2,1),
             GameUtil.shakeBy(0.3,10,5),
-            cc.delayTime(2.5),
+            cc.delayTime(2.8),
             GameUtil.getHideSelfCallFun(this.updateRecordSpt.node)
         ));
     }
     //炸弹按钮
     private OnBombBtnClick (sender, type){
-        ObserverManager.sendNotification(GameEvent.UP_GRADE, 2);
-        // ObserverManager.sendNotification(GameEvent.USE_BOMB);
+        ObserverManager.sendNotification(GameEvent.USE_BOMB);
     }
 
     //暂停游戏
@@ -173,36 +173,78 @@ export default class FightUI extends cc.Component implements IMediator{
     }
 
     //吃道具飘名字
-    private playShowEatItemName(itemName:string){
-        var itemName:string = null;
-        switch (itemName) {
+    private playShowEatItemName(itemConfigName:string){
+        let itemName:string = null
+        let eatCoinTextureName:string = null;
+        switch (itemConfigName) {
             case ItemConfig.itemConfig.item_cc.name:
-                itemName = "fly_buff0";
-                break;
-            case ItemConfig.itemConfig.item_doubleFire.name:
-                itemName = "fly_buff4";
+                itemName = ItemConfig.itemConfig.item_cc.effectTexture;
                 break;
             case ItemConfig.itemConfig.item_xts.name:
-                itemName = "fly_buff1";
+                itemName = ItemConfig.itemConfig.item_xts.effectTexture;
                 break;
-            case ItemConfig.itemConfig.item_down_skill.name:
-                itemName = "fly_buff5";
+            case ItemConfig.itemConfig.item_protect.name:
+                itemName = ItemConfig.itemConfig.item_protect.effectTexture;
+                break;
+            case ItemConfig.itemConfig.item_shadow.name:
+                itemName = ItemConfig.itemConfig.item_shadow.effectTexture;
+                break;
+            case ItemConfig.itemConfig.item_double.name:
+                itemName = ItemConfig.itemConfig.item_double.effectTexture;
+                break;
+            case ItemConfig.itemConfig.item_coin.name:
+                eatCoinTextureName = ItemConfig.itemConfig.item_coin.effectTexture;
+                break;
+            case ItemConfig.itemConfig.item_red.name:
+                eatCoinTextureName = ItemConfig.itemConfig.item_red.effectTexture;
+                break;
+            case ItemConfig.itemConfig.item_green.name:
+                eatCoinTextureName = ItemConfig.itemConfig.item_green.effectTexture;
                 break;
         }
-        this.showEatItemName.spriteFrame = this.showEatItemNameAtlas.getSpriteFrame(itemName);
-        this.showEatItemName.node.active = true;
-        this.showEatItemName.node.scaleX = 2;
-        var playerPos:cc.Vec2 = CanvasNode.getCanvasNode().getShipNodePos();
-        this.showEatItemName.node.setPosition(playerPos.x, playerPos.y + this.showEatItemName.node.height*1.5);
-        //超过屏幕边界修正过来
-        CommonUtil.pClamp(this.showEatItemName.node);
-        this.showEatItemName.node.runAction(cc.sequence(
-            cc.scaleTo(0.1, 1.2),
-            cc.scaleTo(0.2, 1),
-            cc.delayTime(0.4),
-            cc.scaleTo(0.2, 2, 0),
-            cc.callFunc(function(sender){ sender.node.active = false;})
-        ));
+
+        if(itemName!=null){
+            this.showEatItemName.spriteFrame = this.showEatItemNameAtlas.getSpriteFrame(itemName);
+            this.showEatItemName.node.active = true;
+            this.showEatItemName.node.scaleX = 2;
+            var playerPos:cc.Vec2 = CanvasNode.getCanvasNode().getShipNodePos();
+            this.showEatItemName.node.setPosition(playerPos.x, playerPos.y);
+            //超过屏幕边界修正过来
+            CommonUtil.pClamp(this.showEatItemName.node);
+            this.showEatItemName.node.runAction(cc.sequence(
+                cc.scaleTo(0.1, 1.2),
+                cc.scaleTo(0.2, 1),
+                cc.delayTime(1),
+                cc.scaleTo(0.2, 2, 0),
+                cc.callFunc(function(){
+                    this.showEatItemName.node.active = false;},this)
+            ));
+        }else if(eatCoinTextureName!=null){
+            let eatCoinNameNode:cc.Node = this.createEatCoinEffect(eatCoinTextureName);
+            let playerPos:cc.Vec2 = CanvasNode.getCanvasNode().getShipNodePos();
+            eatCoinNameNode.setPosition(playerPos.x, playerPos.y);
+            eatCoinNameNode.runAction(cc.sequence(
+                cc.delayTime(1),
+                cc.blink(0.5,2),
+                cc.callFunc(function(){
+                    this.eatCoinEffectPool.put(eatCoinNameNode);},this))
+            );
+        }
+    }
+    //创建子弹击中效果复用对象
+    private createEatCoinEffect(itemConfigTextureName:string): cc.Node {
+        let spriteNode:cc.Node = null;
+        if (this.eatCoinEffectPool.size() > 0) {
+            spriteNode = this.eatCoinEffectPool.get();
+            spriteNode.opacity = 255;
+            spriteNode.stopAllActions();
+        } else {
+            spriteNode = cc.instantiate(this.eatCoinEffectPrefab);
+        }
+        let sprite:cc.Sprite = spriteNode.getComponent(cc.Sprite);
+        sprite.spriteFrame = this.showEatItemNameAtlas.getSpriteFrame(itemConfigTextureName);
+        this.node.addChild(spriteNode);
+        return spriteNode;
     }
     //升级动画
     private levelUpAnimation() {
@@ -214,17 +256,7 @@ export default class FightUI extends cc.Component implements IMediator{
         }, this)
         animation.play();
     }
-
     //--------游戏事件监听方法---------
-    private ADD_EXP(grade:number, exp:number) {
-        this.setGradeLabel(grade);
-        this.expBar.progress = exp / ConfigUtil.getExpByLevel(grade);
-    }
-
-    private UP_GRADE(grade:number){
-        this.setGradeLabel(grade);
-        this.levelUpAnimation();
-    }
 
     private SET_BOMB(count:number){
         this.setBombCount(count);
@@ -283,5 +315,9 @@ export default class FightUI extends cc.Component implements IMediator{
         if(bNewRecord){
             this.showUpdateRecord();
         }
+    }
+
+    private ITEM_COLLISION_PLAYER(itemConfig:any){
+        this.playShowEatItemName(itemConfig.name);
     }
 }

@@ -20,7 +20,6 @@ export default class EnemySprite extends cc.Component {
     _enemyConfig:any = null;
     _MAX_HP:number = 0;
     _HP:number = 0;
-    _expValue:number = 0;
     _dropItems:any = null;
 
     @property(cc.ProgressBar)
@@ -86,14 +85,11 @@ export default class EnemySprite extends cc.Component {
     setDynamicData(hp, exp, items){
         this._MAX_HP = hp;
         this._HP = this._MAX_HP;
-        this._expValue = exp;
         this._dropItems = [];
-        if(items){
-            if(items instanceof Array){
-                this._dropItems = items;
-            }else{
-                this._dropItems.push(items);
-            }
+        if(items instanceof Array){
+            this._dropItems = items;
+        }else{
+            this._dropItems.push(items);
         }
     }
     //死亡音效（子类重载）

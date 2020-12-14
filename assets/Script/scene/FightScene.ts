@@ -18,7 +18,6 @@ import {CLEAN_TYPE} from "../common/GameEnum";
 import {ConfigUtil} from "../common/ConfigUtil";
 import {GameEvent} from "../common/GameEvent";
 import {ObserverManager} from "../framework/observe/ObserverManager";
-import FightUI from "./ui/FightUI";
 import {ItemConfig} from "../configs/ItemConfig";
 
 
@@ -46,6 +45,8 @@ export default class FightScene extends cc.Component implements IMediator {
     bulletPrefab: cc.Prefab = null;
     @property(cc.SpriteAtlas)
     bulletAtlas: cc.SpriteAtlas = null;
+    @property(cc.Prefab)
+    bulletHitEffectPrefab: cc.Prefab = null;
 
     @property(cc.Prefab)
     enemyPrefab: cc.Prefab = null;
@@ -78,6 +79,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
 
     private bulletPool: cc.NodePool = new cc.NodePool();
+    private bulletHitEffectPool: cc.NodePool = new cc.NodePool();
     private enemyPool: cc.NodePool = new cc.NodePool();
     private enemyFlexPool: cc.NodePool = new cc.NodePool();
     private enemyBossPool: cc.NodePool = new cc.NodePool();
@@ -90,8 +92,8 @@ export default class FightScene extends cc.Component implements IMediator {
     private playerBombRainPool: cc.NodePool = new cc.NodePool();
 
     getCommands(): string[] {
-        return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB, GameEvent.GAME_OVER
-            ,GameEvent.UP_GRADE];
+        return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB, GameEvent.GAME_OVER,
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER];
     }
 
     protected onLoad(): void {
@@ -152,7 +154,6 @@ export default class FightScene extends cc.Component implements IMediator {
         //升级状态中 不创建
         if (Player.player._levelUpIng) return;
         var formation = FormationConfig.formationConfig[CommonUtil.random(0, FormationConfig.formationConfig.length - 1)];
-        var dropItemArray = ConfigUtil.getDropItemArray(formation.length);
         //五架飞机中必有一个最低级飞机
         var worstEnemyIndex = CommonUtil.random(0, formation.length - 1);
         //一定几率出现两个最低级飞机(如果重复，这这次只有一架)
@@ -163,7 +164,7 @@ export default class FightScene extends cc.Component implements IMediator {
             bombEnemyIndex = CommonUtil.random(0, formation.length - 1);
         }
         for (var i = 0; i < formation.length; i++) {
-            var enemyConfig = ConfigUtil.getEnemyConfigByStage(Player.player.getDistanceStage());
+            var enemyConfig:any = ConfigUtil.getEnemyConfigByStage(Player.player.getDistanceStage());
             var enemy: EnemySprite = null;
             if (bombEnemyIndex == i) {
                 enemyConfig = EnemyConfig.enemyConfig.enemyBomb;
@@ -172,21 +173,17 @@ export default class FightScene extends cc.Component implements IMediator {
                 enemyConfig = ConfigUtil.getEnemyConfigByStage(0);
             }
             enemy = this.createEnemy(enemyConfig);
-            if (enemy) {
-                //设置坐标
-                let point: cc.Vec2 = formation[i];
-                enemy.node.x = point.x;
-                enemy.node.y = point.y + this.node.height / 2 + CommonConfig.ENEMY_HEIGHT * 3;
-                //设置血量、经验和掉落
-                let dropItem = dropItemArray[i];
-                if (Player.player._spurt && Math.random() < 0.9) {
-                    dropItem = null;
-                }
-                enemy.setDynamicData(ConfigUtil.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
-            }
+            let dropItem:any = (enemyConfig==EnemyConfig.enemyConfig.enemy0)?ItemConfig.itemConfig.item_coin
+                :ItemConfig.itemConfig.item_red;
+            //设置坐标
+            let point: cc.Vec2 = formation[i];
+            enemy.node.x = point.x;
+            enemy.node.y = point.y + this.node.height / 2 + CommonConfig.ENEMY_HEIGHT * 3;
+            //设置血量、经验和掉落
+            enemy.setDynamicData(ConfigUtil.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
         }
     }
-    //定时创建特殊飞机
+    //定时创建福利飞机
     private scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
@@ -199,7 +196,7 @@ export default class FightScene extends cc.Component implements IMediator {
             var startPosition = enemy["getStartPosition"](enemy)
             enemy.node.setPosition(startPosition);
             //设置血量、经验和掉落
-            var hp = enemy._enemyConfig.HPArray[Player.player.getGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+            var hp = enemy._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
             enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
         }
     }
@@ -207,15 +204,15 @@ export default class FightScene extends cc.Component implements IMediator {
     private scheduleStayEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
-        var enemy = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0, DifficultConfig.stayEnemyArr.length - 1)]);
-        if (!enemy) return;
+        var enemySpriteSct = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0, DifficultConfig.stayEnemyArr.length - 1)]);
+        if (!enemySpriteSct) return;
         //设置坐标
-        var startPosition = new cc.Vec2(CommonUtil.random(-this.node.width/2+enemy.node.width/2, this.node.width/2 - enemy.node.width/2),
-            this.node.height/2 + enemy.node.height);
-        enemy.node.setPosition(startPosition);
+        var startPosition = new cc.Vec2(CommonUtil.random(-this.node.width/2+enemySpriteSct.node.width/2, this.node.width/2 - enemySpriteSct.node.width/2),
+            this.node.height/2 + enemySpriteSct.node.height);
+        enemySpriteSct.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = enemy._enemyConfig.HPArray[Player.player.getGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
-        enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
+        var hp = enemySpriteSct._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+        enemySpriteSct.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
     }
     //定时创建陨石掉落组
     private scheduleRockGroup() {
@@ -225,7 +222,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var actionList = [];
         for (var i = 0; i < rockList.length; i++) {
             var createRockAction = cc.callFunc(
-                function (list) {
+                function (fightSceneNode,list) {
                     for (var k = 0; k < list.length; k++) {
                         var bornIndex = list[k];
                         var bFollow = false;
@@ -234,7 +231,7 @@ export default class FightScene extends cc.Component implements IMediator {
                     }
                     //在同一批次的陨石给音效
                     GameUtil.playSound(SoundConfig.alert_big);
-                },this,{list: rockList[i]}
+                },this,rockList[i]
             );
             actionList.push(cc.delayTime(CommonConfig.ROCK_DELAY));
             actionList.push(createRockAction);
@@ -269,7 +266,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var startPosition = new cc.Vec2(0, this.node.height/2+boss.node.height*2);
         boss.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = boss._enemyConfig.HPArray[Player.player.getGrade()-1]*CommonConfig.BULLET_COUNT_PER;
+        var hp = boss._enemyConfig.HPArray[Player.player.getBulletGrade()-1]*CommonConfig.BULLET_COUNT_PER;
         boss.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(boss));
         Player.player._bossIng = true;
     }
@@ -370,6 +367,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let spriteNode:cc.Node = null;
         if (this.rockLinePool.size() > 0) {
             spriteNode = this.rockLinePool.get();
+            spriteNode.stopAllActions();
         } else {
             spriteNode = cc.instantiate(this.rockLinePrefab);
         }
@@ -382,6 +380,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let spriteNode:cc.Node = null;
         if (this.rockPool.size() > 0) {
             spriteNode = this.rockPool.get();
+            spriteNode.stopAllActions();
         } else {
             spriteNode = cc.instantiate(this.rockPrefab);
         }
@@ -461,17 +460,6 @@ export default class FightScene extends cc.Component implements IMediator {
     }
     //杀敌奖励
     private doKillEnemyAward(enemySprite:EnemySprite){
-        var exp = enemySprite._expValue;
-        //冲刺等阶段 经验降低
-        if(Player.player._spurt||Player.player._bomb||Player.player._spurtReadying){
-            exp = enemySprite._expValue/3;
-            if(Player.player._startSpurtDuration||Player.player._deathSpurtDuration){
-                exp = 0;
-            }
-        }
-        //获得经验
-        Player.player.addExp(exp);
-
         //掉落物品
         for(var i=0;i<enemySprite._dropItems.length;i++){
             var item:ItemSprite = this.createItemSprite(enemySprite._dropItems[i]);
@@ -517,6 +505,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let spriteNode:cc.Node = null;
         if (this.bulletPool.size() > 0) {
             spriteNode = this.bulletPool.get();
+            spriteNode.stopAllActions();
         } else {
             spriteNode = cc.instantiate(this.bulletPrefab);
         }
@@ -524,7 +513,20 @@ export default class FightScene extends cc.Component implements IMediator {
         let bulletSprite = spriteNode.getComponent('BulletSprite');
         bulletSprite.initSprite(spriteNode, this.bulletAtlas, this.bulletPool);
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
-        bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getGrade(Player.player.data.currentPlaneID));
+        bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletGrade(Player.player.data.currentPlaneID));
+        return spriteNode;
+    }
+    //创建子弹击中效果复用对象
+    private createBulletHitEffect(): cc.Node {
+        let spriteNode:cc.Node = null;
+        if (this.bulletHitEffectPool.size() > 0) {
+            spriteNode = this.bulletHitEffectPool.get();
+            spriteNode.active = true;
+            spriteNode.stopAllActions();
+        } else {
+            spriteNode = cc.instantiate(this.bulletHitEffectPrefab);
+        }
+        this.node.addChild(spriteNode);
         return spriteNode;
     }
     //创建敌机复用对象
@@ -554,6 +556,9 @@ export default class FightScene extends cc.Component implements IMediator {
         if (pool.size() > 0) {
             spriteNode = pool.get();
             enemySprite = spriteNode.getComponent(enemyConfig.classType);
+            spriteNode.active = true;
+            spriteNode.opacity = 255;
+            spriteNode.stopAllActions();
         } else {
             spriteNode = cc.instantiate(enemyPrefab);
             enemySprite = spriteNode.addComponent(enemyConfig.classType);
@@ -586,10 +591,10 @@ export default class FightScene extends cc.Component implements IMediator {
         line._bFollow = bFollow;
         var bornX = -CommonConfig.WIDTH/2 + line.node.width / 2 + bornIndex * line.node.width;
         line.node.setPosition(bornX, this.node.height / 2);
-        var lineAction = cc.callFunc(function () {
+        var lineAction = cc.callFunc(function (fightSceneNode:cc.Node, fightScene:FightScene) {
                 //创建陨石的动作
-                var createRockAction = cc.callFunc(function (sender) {
-                        var rock: RockSprite = this.createRockSprite();
+                var createRockAction = cc.callFunc(function (sender,xxoo) {
+                        var rock: RockSprite = fightScene.createRockSprite();
                         if (rock) {
                             rock.node.setPosition(sender.x, sender.y + rock.node.height);
                         }
@@ -604,7 +609,7 @@ export default class FightScene extends cc.Component implements IMediator {
                     createRockAction,
                     cc.callFunc(line.destroySprite, line)
                 ));
-            }, line
+            }, line, this
         );
 
         line.warningSprite.node.runAction(cc.sequence(
@@ -635,6 +640,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let explodeNode:cc.Node = null;
         if (this.enemyExplodePool.size() > 0) {
             explodeNode = this.enemyExplodePool.get();
+            explodeNode.stopAllActions();
         } else {
             explodeNode = cc.instantiate(this.enemyExplodePrefab);
         }
@@ -652,7 +658,7 @@ export default class FightScene extends cc.Component implements IMediator {
     private KILL_ENEMY(enemySprite:EnemySprite, bDrop:boolean){
         //自爆飞机将全屏其他飞机炸开
         if(enemySprite._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
-            this.cleanEnemy(CLEAN_TYPE.ALL, true);
+            this.USE_BOMB();
         }else {
             if(bDrop){
                 this.doKillEnemyAward(enemySprite);
@@ -689,8 +695,15 @@ export default class FightScene extends cc.Component implements IMediator {
         ));
     }
 
-    private UP_GRADE(){
-        this.cleanEnemy(CLEAN_TYPE.ALL, true);
+    private BULLET_HIT_ENEMY(pos:cc.Vec2){
+        var bulletHitEffectNode:cc.Node = this.createBulletHitEffect();
+        bulletHitEffectNode.setPosition(pos);
+        this.scheduleOnce(function() {
+            this.bulletHitEffectPool.put(bulletHitEffectNode);
+        }, 0.02);
     }
 
+    private ITEM_COLLISION_PLAYER(itemConfig:any){
+
+    }
 }

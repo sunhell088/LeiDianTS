@@ -37,8 +37,9 @@ export default class ShipSprite extends cc.Component implements IMediator{
     eatItemEffect:cc.Node = null;
     @property(cc.Node)
     levelUpNode:cc.Node = null;
-    @property(cc.Sprite)
-    bigPlaneShadow:cc.Sprite = null;
+    @property(cc.Node)
+    bigPlaneShadow:cc.Node = null;
+
 
 
     getCommands():string[] {
@@ -175,7 +176,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     private levelUpAnimation() {
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
         let frame = this.shipSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
-        this.bigPlaneShadow.getComponent(cc.Sprite).spriteFrame = frame;
+        this.getComponent(cc.Sprite).spriteFrame = frame;
         this.levelUpNode.active = true;
         let animation:cc.Animation = this.levelUpNode.getComponent(cc.Animation);
         animation.on(cc.Animation.EventType.FINISHED, function () {
@@ -191,6 +192,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             cc.callFunc(function(sender){
                 sender.setScale(1);
                 sender.active = false;
+                sender.stopAllActions()
             },this.eatItemEffect)
         ));
         if(itemConfig.gold){

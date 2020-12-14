@@ -128,6 +128,15 @@ export class EnemyConfig {
             enterGamePreset:true,
             classType:StayEnemySprite
         },
+        //追踪飞机
+        enemyFollow:{
+            id:"enemyFollow",
+            textureName:"enemy27",
+            HPArray:[0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5],
+            presetCount:1,
+            enterGamePreset:true,
+            classType:FollowEnemySprite
+        },
         //boss1
         enemyBoss1:{
             id:"enemyBoss1",
@@ -154,15 +163,6 @@ export class EnemyConfig {
             presetCount:1,
             enterGamePreset:true,
             classType:BossEnemySprite
-        },
-        //追踪飞机
-        enemyFollow:{
-            id:"enemyFollow",
-            textureName:"enemy27",
-            HPArray:[0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:FollowEnemySprite
         }
     };
 }

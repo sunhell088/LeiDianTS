@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "itemPrefab",
+    "_name": "showEatICoinName",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -21,16 +21,10 @@
     "_components": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 3
-      },
-      {
-        "__id__": 4
       }
     ],
     "_prefab": {
-      "__id__": 5
+      "__id__": 3
     },
     "_opacity": 255,
     "_color": {
@@ -42,8 +36,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 56,
-      "height": 59
+      "width": 46,
+      "height": 16
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -54,8 +48,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        128,
-        335,
+        0,
+        0,
         0,
         0,
         0,
@@ -95,7 +89,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "82eda693-adac-4e9d-be58-e452623b617a"
+      "__uuid__": "af555316-d065-4d86-9c58-f5f3d63a10ac"
     },
     "_type": 0,
     "_sizeMode": 1,
@@ -109,39 +103,8 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": {
-      "__uuid__": "bc6df119-344f-4344-8bf4-803785eebb3a"
+      "__uuid__": "1c9c16d7-96e3-4ebf-b47a-f0890f0eaed8"
     },
-    "_id": ""
-  },
-  {
-    "__type__": "cc.BoxCollider",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "tag": 0,
-    "_offset": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_size": {
-      "__type__": "cc.Size",
-      "width": 100,
-      "height": 100
-    },
-    "_id": ""
-  },
-  {
-    "__type__": "d9c874CDtVJSK/GpWL+IXFO",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
     "_id": ""
   },
   {
@@ -150,9 +113,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "881ebc67-dc16-48c8-8e88-c509b4e50aa1"
+      "__uuid__": "c653baa1-ac17-41ae-bf7b-444366b1e446"
     },
-    "fileId": "e5LQvlcjZIoL+vdYJnRnhp",
+    "fileId": "220QEZxIxGbKSxd4PgTz0J",
     "sync": false
   }
 ]

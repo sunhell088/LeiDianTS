@@ -37,11 +37,13 @@ export class CommonConfig {
     //产生飞机的间隔
     public static ENEMY_DELAY = 2;
     //产生陨石的间隔
-    public static ROCK_CONFIG_DELAY = 10;
+    public static ROCK_CONFIG_DELAY = 15;
+    //产生炸弹飞机的间隔
+    public static BLESS_BOMB_DELAY = 5;
     //产生福利飞机的间隔
     public static BLESS_PLANE_DELAY = 10;
-    //产生停留飞机的间隔
-    public static STAY_ENEMY_DELAY = 15;
+    //产生特殊（停留和追踪）飞机的间隔
+    public static STAY_ENEMY_DELAY = 13;
     //产生冲刺敌机的间隔
     public static ENEMY_SPURT_DELAY = 0.3;
     //同一批陨石出现的间隔时间
@@ -78,5 +80,7 @@ export class CommonConfig {
     //吸铁石时间
     public static XTS_TIME = 15;
     //护照时间
-    public static PROTECT = 15;
+    public static PROTECT_TIME = 15;
+    //双倍火力时间
+    public static DOUBLE_FIRE_TIME = 15;
 }

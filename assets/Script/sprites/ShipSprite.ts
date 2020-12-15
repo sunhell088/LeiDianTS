@@ -60,10 +60,9 @@ export default class ShipSprite extends cc.Component implements IMediator{
 
     //重置飞机能力
     resetEffect(){
-        this.setMagnet(false);
-        Player.player._doublePower = false;
-        Player.player._doubleFire = false;
-        this.setProtect(false);
+        this.setMagnetEnd();
+        this.setProtectEnd();
+        this.setDoubleFireEnd()
     }
 
     comeOnStage(){
@@ -95,18 +94,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
         ));
 
     }
-    //显示护盾
-    setProtect(state:boolean){
-        Player.player._protecting = state;
-        this.protectSprite.node.active = state;
-    }
-
-    //显示磁铁
-    setMagnet(state:boolean){
-        Player.player._magnet = state;
-        this.magnetSprite.node.active = state;
-    }
-
     destroyShipSprite(){
         this.node.active = false;
     }
@@ -122,7 +109,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             this.protectExplodeSprite.on(cc.Animation.EventType.FINISHED, function () {
                 this.protectExplodeSprite.node.active = false;
             }, this);
-            this.setProtect(false);
+            this.setProtectEnd();
         }
         else{
             this.death();
@@ -225,36 +212,46 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
     //吸铁石效果
     private itemFunctionXTS(){
-        Player.player._magnet = true;
-        this.magnetSprite.node.active = true;
-        this.node.stopActionByTag(999)
-        let action = this.node.runAction(cc.sequence(
-            cc.delayTime(CommonConfig.XTS_TIME),
-            cc.callFunc(
-                function(){
-                    Player.player._magnet = false;
-                    this.magnetSprite.node.active = false;
-                    },
-                this
-            )
-        ));
-        action.setTag(999);
+        this.setMagnetStart();
+        this.unschedule(this.setMagnetEnd);
+        this.scheduleOnce(this.setMagnetEnd, CommonConfig.XTS_TIME);
     }
     private itemFunctionProtect(){
-        this.setProtect(true);
-        this.protectSprite.node.stopActionByTag(888)
-        let action = this.protectSprite.node.runAction(cc.sequence(
-            cc.delayTime(CommonConfig.PROTECT),
-            cc.callFunc(
-                function(){
-                    this.setProtect(false);
-                },
-                this
-            )
-        ));
-        action.setTag(888);
+        this.setProtectStart();
+        this.unschedule(this.setProtectEnd);
+        this.scheduleOnce(this.setProtectEnd, CommonConfig.PROTECT_TIME);
+    }
 
+    private itemFunctionDoubleFight(){
+        this.setDoubleFireStart();
+        this.unschedule(this.setDoubleFireEnd);
+        this.scheduleOnce(this.setDoubleFireEnd, CommonConfig.PROTECT_TIME);
+    }
 
+    //显示磁铁
+    setMagnetStart(){
+        Player.player._magnet = true;
+        this.magnetSprite.node.active = true;
+    }
+    setMagnetEnd(){
+        Player.player._magnet = false;
+        this.magnetSprite.node.active = false;
+    }
+    //显示护盾
+    setProtectStart(){
+        Player.player._protecting = true;
+        this.protectSprite.node.active = true;
+    }
+    setProtectEnd(){
+        Player.player._protecting = false;
+        this.protectSprite.node.active = false;
+    }
+    //双倍火力
+    setDoubleFireStart(){
+        Player.player._doubleFire = true;
+    }
+    setDoubleFireEnd(){
+        Player.player._doubleFire = false;
     }
     //--------游戏事件监听方法---------
 
@@ -284,6 +281,11 @@ export default class ShipSprite extends cc.Component implements IMediator{
                 break;
             case ItemConfig.itemConfig.item_protect.name:
                 this.itemFunctionProtect();
+                break;
+            case ItemConfig.itemConfig.item_shadow.name:
+                break;
+            case ItemConfig.itemConfig.item_double.name:
+                this.itemFunctionDoubleFight();
                 break;
         }
     }

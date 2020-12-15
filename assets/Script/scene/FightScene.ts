@@ -103,6 +103,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
         this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
         this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
         this.init();
@@ -114,6 +115,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.unschedule(this.shoot);
         this.unschedule(this.scheduleNormalEnemy);
         this.unschedule(this.scheduleRockGroup);
+        this.unschedule(this.scheduleBombEnemy);
         this.unschedule(this.scheduleBlessEnemy);
         this.unschedule(this.scheduleStayEnemy);
     }
@@ -182,22 +184,23 @@ export default class FightScene extends cc.Component implements IMediator {
             enemy.setDynamicData(ConfigUtil.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
         }
     }
+    //定时创建炸弹飞机
+    private scheduleBombEnemy() {
+        //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
+        if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
+        Player.player._createBombEnemy = true;
+    }
     //定时创建福利飞机
     private scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
-        var enemyConfigObj: any = DifficultConfig.blessEnemyArr[CommonUtil.random(0, DifficultConfig.blessEnemyArr.length - 1)];
-        if (enemyConfigObj.id == EnemyConfig.enemyConfig.enemyBomb.id) {
-            Player.player._createBombEnemy = true;
-        } else if (enemyConfigObj.id == EnemyConfig.enemyConfig.enemyBox.id) {
-            let enemy: EnemySprite = this.createEnemy(enemyConfigObj);
-            //设置坐标
-            var startPosition = enemy["getStartPosition"](enemy)
-            enemy.node.setPosition(startPosition);
-            //设置血量、经验和掉落
-            var hp = enemy._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
-            enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
-        }
+        let enemy: EnemySprite = this.createEnemy(EnemyConfig.enemyConfig.enemyBox);
+        //设置坐标
+        var startPosition = enemy["getStartPosition"](enemy)
+        enemy.node.setPosition(startPosition);
+        //设置血量、经验和掉落
+        var hp = enemy._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+        enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
     }
     //定时创建特殊飞机
     private scheduleStayEnemy() {
@@ -301,27 +304,15 @@ export default class FightScene extends cc.Component implements IMediator {
         let bullet = this.createBullet();
         bullet.x = this.ship.node.x;
         bullet.y = this.ship.node.y + this.ship.node.width / 2;
-        bullet.setScale(1);
-        //升级时子弹不双倍和变大
-        if(!Player.player._levelUpIng){
-            //二条
-            var bullet2 = null;
-            if(Player.player._doubleFire){
-                var scaleRatio = Player.player._doublePower?1.6:1.1;
 
-                bullet2 = this.createBullet();
-                if(!bullet2) return;
-                bullet2.x = this.ship.node.x + bullet2.width*scaleRatio/2;
-                bullet2.y = bullet.y;
-                bullet2.setScale(1);
+        //双倍火力二条
+        var bullet2:cc.Node = null;
+        if(Player.player._doubleFire){
+            bullet2 = this.createBullet();
+            bullet2.x = this.ship.node.x + bullet2.width/2;
+            bullet2.y = this.ship.node.y + this.ship.node.width / 2;
 
-                bullet.x = this.node.x - bullet.width*scaleRatio/2;
-            }
-            //加粗
-            if(Player.player._doublePower){
-                bullet.setScale(1.5);
-                if(bullet2) bullet2.setScale(1.5);
-            }
+            bullet.x = this.ship.node.x - bullet.width/2;
         }
     }
     //根据player信息初始化显示对象

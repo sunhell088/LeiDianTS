@@ -78,11 +78,11 @@ export default class FightScene extends cc.Component implements IMediator {
     @property(cc.Prefab)
     playerBombRainPrefab: cc.Prefab = null;
 
-    @property(cc.Sprite)
-    shipShadow: cc.Sprite = null;
-    @property(cc.Sprite)
-    shipShadow2: cc.Sprite = null;
+    @property(cc.Prefab)
+    shipShadowPrefab: cc.Prefab = null;
 
+    //只支持最多三个
+    private shipShadowList: cc.Node[] = [];
 
     private bulletPool: cc.NodePool = new cc.NodePool();
     private bulletHitEffectPool: cc.NodePool = new cc.NodePool();
@@ -96,6 +96,7 @@ export default class FightScene extends cc.Component implements IMediator {
     private itemPool: cc.NodePool = new cc.NodePool();
     private enemyExplodePool: cc.NodePool = new cc.NodePool();
     private playerBombRainPool: cc.NodePool = new cc.NodePool();
+    private planeShadowPool: cc.NodePool = new cc.NodePool();
 
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
@@ -312,11 +313,8 @@ export default class FightScene extends cc.Component implements IMediator {
     //发射子弹
     private shoot() {
         this.shootReal(this.ship.node);
-        if (this.shipShadow.node.active) {
-            this.shootReal(this.shipShadow.node);
-        }
-        if (this.shipShadow2.node.active) {
-            this.shootReal(this.shipShadow2.node);
+        for (let key in this.shipShadowList) {
+            this.shootReal(this.shipShadowList[key])
         }
     }
 
@@ -527,17 +525,144 @@ export default class FightScene extends cc.Component implements IMediator {
         shipSelf.x = curPos.x;
         shipSelf.y = curPos.y;
 
-        this.onTouchMovedReal(oldX, oldY, curPos, this.shipShadow.node)
-
-        // oldX = this.shipShadow.node.x;
-        // oldY = this.shipShadow.node.y;
-        // this.onTouchMovedReal(oldX, oldY, this.shipShadow.node.getPosition(), this.shipShadow2.node)
+        this.onTouchMovedReal(oldX, oldY, curPos, this.shipShadowList[0])
     }
 
-    private onTouchMovedReal(oldX, oldY, curPos: cc.Vec2, shadow: cc.Node) {
+
+    private onTouchMovedReal(oldX, oldY, curPos: cc.Vec2, shadow){
+        if(!shadow) return;
+        let oldShadowX = shadow.x;
+        let oldShadowY = shadow.y;
         let offsetX: number = curPos.x - oldX;
         let offsetY: number = curPos.y - oldY;
-        console.log(offsetX + "====" + offsetY)
+        //如果往右边移动
+        if (offsetX > 0) {
+            //如果影子在右边
+            if (shadow.x > curPos.x) {
+                shadow.x -= offsetX;
+            } else {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x -= offsetX;
+                } else {
+                    shadow.x += offsetX;
+                }
+            }
+        }
+        //如果往左边移动
+        else {
+            //如果影子在左边
+            if (shadow.x < curPos.x) {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x += Math.abs(offsetX);
+                }
+            } else {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x += Math.abs(offsetX);
+                } else {
+                    shadow.x -= Math.abs(offsetX);
+                }
+            }
+        }
+        //如果往上边移动-------
+        if (offsetY > 0) {
+            //如果影子在上边
+            if (shadow.y > curPos.y) {
+                shadow.y -= offsetY;
+            } else {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y -= offsetY;
+                } else {
+                    shadow.y += offsetY;
+                }
+            }
+        }
+        //如果往下边移动
+        else {
+            //如果影子在下边
+            if (shadow.y < curPos.y) {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y += Math.abs(offsetY);
+                }
+            } else {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y += Math.abs(offsetY);
+                } else {
+                    shadow.y -= Math.abs(offsetY);
+                }
+            }
+        }
+        this.onTouchMovedReal2(oldShadowX, oldShadowY, shadow.getPosition(), this.shipShadowList[1])
+    }
+    private onTouchMovedReal2(oldX, oldY, curPos: cc.Vec2, shadow) {
+        if (!shadow) return;
+        let oldShadowX = shadow.x;
+        let oldShadowY = shadow.y;
+        let offsetX: number = curPos.x - oldX;
+        let offsetY: number = curPos.y - oldY;
+        //如果往右边移动
+        if (offsetX > 0) {
+            //如果影子在右边
+            if (shadow.x > curPos.x) {
+                shadow.x -= offsetX;
+            } else {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x -= offsetX;
+                } else {
+                    shadow.x += offsetX;
+                }
+            }
+        }
+        //如果往左边移动
+        else {
+            //如果影子在左边
+            if (shadow.x < curPos.x) {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x += Math.abs(offsetX);
+                }
+            } else {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x += Math.abs(offsetX);
+                } else {
+                    shadow.x -= Math.abs(offsetX);
+                }
+            }
+        }
+        //如果往上边移动-------
+        if (offsetY > 0) {
+            //如果影子在上边
+            if (shadow.y > curPos.y) {
+                shadow.y -= offsetY;
+            } else {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y -= offsetY;
+                } else {
+                    shadow.y += offsetY;
+                }
+            }
+        }
+        //如果往下边移动
+        else {
+            //如果影子在下边
+            if (shadow.y < curPos.y) {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y += Math.abs(offsetY);
+                }
+            } else {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y += Math.abs(offsetY);
+                } else {
+                    shadow.y -= Math.abs(offsetY);
+                }
+            }
+        }
+        this.onTouchMovedReal3(oldShadowX, oldShadowY, shadow.getPosition(), this.shipShadowList[2])
+    }
+    private onTouchMovedReal3(oldX, oldY, curPos: cc.Vec2, shadow) {
+        if (!shadow) return;
+        let oldShadowX = shadow.x;
+        let oldShadowY = shadow.y;
+        let offsetX: number = curPos.x - oldX;
+        let offsetY: number = curPos.y - oldY;
         //如果往右边移动
         if (offsetX > 0) {
             //如果影子在右边
@@ -767,6 +892,22 @@ export default class FightScene extends cc.Component implements IMediator {
         this.createBomb();
     }
 
+    private setShadowStart(){
+        let spriteNode: cc.Node = null;
+        if (this.planeShadowPool.size() > 0) {
+            spriteNode = this.planeShadowPool.get();
+        } else {
+            spriteNode = cc.instantiate(this.shipShadowPrefab);
+        }
+        this.shipShadowList.push(spriteNode);
+        this.node.addChild(spriteNode);
+        spriteNode.setPosition(this.ship.node.getPosition());
+    }
+
+    private setShadowEnd(){
+        this.planeShadowPool.put(this.shipShadowList.pop());
+    }
+
     //-----------------------------------------
     private KILL_ENEMY(enemySprite: EnemySprite, bDrop: boolean) {
         //自爆飞机将全屏其他飞机炸开
@@ -818,6 +959,16 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private EAT_ITEM(itemConfigObj: any) {
+        switch (itemConfigObj.name) {
+            case ItemConfig.itemConfig.item_shadow.name:
+                if(this.shipShadowList.length==1){
+                    return;
+                }
+                this.setShadowStart();
+                this.unschedule(this.setShadowEnd);
+                this.scheduleOnce(this.setShadowEnd, CommonConfig.SHADOW_TIME);
+                break;
+        }
     }
 
     private SPURT_DURATION(bSpurt: boolean) {

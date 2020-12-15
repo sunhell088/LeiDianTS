@@ -10,7 +10,7 @@ export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode:boolean = true;
+    public debugMode:boolean = false;
 
     //需要存盘的数据
     public data = {

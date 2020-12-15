@@ -107,7 +107,7 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //暂停游戏
     private OnPauseGame(sender,type){
-
+        ObserverManager.sendNotification(GameEvent.EAT_ITEM, ItemConfig.itemConfig.item_shadow);
         return;
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         //游戏暂停

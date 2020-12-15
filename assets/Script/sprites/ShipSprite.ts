@@ -38,7 +38,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     //机身
     @property(cc.Sprite)
     shipSprite:cc.Sprite = null;
-    //机身
+    //机身图集
     @property(cc.SpriteAtlas)
     shipSpriteAtlas:cc.SpriteAtlas = null;
     @property(cc.Node)
@@ -62,7 +62,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     resetEffect(){
         this.setMagnetEnd();
         this.setProtectEnd();
-        this.setDoubleFireEnd()
+        this.setDoubleFireEnd();
     }
 
     comeOnStage(){
@@ -77,23 +77,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             })
         ));
     }
-    //更换飞机
-    changePlane(planeConfig){
-        this.node.runAction(cc.sequence(
-            //更换图片（赋予新飞机的功能）
-            cc.callFunc(function(){
-                this.resetEffect();
-                let frame = this.shipSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
-                this.shipSprite.getComponent(cc.Sprite).spriteFrame = frame;
-                Player.player.data.currentPlaneID = planeConfig.id;
-                planeConfig.planeFunction(this);
-                ObserverManager.sendNotification(GameEvent.CHANGE_PLANE);
-            }, this),
-            //登场
-            cc.callFunc(this.comeOnStage,this)
-        ));
 
-    }
     destroyShipSprite(){
         this.node.active = false;
     }
@@ -225,7 +209,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     private itemFunctionDoubleFight(){
         this.setDoubleFireStart();
         this.unschedule(this.setDoubleFireEnd);
-        this.scheduleOnce(this.setDoubleFireEnd, CommonConfig.PROTECT_TIME);
+        this.scheduleOnce(this.setDoubleFireEnd, CommonConfig.DOUBLE_FIRE_TIME);
     }
 
     //显示磁铁
@@ -246,6 +230,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
         Player.player._protecting = false;
         this.protectSprite.node.active = false;
     }
+
     //双倍火力
     setDoubleFireStart(){
         Player.player._doubleFire = true;
@@ -281,8 +266,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
                 break;
             case ItemConfig.itemConfig.item_protect.name:
                 this.itemFunctionProtect();
-                break;
-            case ItemConfig.itemConfig.item_shadow.name:
                 break;
             case ItemConfig.itemConfig.item_double.name:
                 this.itemFunctionDoubleFight();

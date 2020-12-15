@@ -79,8 +79,10 @@ export class CommonConfig {
 
     //吸铁石时间
     public static XTS_TIME = 15;
-    //护照时间
+    //护盾时间
     public static PROTECT_TIME = 15;
     //双倍火力时间
     public static DOUBLE_FIRE_TIME = 15;
+    //影子时间
+    public static SHADOW_TIME = 15;
 }

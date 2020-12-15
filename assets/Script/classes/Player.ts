@@ -77,8 +77,8 @@ export class Player {
     public _death:boolean = false;
     //吸铁石中
     public _magnet:boolean = false;
-    //双倍攻击中
-    public _doublePower:boolean = false;
+    //影子生成中
+    public _shadowCount:number = 0;
     //双倍火力中
     public _doubleFire:boolean = false;
     //护罩中
@@ -257,7 +257,6 @@ export class Player {
     public getBulletPower():number{
         var basePower = 1;
         var ratio = 1;
-        if(this._doublePower) ratio = 2;
         return basePower*ratio;
     }
     //飞行距离对应的难度等级

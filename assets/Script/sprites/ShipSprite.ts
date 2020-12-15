@@ -46,7 +46,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
 
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
-            GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER];
+            GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER,GameEvent.COLLIDER_MAGNET];
     }
     
     protected onLoad(): void {
@@ -55,6 +55,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
     }
+
     //重置飞机能力
     resetEffect(){
         this.setMagnet(false);
@@ -153,15 +154,12 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     attractItem(itemSprite:ItemSprite){
-        if(itemSprite._bAttracting) return;
         itemSprite.node.stopAllActions();
         let moveTo = cc.moveTo(0.1, new cc.Vec2(this.node.x, this.node.y));
         itemSprite.node.runAction(cc.sequence(
             moveTo,
-            cc.callFunc(itemSprite.destroy, itemSprite)
+            cc.callFunc(itemSprite.destroySprite, itemSprite)
         ));
-
-        itemSprite._bAttracting = true;
     }
 
     getPlayerSprintExplodeAnimation(){
@@ -228,6 +226,26 @@ export default class ShipSprite extends cc.Component implements IMediator{
             }, spurtDuration);
         }, this);
     }
+    //吸铁石效果
+    private itemFunctionXTS(){
+        Player.player._magnet = true;
+        this.magnetSprite.node.active = true;
+        this.node.stopActionByTag(999)
+        let action = this.node.runAction(cc.sequence(
+            cc.delayTime(CommonConfig.XTS_TIME),
+            cc.callFunc(
+                function(){
+                    Player.player._magnet = false;
+                    this.magnetSprite.node.active = false;
+                    },
+                this
+            )
+        ));
+        action.setTag(999);
+    }
+    private itemFunctionProtect(){
+
+    }
     //--------游戏事件监听方法---------
 
     private RESTART_GAME(){
@@ -252,8 +270,15 @@ export default class ShipSprite extends cc.Component implements IMediator{
                 this.itemFunctionSpurt();
                 break;
             case ItemConfig.itemConfig.item_xts.name:
-                // this.itemFunctionSpurt();
+                this.itemFunctionXTS();
+                break;
+            case ItemConfig.itemConfig.item_protect.name:
+                this.itemFunctionProtect();
                 break;
         }
+    }
+
+    private COLLIDER_MAGNET(itemSpriteNode:ItemSprite){
+        this.attractItem(itemSpriteNode);
     }
 }

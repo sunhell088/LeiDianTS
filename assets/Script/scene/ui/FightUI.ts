@@ -14,24 +14,15 @@ import {CommonConfig} from "../../configs/CommonConfig";
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class FightUI extends cc.Component implements IMediator{
-    //当前等级
-    @property(cc.Label)
-    gradeLabel :cc.Label =  null;
     //当前距离
     @property(cc.Label)
     distanceLabel :cc.Label=  null;
-    //炸弹数目
-    @property([cc.Sprite])
-    bombList:cc.Sprite[] =[];
     //金币数量
     @property(cc.Label)
     goldCount :cc.Label =  null;
     //每500米报数
     @property(cc.Label)
     distanceStage :cc.Label =  null;
-    //炸弹按钮
-    @property(cc.Button)
-    bombBtn :cc.Button = null;
     //暂停按钮
     @property(cc.Button)
     pauseBtn :cc.Button = null;
@@ -79,9 +70,10 @@ export default class FightUI extends cc.Component implements IMediator{
     eatCoinEffectPrefab:cc.Prefab = null;
 
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
+    private bombBtn: any;
 
     getCommands():string[] {
-        return [GameEvent.SET_BOMB, GameEvent.SET_CURRENT_REWARD_GOLD,
+        return [GameEvent.SET_CURRENT_REWARD_GOLD,
             GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT, GameEvent.UPDATE_DISTANCE_STAGE,
             GameEvent.ITEM_COLLISION_PLAYER];
     }
@@ -89,7 +81,6 @@ export default class FightUI extends cc.Component implements IMediator{
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
         this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
-        this.bombBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick, this);
         this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
         this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
         this.init();
@@ -105,32 +96,14 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //初始化玩家UI信息
     private init(){
-        this.setGradeLabel(Player.player.getBulletGrade());
-        this.setBombCount(Player.player.bomb);
         this.goldCount.string = "0";
     }
 
-    //刷新玩家等级
-    private setGradeLabel(grade){
-        this.gradeLabel.string = "" + grade;
-    }
     //刷新飞行距离
     private setDistanceLabel(distance){
         this.distanceLabel.string = distance+"M";
     }
 
-
-    //刷新拥有炸弹数目
-    private setBombCount(count){
-        for (let k in this.bombList){
-            if (k < count){
-                this.bombList[k].node.active = true;
-            }
-            else{
-                this.bombList[k].node.active = false;
-            }
-        }
-    }
     //显示刷新记录图片
     private showUpdateRecord(){
         this.updateRecordSpt.node.scale = 8;
@@ -250,10 +223,6 @@ export default class FightUI extends cc.Component implements IMediator{
         return spriteNode;
     }
     //--------游戏事件监听方法---------
-
-    private SET_BOMB(count:number){
-        this.setBombCount(count);
-    }
 
     private SET_CURRENT_REWARD_GOLD(count:number){
         this.goldCount.string = ""+count;

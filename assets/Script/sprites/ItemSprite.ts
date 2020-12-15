@@ -16,8 +16,6 @@ export default class ItemSprite extends cc.Component {
 
     //玩家吃到道具后执行的事件
     _itemConfig: any = null;
-    //是否处于被吸引状态，如果是，则不判断碰撞了
-    _bAttracting: boolean = false;
 
     initSprite(node:cc.Node, atlas:cc.SpriteAtlas, pool:cc.NodePool, itemConfig:any){
         this._spriteNode = node;
@@ -33,7 +31,6 @@ export default class ItemSprite extends cc.Component {
 
     destroySprite() {
         this._spritePool.put(this._spriteNode);
-        this._bAttracting = false;
     }
 
     drop() {

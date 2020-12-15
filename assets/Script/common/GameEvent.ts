@@ -1,11 +1,9 @@
 export class GameEvent {
-    public static SET_BOMB:string = "SET_BOMB";
     public static SET_CURRENT_REWARD_GOLD:string = "SET_CURRENT_REWARD_GOLD";
 
     public static USE_STORE_ITEM:string = "USE_STORE_ITEM";
     public static USE_FIGHT_DROP_ITEM:string = "USE_FIGHT_DROP_ITEM";
 
-    public static USE_BOMB:string = "USE_BOMB";
 
     public static RESTART_GAME:string = "RESTART_GAME";
     public static GAME_OVER:string = "GAME_OVER";
@@ -32,5 +30,8 @@ export class GameEvent {
 
     //开始冲刺（已经在冲刺中）
     public static SPURT_DURATION:string = "SPURT_DURATION";
+
+    //碰到吸铁石区域了
+    public static COLLIDER_MAGNET:string = "COLLIDER_MAGNET";
 
 }

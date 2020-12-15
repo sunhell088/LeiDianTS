@@ -93,13 +93,12 @@ export default class FightScene extends cc.Component implements IMediator {
     private playerBombRainPool: cc.NodePool = new cc.NodePool();
 
     getCommands(): string[] {
-        return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB, GameEvent.GAME_OVER,
+        return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
             GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER,GameEvent.SPURT_DURATION];
     }
 
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
-        this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
@@ -111,7 +110,6 @@ export default class FightScene extends cc.Component implements IMediator {
 
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
-        this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchBegan, this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.unschedule(this.shoot);
         this.unschedule(this.scheduleNormalEnemy);
@@ -463,6 +461,10 @@ export default class FightScene extends cc.Component implements IMediator {
         //掉落物品
         for(var i=0;i<enemySprite._dropItems.length;i++){
             var item:ItemSprite = this.createItemSprite(enemySprite._dropItems[i]);
+            //如果在冲刺中，则只爆金币类
+            if(Player.player._spurt||Player.player._spurtReadying){
+                if(!item._itemConfig.gold) continue;
+            }
             item.setSpriteFrame();
             item.node.x = enemySprite.node.x;
             item.node.y = enemySprite.node.y;
@@ -473,16 +475,6 @@ export default class FightScene extends cc.Component implements IMediator {
             }
             item.drop();
         }
-    }
-
-    private onTouchBegan(event) {
-        if(Player.player._clicked){
-            ObserverManager.sendNotification(GameEvent.USE_BOMB);
-        }else{
-            Player.player._clicked = true;
-            this.scheduleOnce(function(){ Player.player._clicked = false; }, 0.25);
-        }
-        return true
     }
 
     private onTouchMoved(event) {
@@ -656,13 +648,16 @@ export default class FightScene extends cc.Component implements IMediator {
     //冲刺
     private itemFunctionSpurt(){
         if(Player.player._spurt||Player.player._spurtReadying) return;
-
+    }
+    private useBomb(){
+        if(Player.player._bomb) return;
+        this.createBomb();
     }
     //-----------------------------------------
     private KILL_ENEMY(enemySprite:EnemySprite, bDrop:boolean){
         //自爆飞机将全屏其他飞机炸开
         if(enemySprite._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
-            this.USE_BOMB();
+            this.useBomb();
         }else {
             if(bDrop){
                 this.doKillEnemyAward(enemySprite);
@@ -677,15 +672,6 @@ export default class FightScene extends cc.Component implements IMediator {
 
     private PROTECT_EFFECT(){
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
-    }
-
-    private USE_BOMB(){
-        if(Player.player._bomb||Player.player._levelUpIng) return;
-        if(!Player.player.useBomb()){
-            this.node.runAction(GameUtil.shakeBy(0.2,5,5));
-            return;
-        }
-        this.createBomb();
     }
 
     private GAME_OVER(){
@@ -719,7 +705,7 @@ export default class FightScene extends cc.Component implements IMediator {
         if(bSpurt){
             this.unschedule(this.scheduleNormalEnemy);
             this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_SPURT_DELAY);
-            this.USE_BOMB();
+            this.useBomb();
         }else {
             this.unschedule(this.scheduleNormalEnemy);
             this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);

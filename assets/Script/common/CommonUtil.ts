@@ -26,7 +26,7 @@ export class CommonUtil {
         return parseInt(Math.random()*(maxInclud-min+1)+min);
     };
 
-//获得碰撞区域
+    //获得碰撞区域
     public static getCollideRect(sprite){
         let rect = cc.rect(sprite.x - sprite.width/2, sprite.y - sprite.height/2, sprite.width, sprite.height);
         if(!sprite.visible) {
@@ -35,7 +35,7 @@ export class CommonUtil {
         return rect;
     };
 
-//获得预创碰撞区域(并且每次重置)
+    //获得预创碰撞区域(并且每次重置)
     public static getPresetCollideRect(sprite){
         if(sprite.visible){
             sprite._collideRect.x = sprite.x - sprite.width / 2;
@@ -51,7 +51,7 @@ export class CommonUtil {
         return sprite._collideRect;
     };
 
-//控制范围
+    //控制范围
     public static pClamp(node:cc.Node){
         let newPos:cc.Vec2 = node.getPosition();
         newPos = newPos.clampf(new cc.Vec2(-CommonConfig.WIDTH/2+node.width/2, node.height/2),

@@ -129,7 +129,6 @@ export class Player {
 
     //获得指定飞机的等级(不传参数则为当前出战飞机)
     public getBulletGrade(planeID?):number {
-        return 20;
         if (planeID == undefined) planeID = this.data.currentPlaneID;
         this.data.grades[planeID] = this.data.grades[planeID] || 1;
         return this.data.grades[planeID];
@@ -147,22 +146,6 @@ export class Player {
         this.data.gold -= value;
     }
 
-    //增加炸弹
-    public addBomb(count:number){
-        this.bomb += count;
-        if(this.bomb >= CommonConfig.BOMB_MAX_COUNT){
-            this.bomb = CommonConfig.BOMB_MAX_COUNT;
-        }
-        ObserverManager.sendNotification(GameEvent.SET_BOMB, this.bomb);
-    }
-    //使用炸弹
-    public useBomb():boolean{
-        this.bomb = 5;
-        if(this.bomb <= 0) return false;
-        this.bomb--;
-        ObserverManager.sendNotification(GameEvent.SET_BOMB, this.bomb);
-        return true;
-    }
     //增加本局金币数量
     public addCurrentRewardGold(value){
         if(value<=0) return;

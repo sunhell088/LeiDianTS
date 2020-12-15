@@ -89,7 +89,7 @@ export class ConfigUtil {
         return dropArray;
     };
 
-    //获得暴落物
+    //获得功能性暴落物
     public static getSpecialDropItem():any{
         var itemConfig = null;
         var random = parseInt(""+CommonUtil.random(1,100));

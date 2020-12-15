@@ -74,4 +74,7 @@ export class CommonConfig {
 
     //-------------------
     public static PRESET_COUNT_BOMB = 10;
+
+    //吸铁石时间
+    public static XTS_TIME = 15;
 }

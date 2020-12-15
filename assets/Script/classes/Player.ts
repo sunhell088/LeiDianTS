@@ -5,14 +5,12 @@ import {CommonUtil} from "../common/CommonUtil";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
 import {ConfigUtil} from "../common/ConfigUtil";
-import {GameUtil} from "../common/GameUtil";
-import {SoundConfig} from "../configs/SoundConfig";
 
 export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode:boolean = true;
+    public debugMode:boolean = false;
 
     //需要存盘的数据
     public data = {
@@ -87,8 +85,6 @@ export class Player {
     public _protecting:boolean = false;
     //升级状态中
     public _levelUpIng:boolean = false;
-    //升级后的暴走状态中
-    public _invincible:boolean = false;
     //切换战机登场中
     public _changePlaneIng:boolean = false;
     //停止发射子弹中
@@ -262,7 +258,6 @@ export class Player {
         var basePower = 1;
         var ratio = 1;
         if(this._doublePower) ratio = 2;
-        if(this._invincible) ratio = 10000;
         return basePower*ratio;
     }
     //飞行距离对应的难度等级

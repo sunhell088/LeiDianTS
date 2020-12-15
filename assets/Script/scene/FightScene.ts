@@ -72,8 +72,8 @@ export default class FightScene extends cc.Component implements IMediator {
     enemyExplodePrefab:cc.Prefab = null;
     @property(cc.Prefab)
     enemyExplode2Prefab:cc.Prefab = null;
-    @property(cc.Sprite)
-    playerDeadExplodeSprite:cc.Sprite = null;
+    @property(cc.Animation)
+    playerDeadExplodeSprite:cc.Animation = null;
 
     @property(cc.Prefab)
     playerBombRainPrefab:cc.Prefab = null;
@@ -303,7 +303,7 @@ export default class FightScene extends cc.Component implements IMediator {
         bullet.y = this.ship.node.y + this.ship.node.width / 2;
         bullet.setScale(1);
         //升级时子弹不双倍和变大
-        if(!Player.player._levelUpIng&&!Player.player._invincible){
+        if(!Player.player._levelUpIng){
             //二条
             var bullet2 = null;
             if(Player.player._doubleFire){
@@ -394,14 +394,18 @@ export default class FightScene extends cc.Component implements IMediator {
         let rockLineSprite:RockLineSprite = null;
         let rockSprite:RockSprite = null;
         let enemy:EnemySprite = null;
+        let rockLineSpriteList:RockLineSprite[] = [];
+        let rockSpriteList:RockSprite[] = [];
+        let enemyList:EnemySprite[] = [];
         for(let key in childrenArray){
             if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ROCK){
                 rockLineSprite = childrenArray[key].getComponent(RockLineSprite);
                 if(rockLineSprite){
-                    rockLineSprite.destroySprite();
+                    rockLineSpriteList.push(rockLineSprite);
                 }
                 rockSprite = childrenArray[key].getComponent(RockSprite);
                 if(rockSprite){
+                    rockSpriteList.push(rockSprite);
                     rockSprite.destroySprite();
                 }
             }
@@ -409,10 +413,19 @@ export default class FightScene extends cc.Component implements IMediator {
                 enemy = childrenArray[key].getComponent(EnemySprite);
                 if(enemy){
                     if(enemy._enemyConfig.classType==EnemySprite){
-                        enemy.hurt(-1,bDrop)
+                        enemyList.push(enemy);
                     }
                 }
             }
+        }
+        for(let key in rockLineSpriteList){
+            rockLineSpriteList[key].destroySprite();
+        }
+        for(let key in rockSpriteList){
+            rockSpriteList[key].destroySprite();
+        }
+        for(let key in enemyList){
+            enemyList[key].hurt(-1,true);
         }
     }
     //创建炸弹效果
@@ -675,6 +688,12 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private GAME_OVER(){
+        this.playerDeadExplodeSprite.node.setPosition(this.ship.node.getPosition());
+        this.playerDeadExplodeSprite.node.active = true;
+        this.playerDeadExplodeSprite.play();
+        this.playerDeadExplodeSprite.on(cc.Animation.EventType.FINISHED, function (xxoo,xx2) {
+            this.playerDeadExplodeSprite.node.active = false;
+        }, this)
         this.node.runAction(cc.sequence(
             cc.delayTime(2),
             cc.callFunc(function () {
@@ -698,7 +717,6 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private EAT_ITEM_NAME_FLY_OVER(itemConfigObj:any){
-        this.cleanEnemy(CLEAN_TYPE.ALL, false);
     }
 
     private SPURT_DURATION(bSpurt:boolean){

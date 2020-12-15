@@ -52,15 +52,6 @@ export default class FightUI extends cc.Component implements IMediator{
     @property([cc.SpriteFrame])
     levelUpManSpriteFrame:cc.SpriteFrame[] = [];
 
-    //商城道具图片（用于开局使用时给效果）
-    @property(cc.Sprite)
-    storeItemSpurt:cc.Sprite = null;
-    @property(cc.Sprite)
-    storeItemRevive:cc.Sprite = null;
-    @property(cc.Sprite)
-    storeItemDeath:cc.Sprite = null;
-    @property(cc.Sprite)
-    storeItemChange:cc.Sprite = null;
     //吃功能道具飘名字
     @property(cc.SpriteAtlas)
     showEatItemNameAtlas:cc.SpriteAtlas = null;
@@ -70,7 +61,6 @@ export default class FightUI extends cc.Component implements IMediator{
     eatCoinEffectPrefab:cc.Prefab = null;
 
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
-    private bombBtn: any;
 
     getCommands():string[] {
         return [GameEvent.SET_CURRENT_REWARD_GOLD,
@@ -89,7 +79,6 @@ export default class FightUI extends cc.Component implements IMediator{
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
         this.pauseBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
-        this.bombBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBombBtnClick, this);
         this.backBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
         this.restartBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
     }
@@ -115,14 +104,11 @@ export default class FightUI extends cc.Component implements IMediator{
             GameUtil.getHideSelfCallFun(this.updateRecordSpt.node)
         ));
     }
-    //炸弹按钮
-    private OnBombBtnClick (sender, type){
-        // ObserverManager.sendNotification(GameEvent.USE_BOMB);
-        ObserverManager.sendNotification(GameEvent.EAT_ITEM_NAME_FLY_OVER, ItemConfig.itemConfig.item_cc);
-    }
 
     //暂停游戏
     private OnPauseGame(sender,type){
+        ObserverManager.sendNotification(GameEvent.PROTECT_EFFECT);
+        return;
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         //游戏暂停
         cc.director.pause();
@@ -234,31 +220,6 @@ export default class FightUI extends cc.Component implements IMediator{
 
     public MOVE_BG(currentDistance:number){
         this.setDistanceLabel(currentDistance)
-    }
-
-    private STORE_ITEM_EFFECT(storeItemConfig:any, shipSprite:ShipSprite){
-        //出现道具图标
-        var storeItemIcon = this.storeItemRevive;
-        storeItemIcon.node.setPosition(0, 0);
-        storeItemIcon.node.scale = 8;
-        storeItemIcon.node.runAction(cc.sequence(
-            cc.callFunc(function(){
-                storeItemIcon.node.active = true
-            }),
-            cc.scaleTo(0.2,1),
-            GameUtil.shakeBy(0.3,10,5),
-            cc.delayTime(0.5),
-            GameUtil.getHideSelfCallFun(storeItemIcon.node),
-            cc.callFunc(function(){
-                shipSprite.revive();
-                shipSprite.changePlane(ConfigUtil.getPlaneConfig(Player.player._revivePlaneID));
-                Player.player._revivePlaneID = 0;
-            }),
-            cc.delayTime(1),
-            cc.callFunc(function(){
-                Player.player._changePlaneIng = false;
-            })
-        ));
     }
 
     private UPDATE_DISTANCE_STAGE(){

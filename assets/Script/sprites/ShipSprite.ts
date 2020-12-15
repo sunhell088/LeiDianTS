@@ -19,8 +19,10 @@ const {ccclass, property} = cc._decorator;
 @ccclass
 export default class ShipSprite extends cc.Component implements IMediator{
     //护盾动画
-    @property(cc.Sprite)
-    protectSprite:cc.Sprite = null;
+    @property(cc.Animation)
+    protectSprite:cc.Animation = null;
+    @property(cc.Animation)
+    protectExplodeSprite:cc.Animation = null;
     //磁铁动画
     @property(cc.Sprite)
     magnetSprite:cc.Sprite = null;
@@ -110,23 +112,18 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     hurt(){
-        if(Player.player._invincible||Player.player._spurt||Player.player.debugMode) return;
+        if(Player.player._spurt||Player.player.debugMode) return;
         //是否在护盾状态下
         if(Player.player._protecting){
             GameUtil.playSound(SoundConfig.shield);  //音效
             ObserverManager.sendNotification(GameEvent.PROTECT_EFFECT);
-            this.protectSprite.node.stopAllActions()
-            this.protectSprite.node.runAction(cc.sequence(cc.scaleBy(0.4,40),
-                cc.callFunc(function(){this.setProtect(false);},this)));
-        }//判断是否有接力
-        else if(Player.player._revivePlaneID>0){
-            this.death();
-            this.node.runAction(cc.sequence(
-                cc.delayTime(1),
-                cc.callFunc(this.storeItemRevive,this)
-            ));
+            this.protectExplodeSprite.node.active = true;
+            this.protectExplodeSprite.play();
+            this.protectExplodeSprite.on(cc.Animation.EventType.FINISHED, function () {
+                this.protectExplodeSprite.node.active = false;
+            }, this);
+            this.setProtect(false);
         }
-        //判断死亡时是否有商城道具触发
         else{
             this.death();
             ObserverManager.sendNotification(GameEvent.GAME_OVER);
@@ -244,6 +241,19 @@ export default class ShipSprite extends cc.Component implements IMediator{
         action.setTag(999);
     }
     private itemFunctionProtect(){
+        this.setProtect(true);
+        this.protectSprite.node.stopActionByTag(888)
+        let action = this.protectSprite.node.runAction(cc.sequence(
+            cc.delayTime(CommonConfig.PROTECT),
+            cc.callFunc(
+                function(){
+                    this.setProtect(false);
+                },
+                this
+            )
+        ));
+        action.setTag(888);
+
 
     }
     //--------游戏事件监听方法---------

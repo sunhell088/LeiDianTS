@@ -77,4 +77,6 @@ export class CommonConfig {
 
     //吸铁石时间
     public static XTS_TIME = 15;
+    //护照时间
+    public static PROTECT = 15;
 }

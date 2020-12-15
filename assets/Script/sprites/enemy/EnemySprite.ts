@@ -20,7 +20,7 @@ export default class EnemySprite extends cc.Component {
     _enemyConfig:any = null;
     _MAX_HP:number = 0;
     _HP:number = 0;
-    _dropItems:any = null;
+    _dropItems:any[] = null;
 
     @property(cc.ProgressBar)
     bloodBar:cc.ProgressBar = null;
@@ -83,6 +83,7 @@ export default class EnemySprite extends cc.Component {
 
     //动态设置敌机的血量、经验和掉落物品
     setDynamicData(hp, exp, items){
+        this._dropItems = [];
         this._MAX_HP = hp;
         this._HP = this._MAX_HP;
         this._dropItems = [];
@@ -105,14 +106,10 @@ export default class EnemySprite extends cc.Component {
         //玩家
         let shipSprite:ShipSprite = other.getComponent(ShipSprite);
         if(shipSprite){
-            //冲刺 TODO
-            // if(Player.player._spurt){
-            //     self.size.width = CommonConfig.WIDTH/2;
-            // }
             if(!Player.player._spurt&&!Player.player._bomb){
                 shipSprite.hurt();
             }
-            this.hurt(-1,true);
+            // this.hurt(-1,true);
         }
         //敌机与玩家炸弹碰撞
         let bombRainSprite:BombRainSprite = other.getComponent(BombRainSprite);

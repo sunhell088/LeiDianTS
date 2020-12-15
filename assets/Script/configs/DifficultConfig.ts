@@ -30,7 +30,7 @@ export class DifficultConfig {
 
     //爆金币和钻石的概率
     public static SPECIAL_DROP_ODDS = [
-        {min:1,max:20, itemConfig:ItemConfig.itemConfig.item_cc},
+        {min:1,max:99, itemConfig:ItemConfig.itemConfig.item_cc},
         {min:21,max:40, itemConfig:ItemConfig.itemConfig.item_xts},
         {min:41,max:60, itemConfig:ItemConfig.itemConfig.item_protect},
         {min:61,max:80, itemConfig:ItemConfig.itemConfig.item_shadow},

@@ -1,0 +1,51 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "spurtDuration",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.6666666666666666,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 2,
+  "curveData": {
+    "paths": {
+      "cc_efx10": {
+        "props": {
+          "angle": [
+            {
+              "frame": 0,
+              "value": 0
+            },
+            {
+              "frame": 0.3333333333333333,
+              "value": 360
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": 720
+            }
+          ]
+        }
+      },
+      "skill_up0": {
+        "props": {
+          "scaleX": [
+            {
+              "frame": 0,
+              "value": 1
+            },
+            {
+              "frame": 0.3333333333333333,
+              "value": 1.1
+            },
+            {
+              "frame": 0.6666666666666666,
+              "value": 0.9
+            }
+          ]
+        }
+      }
+    }
+  },
+  "events": []
+}

@@ -24,9 +24,15 @@ export default class ShipSprite extends cc.Component implements IMediator{
     //磁铁动画
     @property(cc.Sprite)
     magnetSprite:cc.Sprite = null;
-    //冲刺动画
-    @property(cc.Sprite)
-    spurtSprite:cc.Sprite = null;
+    //冲刺准备的爆炸动画
+    @property(cc.Animation)
+    spurtStartExplode:cc.Animation = null;
+    //冲刺中的缩放动画
+    @property(cc.Animation)
+    spurtDuration:cc.Animation = null;
+    //冲刺结束的爆炸动画
+    @property(cc.Animation)
+    spurtEndExplode:cc.Animation = null;
     //机身
     @property(cc.Sprite)
     shipSprite:cc.Sprite = null;
@@ -35,16 +41,12 @@ export default class ShipSprite extends cc.Component implements IMediator{
     shipSpriteAtlas:cc.SpriteAtlas = null;
     @property(cc.Node)
     eatItemEffect:cc.Node = null;
-    @property(cc.Node)
-    levelUpNode:cc.Node = null;
-    @property(cc.Node)
-    bigPlaneShadow:cc.Node = null;
 
 
 
     getCommands():string[] {
-        return [GameEvent.LEVEL_UP_UI_ANIMATION_FINISH, GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
-            GameEvent.ROCK_COLLISION_PLAYER];
+        return [GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
+            GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER];
     }
     
     protected onLoad(): void {
@@ -107,7 +109,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     hurt(){
-        if(Player.player._invincible||Player.player.debugMode) return;
+        if(Player.player._invincible||Player.player._spurt||Player.player.debugMode) return;
         //是否在护盾状态下
         if(Player.player._protecting){
             GameUtil.playSound(SoundConfig.shield);  //音效
@@ -172,18 +174,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
         this.eatItemEffect.getComponent(cc.Animation).play();
     }
 
-    //升级动画
-    private levelUpAnimation() {
-        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
-        let frame = this.shipSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
-        this.getComponent(cc.Sprite).spriteFrame = frame;
-        this.levelUpNode.active = true;
-        let animation:cc.Animation = this.levelUpNode.getComponent(cc.Animation);
-        animation.on(cc.Animation.EventType.FINISHED, function () {
-            this.levelUpNode.active = false;
-        }, this)
-        animation.play();
-    }
+
     //吃道具闪一下光
     private eatItemBlink(itemConfig:any){
         this.eatItemEffect.active = true;
@@ -205,10 +196,39 @@ export default class ShipSprite extends cc.Component implements IMediator{
             GameUtil.playSound(SoundConfig.get_item);
         }
     }
-    //--------游戏事件监听方法---------
-    private LEVEL_UP_UI_ANIMATION_FINISH(){
-        this.levelUpAnimation();
+    //冲刺表现动画
+    private itemFunctionSpurt(){
+        if(Player.player._spurt||Player.player._spurtReadying) return;
+        //冲刺持续时间
+        var spurtDuration = CommonConfig.SPURT_DURATION;
+        //冲刺开始的蓄能动画
+        GameUtil.playSound(SoundConfig.cc_ready);
+        Player.player._spurtReadying = true;
+        this.spurtStartExplode.node.active = true;
+        this.spurtStartExplode.play();
+        this.spurtStartExplode.on(cc.Animation.EventType.FINISHED, function () {
+            //冲刺蓄能结束
+            Player.player._spurtReadying = false;
+            Player.player._spurt = true;
+            //冲刺过程缩放光柱
+            this.spurtDuration.node.active = true;
+            this.spurtDuration.play();
+            this.spurtStartExplode.node.active = false;
+            ObserverManager.sendNotification(GameEvent.SPURT_DURATION, true);
+            this.scheduleOnce(function() {
+                //持续指定时间播放爆炸动画
+                this.spurtDuration.node.active = false;
+                this.spurtDuration.stop();
+                Player.player._spurt = false;
+                this.scheduleOnce(function () {
+                    this.spurtEndExplode.node.active = true;
+                    this.spurtEndExplode.play();
+                    ObserverManager.sendNotification(GameEvent.SPURT_DURATION, false);
+                }, 0.7);
+            }, spurtDuration);
+        }, this);
     }
+    //--------游戏事件监听方法---------
 
     private RESTART_GAME(){
         this.node.stopAllActions();
@@ -224,5 +244,16 @@ export default class ShipSprite extends cc.Component implements IMediator{
 
     private ROCK_COLLISION_PLAYER(){
         this.hurt();
+    }
+
+    private EAT_ITEM_NAME_FLY_OVER(itemConfigObj:any){
+        switch (itemConfigObj.name) {
+            case ItemConfig.itemConfig.item_cc.name:
+                this.itemFunctionSpurt();
+                break;
+            case ItemConfig.itemConfig.item_xts.name:
+                // this.itemFunctionSpurt();
+                break;
+        }
     }
 }

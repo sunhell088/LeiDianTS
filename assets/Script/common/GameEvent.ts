@@ -24,9 +24,13 @@ export class GameEvent {
     //复活甲
     public static STORE_ITEM_EFFECT:string = "STORE_ITEM_EFFECT";
 
-    //升级UI动画播放完毕
-    public static LEVEL_UP_UI_ANIMATION_FINISH:string = "LEVEL_UP_UI_ANIMATION_FINISH";
     //子弹击中敌机
     public static BULLET_HIT_ENEMY:string = "BULLET_HIT_ENEMY";
+
+    //功能道具飘出结束
+    public static EAT_ITEM_NAME_FLY_OVER:string = "EAT_ITEM_NAME_FLY_OVER";
+
+    //开始冲刺（已经在冲刺中）
+    public static SPURT_DURATION:string = "SPURT_DURATION";
 
 }

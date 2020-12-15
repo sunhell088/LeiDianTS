@@ -19,6 +19,7 @@ import {ConfigUtil} from "../common/ConfigUtil";
 import {GameEvent} from "../common/GameEvent";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {ItemConfig} from "../configs/ItemConfig";
+import Game = cc.Game;
 
 
 const {ccclass, property} = cc._decorator;
@@ -93,7 +94,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB, GameEvent.GAME_OVER,
-            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER];
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER,GameEvent.SPURT_DURATION];
     }
 
     protected onLoad(): void {
@@ -150,7 +151,7 @@ export default class FightScene extends cc.Component implements IMediator {
         }
     }
     //定时创建普通飞机
-    private scheduleNormalEnemy() {
+    public scheduleNormalEnemy() {
         //升级状态中 不创建
         if (Player.player._levelUpIng) return;
         var formation = FormationConfig.formationConfig[CommonUtil.random(0, FormationConfig.formationConfig.length - 1)];
@@ -298,7 +299,6 @@ export default class FightScene extends cc.Component implements IMediator {
         if(Player.player._stopBullet) return;
         if(Player.player._changePlaneIng) return;
         if(Player.player._death) return;
-        if(Player.player._spurt) return;
         if(Player.player._levelUpIng) return;
         let bullet = this.createBullet();
         bullet.x = this.ship.node.x;
@@ -411,7 +411,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 enemy = childrenArray[key].getComponent(EnemySprite);
                 if(enemy){
                     if(enemy._enemyConfig.classType==EnemySprite){
-                        enemy.death(bDrop)
+                        enemy.hurt(-1,bDrop)
                     }
                 }
             }
@@ -653,7 +653,11 @@ export default class FightScene extends cc.Component implements IMediator {
         }, this);
         effectAnimation.play();
     }
+    //冲刺
+    private itemFunctionSpurt(){
+        if(Player.player._spurt||Player.player._spurtReadying) return;
 
+    }
     //-----------------------------------------
     private KILL_ENEMY(enemySprite:EnemySprite, bDrop:boolean){
         //自爆飞机将全屏其他飞机炸开
@@ -676,7 +680,7 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private USE_BOMB(){
-        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying||Player.player._levelUpIng) return;
+        if(Player.player._bomb||Player.player._levelUpIng) return;
         if(!Player.player.useBomb()){
             this.node.runAction(GameUtil.shakeBy(0.2,5,5));
             return;
@@ -705,5 +709,22 @@ export default class FightScene extends cc.Component implements IMediator {
 
     private ITEM_COLLISION_PLAYER(itemConfig:any){
 
+    }
+
+    private EAT_ITEM_NAME_FLY_OVER(itemConfigObj:any){
+        this.cleanEnemy(CLEAN_TYPE.ALL, false);
+    }
+
+    private SPURT_DURATION(bSpurt:boolean){
+        if(bSpurt){
+            this.unschedule(this.scheduleNormalEnemy);
+            this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_SPURT_DELAY);
+            this.USE_BOMB();
+        }else {
+            this.unschedule(this.scheduleNormalEnemy);
+            this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
+            // this.USE_BOMB();
+            this.cleanEnemy(CLEAN_TYPE.ALL, false);
+        }
     }
 }

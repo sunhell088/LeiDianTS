@@ -1,9 +1,10 @@
 import {CommonConfig} from "../configs/CommonConfig";
 import {CommonUtil} from "./CommonUtil";
+import {Player} from "../classes/Player";
 
 export class GameUtil {
     public static bgMove(dt, bg1, bg2) {
-        const speed = CommonConfig.BG_SPEED;
+        let speed = Player.player._spurt?CommonConfig.BG_SPURT_SPEED:CommonConfig.BG_SPEED;
         bg1.y -= speed*dt;
         bg2.y -= speed*dt;
         if(bg1.y <= -bg1.height){

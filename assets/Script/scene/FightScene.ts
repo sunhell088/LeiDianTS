@@ -31,9 +31,9 @@ export default class FightScene extends cc.Component implements IMediator {
     @property(cc.Sprite)
     background1: cc.Sprite = null;
     @property(cc.Sprite)
-    bombEffect:cc.Sprite = null;
+    bombEffect: cc.Sprite = null;
     @property(cc.Sprite)
-    darkSprite:cc.Sprite = null;
+    darkSprite: cc.Sprite = null;
     @property([cc.SpriteFrame])
     bgSptArr: cc.SpriteFrame[] = [];
 
@@ -69,14 +69,19 @@ export default class FightScene extends cc.Component implements IMediator {
     itemAtlas: cc.SpriteAtlas = null;
 
     @property(cc.Prefab)
-    enemyExplodePrefab:cc.Prefab = null;
+    enemyExplodePrefab: cc.Prefab = null;
     @property(cc.Prefab)
-    enemyExplode2Prefab:cc.Prefab = null;
+    enemyExplode2Prefab: cc.Prefab = null;
     @property(cc.Animation)
-    playerDeadExplodeSprite:cc.Animation = null;
+    playerDeadExplodeSprite: cc.Animation = null;
 
     @property(cc.Prefab)
-    playerBombRainPrefab:cc.Prefab = null;
+    playerBombRainPrefab: cc.Prefab = null;
+
+    @property(cc.Sprite)
+    shipShadow: cc.Sprite = null;
+    @property(cc.Sprite)
+    shipShadow2: cc.Sprite = null;
 
 
     private bulletPool: cc.NodePool = new cc.NodePool();
@@ -94,7 +99,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
-            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM,GameEvent.SPURT_DURATION];
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION];
     }
 
     protected onLoad(): void {
@@ -109,7 +114,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.init();
     }
 
-    protected onDisable():void {
+    protected onDisable(): void {
         ObserverManager.unRegisterObserverFun(this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
         this.unschedule(this.shoot);
@@ -124,13 +129,14 @@ export default class FightScene extends cc.Component implements IMediator {
         this.moveBackground(dt);
     }
 
-    private init(){
+    private init() {
         //切换背景音乐
         GameUtil.playMusic(SoundConfig.fightMusic_mp3);
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.initPlayer();
     }
+
     private moveBackground(dt) {
         if (Player.player._changePlaneIng) return;
         if (Player.player._death) return;
@@ -150,6 +156,7 @@ export default class FightScene extends cc.Component implements IMediator {
             this.createBoos(Player.player._preDistanceStage);
         }
     }
+
     //定时创建普通飞机
     public scheduleNormalEnemy() {
         //升级状态中 不创建
@@ -165,7 +172,7 @@ export default class FightScene extends cc.Component implements IMediator {
             bombEnemyIndex = CommonUtil.random(0, formation.length - 1);
         }
         for (var i = 0; i < formation.length; i++) {
-            var enemyConfig:any = ConfigUtil.getEnemyConfigByStage(Player.player.getDistanceStage());
+            var enemyConfig: any = ConfigUtil.getEnemyConfigByStage(Player.player.getDistanceStage());
             var enemy: EnemySprite = null;
             if (bombEnemyIndex == i) {
                 enemyConfig = EnemyConfig.enemyConfig.enemyBomb;
@@ -174,8 +181,8 @@ export default class FightScene extends cc.Component implements IMediator {
                 enemyConfig = ConfigUtil.getEnemyConfigByStage(0);
             }
             enemy = this.createEnemy(enemyConfig);
-            let dropItem:any = (enemyConfig==EnemyConfig.enemyConfig.enemy0)?ItemConfig.itemConfig.item_coin
-                :ItemConfig.itemConfig.item_red;
+            let dropItem: any = (enemyConfig == EnemyConfig.enemyConfig.enemy0) ? ItemConfig.itemConfig.item_coin
+                : ItemConfig.itemConfig.item_red;
             //设置坐标
             let point: cc.Vec2 = formation[i];
             enemy.node.x = point.x;
@@ -184,12 +191,14 @@ export default class FightScene extends cc.Component implements IMediator {
             enemy.setDynamicData(ConfigUtil.getEnemyHPByPower(enemy._enemyConfig), 1, dropItem);
         }
     }
+
     //定时创建炸弹飞机
     private scheduleBombEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng || Player.player._bossIng) return;
         Player.player._createBombEnemy = true;
     }
+
     //定时创建福利飞机
     private scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
@@ -202,6 +211,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var hp = enemy._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
         enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
     }
+
     //定时创建特殊飞机
     private scheduleStayEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
@@ -209,13 +219,14 @@ export default class FightScene extends cc.Component implements IMediator {
         var enemySpriteSct = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0, DifficultConfig.stayEnemyArr.length - 1)]);
         if (!enemySpriteSct) return;
         //设置坐标
-        var startPosition = new cc.Vec2(CommonUtil.random(-this.node.width/2+enemySpriteSct.node.width/2, this.node.width/2 - enemySpriteSct.node.width/2),
-            this.node.height/2 + enemySpriteSct.node.height);
+        var startPosition = new cc.Vec2(CommonUtil.random(-this.node.width / 2 + enemySpriteSct.node.width / 2, this.node.width / 2 - enemySpriteSct.node.width / 2),
+            this.node.height / 2 + enemySpriteSct.node.height);
         enemySpriteSct.node.setPosition(startPosition);
         //设置血量、经验和掉落
         var hp = enemySpriteSct._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
         enemySpriteSct.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
     }
+
     //定时创建陨石掉落组
     private scheduleRockGroup() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
@@ -224,7 +235,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var actionList = [];
         for (var i = 0; i < rockList.length; i++) {
             var createRockAction = cc.callFunc(
-                function (fightSceneNode,list) {
+                function (fightSceneNode, list) {
                     for (var k = 0; k < list.length; k++) {
                         var bornIndex = list[k];
                         var bFollow = false;
@@ -233,17 +244,18 @@ export default class FightScene extends cc.Component implements IMediator {
                     }
                     //在同一批次的陨石给音效
                     GameUtil.playSound(SoundConfig.alert_big);
-                },this,rockList[i]
+                }, this, rockList[i]
             );
             actionList.push(cc.delayTime(CommonConfig.ROCK_DELAY));
             actionList.push(createRockAction);
         }
         this.node.runAction(cc.sequence(actionList));
     }
+
     //根据飞行距离创建BOSS
-    private createBoos(distanceStage){
-        let boss:BossEnemySprite = null;
-        switch (distanceStage){
+    private createBoos(distanceStage) {
+        let boss: BossEnemySprite = null;
+        switch (distanceStage) {
             case 1:
                 boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss1);
                 break;
@@ -263,15 +275,16 @@ export default class FightScene extends cc.Component implements IMediator {
                 boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss3);
                 break;
         }
-        if(!boss) return;
+        if (!boss) return;
         //设置坐标
-        var startPosition = new cc.Vec2(0, this.node.height/2+boss.node.height*2);
+        var startPosition = new cc.Vec2(0, this.node.height / 2 + boss.node.height * 2);
         boss.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = boss._enemyConfig.HPArray[Player.player.getBulletGrade()-1]*CommonConfig.BULLET_COUNT_PER;
+        var hp = boss._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
         boss.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(boss));
         Player.player._bossIng = true;
     }
+
     //根据飞行距离加速敌机速度
     private addEnemySpeed(distanceStage) {
         switch (distanceStage) {
@@ -295,26 +308,39 @@ export default class FightScene extends cc.Component implements IMediator {
                 break;
         }
     }
+
     //发射子弹
     private shoot() {
-        if(Player.player._stopBullet) return;
-        if(Player.player._changePlaneIng) return;
-        if(Player.player._death) return;
-        if(Player.player._levelUpIng) return;
-        let bullet = this.createBullet();
-        bullet.x = this.ship.node.x;
-        bullet.y = this.ship.node.y + this.ship.node.width / 2;
-
-        //双倍火力二条
-        var bullet2:cc.Node = null;
-        if(Player.player._doubleFire){
-            bullet2 = this.createBullet();
-            bullet2.x = this.ship.node.x + bullet2.width/2;
-            bullet2.y = this.ship.node.y + this.ship.node.width / 2;
-
-            bullet.x = this.ship.node.x - bullet.width/2;
+        this.shootReal(this.ship.node);
+        if (this.shipShadow.node.active) {
+            this.shootReal(this.shipShadow.node);
+        }
+        if (this.shipShadow2.node.active) {
+            this.shootReal(this.shipShadow2.node);
         }
     }
+
+    //发射子弹
+    private shootReal(ship: cc.Node) {
+        if (Player.player._stopBullet) return;
+        if (Player.player._changePlaneIng) return;
+        if (Player.player._death) return;
+        if (Player.player._levelUpIng) return;
+        let bullet = this.createBullet();
+        bullet.x = ship.x;
+        bullet.y = ship.y + ship.width / 2;
+
+        //双倍火力二条
+        var bullet2: cc.Node = null;
+        if (Player.player._doubleFire) {
+            bullet2 = this.createBullet();
+            bullet2.x = ship.x + bullet2.width / 2;
+            bullet2.y = ship.y + ship.width / 2;
+
+            bullet.x = ship.x - bullet.width / 2;
+        }
+    }
+
     //根据player信息初始化显示对象
     private initPlayer() {
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
@@ -330,30 +356,32 @@ export default class FightScene extends cc.Component implements IMediator {
         //登场
         this.ship.comeOnStage();
     }
+
     //商城道具效果(开局时)
-    storeItemEffect(state):boolean {
+    storeItemEffect(state): boolean {
         let triggerSuccess = false;
         //随机道具
         let item = ConfigUtil.getStoreItemConfig(Player.player.randomItemID);
-        if(item&&item.trigger==state){
+        if (item && item.trigger == state) {
             Player.player.randomItemID = "0";
             triggerSuccess = true;
         }
         //购买的道具
-        for(var i=0; i<Player.player.data.storeItemPackage.length; i++){
+        for (var i = 0; i < Player.player.data.storeItemPackage.length; i++) {
             var itemObj = Player.player.data.storeItemPackage[i];
             item = ConfigUtil.getStoreItemConfig(itemObj.itemID);
-            if(item.trigger==state){
-                if(Player.player.useStoreItem(itemObj.itemID)){
+            if (item.trigger == state) {
+                if (Player.player.useStoreItem(itemObj.itemID)) {
                     triggerSuccess = true;
                 }
             }
         }
         return triggerSuccess;
     }
+
     //创建陨石
     private createRockLineSprite(): RockLineSprite {
-        let spriteNode:cc.Node = null;
+        let spriteNode: cc.Node = null;
         if (this.rockLinePool.size() > 0) {
             spriteNode = this.rockLinePool.get();
             spriteNode.stopAllActions();
@@ -365,8 +393,9 @@ export default class FightScene extends cc.Component implements IMediator {
         rockLineSprite.initSprite(spriteNode, this.rockLinePool);
         return rockLineSprite;
     }
+
     private createRockSprite(): RockSprite {
-        let spriteNode:cc.Node = null;
+        let spriteNode: cc.Node = null;
         if (this.rockPool.size() > 0) {
             spriteNode = this.rockPool.get();
             spriteNode.stopAllActions();
@@ -380,47 +409,48 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     //清屏（清除陨石，所有敌机、子弹、陨石爆炸）
-    private cleanEnemy(cleanType:CLEAN_TYPE=CLEAN_TYPE.ALL, bDrop:boolean=true){
-        var childrenArray:cc.Node[] = this.node.children;
-        let rockLineSprite:RockLineSprite = null;
-        let rockSprite:RockSprite = null;
-        let enemy:EnemySprite = null;
-        let rockLineSpriteList:RockLineSprite[] = [];
-        let rockSpriteList:RockSprite[] = [];
-        let enemyList:EnemySprite[] = [];
-        for(let key in childrenArray){
-            if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ROCK){
+    private cleanEnemy(cleanType: CLEAN_TYPE = CLEAN_TYPE.ALL, bDrop: boolean = true) {
+        var childrenArray: cc.Node[] = this.node.children;
+        let rockLineSprite: RockLineSprite = null;
+        let rockSprite: RockSprite = null;
+        let enemy: EnemySprite = null;
+        let rockLineSpriteList: RockLineSprite[] = [];
+        let rockSpriteList: RockSprite[] = [];
+        let enemyList: EnemySprite[] = [];
+        for (let key in childrenArray) {
+            if (cleanType == CLEAN_TYPE.ALL || cleanType == CLEAN_TYPE.ROCK) {
                 rockLineSprite = childrenArray[key].getComponent(RockLineSprite);
-                if(rockLineSprite){
+                if (rockLineSprite) {
                     rockLineSpriteList.push(rockLineSprite);
                 }
                 rockSprite = childrenArray[key].getComponent(RockSprite);
-                if(rockSprite){
+                if (rockSprite) {
                     rockSpriteList.push(rockSprite);
                     rockSprite.destroySprite();
                 }
             }
-            if(cleanType==CLEAN_TYPE.ALL||cleanType==CLEAN_TYPE.ENEMY){
+            if (cleanType == CLEAN_TYPE.ALL || cleanType == CLEAN_TYPE.ENEMY) {
                 enemy = childrenArray[key].getComponent(EnemySprite);
-                if(enemy){
-                    if(enemy._enemyConfig.classType==EnemySprite){
+                if (enemy) {
+                    if (enemy._enemyConfig.classType == EnemySprite) {
                         enemyList.push(enemy);
                     }
                 }
             }
         }
-        for(let key in rockLineSpriteList){
+        for (let key in rockLineSpriteList) {
             rockLineSpriteList[key].destroySprite();
         }
-        for(let key in rockSpriteList){
+        for (let key in rockSpriteList) {
             rockSpriteList[key].destroySprite();
         }
-        for(let key in enemyList){
-            enemyList[key].hurt(-1,true);
+        for (let key in enemyList) {
+            enemyList[key].hurt(-1, true);
         }
     }
+
     //创建炸弹效果
-    private createBomb(){
+    private createBomb() {
         //音效
         GameUtil.playSound(SoundConfig.useBomb);
         Player.player._bomb = true;
@@ -432,73 +462,143 @@ export default class FightScene extends cc.Component implements IMediator {
         this.bombEffect.node.active = true;
         this.bombEffect.node.scale = 1
         this.bombEffect.node.setPosition(this.ship.node.x, this.ship.node.y);
-        this.bombEffect.node.runAction(cc.scaleBy(0.6,30));
+        this.bombEffect.node.runAction(cc.scaleBy(0.6, 30));
         //创建炸弹效果
         var createBombAction = cc.callFunc(
-            function(){
-                let bomb:cc.Node = this.createPlayerBombRainSprite(Player.player.data.currentPlaneID);
-                bomb.setPosition(GameUtil.randomWidth(bomb), -CommonConfig.HEIGHT/2-bomb.height);
+            function () {
+                let bomb: cc.Node = this.createPlayerBombRainSprite(Player.player.data.currentPlaneID);
+                bomb.setPosition(GameUtil.randomWidth(bomb), -CommonConfig.HEIGHT / 2 - bomb.height);
                 bomb.runAction(cc.sequence(
-                    cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT+bomb.height)),
-                    cc.callFunc(function(sender){
+                    cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT + bomb.height)),
+                    cc.callFunc(function (sender) {
                         this.playerBombRainPool.put(bomb);
-                    },this)
+                    }, this)
                 ));
-            },this
+            }, this
         );
-        for(var i=0; i<CommonConfig.PRESET_COUNT_BOMB; i++){
+        for (var i = 0; i < CommonConfig.PRESET_COUNT_BOMB; i++) {
             actionArray.push(createBombAction);
             actionArray.push(cc.delayTime(0.2));
         }
         var overFunc = cc.callFunc(
-            function(){
+            function () {
                 this.dark.node.active = false;
                 this.bombEffect.node.active = false;
                 Player.player._bomb = false;
-            },{dark:this.darkSprite, bombEffect:this.bombEffect}
+            }, {dark: this.darkSprite, bombEffect: this.bombEffect}
         );
         actionArray.push(overFunc);
         this.bombEffect.node.runAction(cc.sequence(actionArray));
     }
+
     //杀敌奖励
-    private doKillEnemyAward(enemySprite:EnemySprite){
+    private doKillEnemyAward(enemySprite: EnemySprite) {
         //掉落物品
-        for(var i=0;i<enemySprite._dropItems.length;i++){
-            var item:ItemSprite = this.createItemSprite(enemySprite._dropItems[i]);
+        for (var i = 0; i < enemySprite._dropItems.length; i++) {
+            var item: ItemSprite = this.createItemSprite(enemySprite._dropItems[i]);
             //如果在冲刺中，则只爆金币类
-            if(Player.player._spurt||Player.player._spurtReadying){
-                if(!item._itemConfig.gold) continue;
+            if (Player.player._spurt || Player.player._spurtReadying) {
+                if (!item._itemConfig.gold) continue;
             }
             item.setSpriteFrame();
             item.node.x = enemySprite.node.x;
             item.node.y = enemySprite.node.y;
             //多个暴落物的话，散开
-            if(i!=0){
-                item.node.x += CommonUtil.random(-100,100);
-                item.node.y += CommonUtil.random(0,100);
+            if (i != 0) {
+                item.node.x += CommonUtil.random(-100, 100);
+                item.node.y += CommonUtil.random(0, 100);
             }
             item.drop();
         }
     }
 
     private onTouchMoved(event) {
-        if(!this.ship.node.active) return;
-        let target = this.ship.node;
+        let oldX: number = this.ship.node.x;
+        let oldY: number = this.ship.node.y;
+        let shipSelf: cc.Node = this.ship.node;
         let touch = event.currentTouch;
         let delta = touch.getDelta();
-        let curPos = new cc.Vec2(target.x, target.y);
-        curPos = curPos.addSelf(delta)
-        let shipHalfWidth = target.width / 2;
-        let shipHalfHeight = target.height / 2;
+        let oldPos = new cc.Vec2(shipSelf.x, shipSelf.y);
+        let curPos = oldPos.addSelf(delta)
+        let shipHalfWidth = shipSelf.width / 2;
+        let shipHalfHeight = shipSelf.height / 2;
         curPos = curPos.clampf(new cc.Vec2(-this.node.width / 2 + shipHalfWidth, -this.node.height / 2 + shipHalfHeight),
             new cc.Vec2(this.node.width / 2 - shipHalfWidth, this.node.height / 2 - shipHalfHeight));
-        target.x = curPos.x;
-        target.y = curPos.y;
+        shipSelf.x = curPos.x;
+        shipSelf.y = curPos.y;
+
+        this.onTouchMovedReal(oldX, oldY, curPos, this.shipShadow.node)
+
+        // oldX = this.shipShadow.node.x;
+        // oldY = this.shipShadow.node.y;
+        // this.onTouchMovedReal(oldX, oldY, this.shipShadow.node.getPosition(), this.shipShadow2.node)
+    }
+
+    private onTouchMovedReal(oldX, oldY, curPos: cc.Vec2, shadow: cc.Node) {
+        let offsetX: number = curPos.x - oldX;
+        let offsetY: number = curPos.y - oldY;
+        console.log(offsetX + "====" + offsetY)
+        //如果往右边移动
+        if (offsetX > 0) {
+            //如果影子在右边
+            if (shadow.x > curPos.x) {
+                shadow.x -= offsetX;
+            } else {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x -= offsetX;
+                } else {
+                    shadow.x += offsetX;
+                }
+            }
+        }
+        //如果往左边移动
+        else {
+            //如果影子在左边
+            if (shadow.x < curPos.x) {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x += Math.abs(offsetX);
+                }
+            } else {
+                if (Math.abs(curPos.x - shadow.x) < 50) {
+                    shadow.x += Math.abs(offsetX);
+                } else {
+                    shadow.x -= Math.abs(offsetX);
+                }
+            }
+        }
+        //如果往上边移动-------
+        if (offsetY > 0) {
+            //如果影子在上边
+            if (shadow.y > curPos.y) {
+                shadow.y -= offsetY;
+            } else {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y -= offsetY;
+                } else {
+                    shadow.y += offsetY;
+                }
+            }
+        }
+        //如果往下边移动
+        else {
+            //如果影子在下边
+            if (shadow.y < curPos.y) {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y += Math.abs(offsetY);
+                }
+            } else {
+                if (Math.abs(curPos.y - shadow.y) < 50) {
+                    shadow.y += Math.abs(offsetY);
+                } else {
+                    shadow.y -= Math.abs(offsetY);
+                }
+            }
+        }
     }
 
     //创建子弹复用对象
     private createBullet(): cc.Node {
-        let spriteNode:cc.Node = null;
+        let spriteNode: cc.Node = null;
         if (this.bulletPool.size() > 0) {
             spriteNode = this.bulletPool.get();
             spriteNode.stopAllActions();
@@ -512,9 +612,10 @@ export default class FightScene extends cc.Component implements IMediator {
         bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletGrade(Player.player.data.currentPlaneID));
         return spriteNode;
     }
+
     //创建子弹击中效果复用对象
     private createBulletHitEffect(): cc.Node {
-        let spriteNode:cc.Node = null;
+        let spriteNode: cc.Node = null;
         if (this.bulletHitEffectPool.size() > 0) {
             spriteNode = this.bulletHitEffectPool.get();
             spriteNode.active = true;
@@ -525,13 +626,15 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.addChild(spriteNode);
         return spriteNode;
     }
+
     //创建敌机复用对象
     private createEnemy(enemyConfig: any): EnemySprite {
         let spriteNode: cc.Node = null;
-        let enemySprite: EnemySprite = null;;
-        let enemyPrefab:cc.Prefab = this.enemyPrefab;
-        let classNameStr:string = CommonUtil.getQualifiedClassName(enemyConfig.classType);
-        let pool:cc.NodePool = this.enemyPool;
+        let enemySprite: EnemySprite = null;
+        ;
+        let enemyPrefab: cc.Prefab = this.enemyPrefab;
+        let classNameStr: string = CommonUtil.getQualifiedClassName(enemyConfig.classType);
+        let pool: cc.NodePool = this.enemyPool;
         switch (classNameStr) {
             case "FlexEnemySprite":
                 pool = this.enemyFlexPool;
@@ -565,8 +668,9 @@ export default class FightScene extends cc.Component implements IMediator {
         enemySprite.setSpriteFrame();
         return enemySprite;
     }
+
     //创建爆落复用对象
-    private createItemSprite(itemConfig:any): ItemSprite {
+    private createItemSprite(itemConfig: any): ItemSprite {
         let spriteNode = null;
         if (this.itemPool.size() > 0) {
             spriteNode = this.itemPool.get();
@@ -576,20 +680,21 @@ export default class FightScene extends cc.Component implements IMediator {
         }
         this.node.addChild(spriteNode);
         let itemSprite: ItemSprite = spriteNode.getComponent('ItemSprite');
-        itemSprite.initSprite(spriteNode,this.itemAtlas, this.itemPool, itemConfig);
+        itemSprite.initSprite(spriteNode, this.itemAtlas, this.itemPool, itemConfig);
         return itemSprite;
     }
+
     //创建陨石复用对象
     private createRock(bFollow, bornIndex) {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._levelUpIng) return;
         var line: RockLineSprite = this.createRockLineSprite();
         line._bFollow = bFollow;
-        var bornX = -CommonConfig.WIDTH/2 + line.node.width / 2 + bornIndex * line.node.width;
+        var bornX = -CommonConfig.WIDTH / 2 + line.node.width / 2 + bornIndex * line.node.width;
         line.node.setPosition(bornX, this.node.height / 2);
-        var lineAction = cc.callFunc(function (fightSceneNode:cc.Node, fightScene:FightScene) {
+        var lineAction = cc.callFunc(function (fightSceneNode: cc.Node, fightScene: FightScene) {
                 //创建陨石的动作
-                var createRockAction = cc.callFunc(function (sender,xxoo) {
+                var createRockAction = cc.callFunc(function (sender, xxoo) {
                         var rock: RockSprite = fightScene.createRockSprite();
                         if (rock) {
                             rock.node.setPosition(sender.x, sender.y + rock.node.height);
@@ -597,7 +702,7 @@ export default class FightScene extends cc.Component implements IMediator {
                         sender.active = false;
                         //警告消失，陨石落下的时候，给音效
                         GameUtil.playSound(SoundConfig.meteor);
-                    },this
+                    }, this
                 );
                 //line宽 缩小到0
                 this.node.runAction(cc.sequence(
@@ -616,24 +721,26 @@ export default class FightScene extends cc.Component implements IMediator {
             lineAction
         ));
     }
+
     //创建炸弹时炸弹雨复用对象
     private createPlayerBombRainSprite(planeID): cc.Node {
-        let planeConfig:any = ConfigUtil.getPlaneConfig(planeID);
-        let spriteNode:cc.Node = null;
+        let planeConfig: any = ConfigUtil.getPlaneConfig(planeID);
+        let spriteNode: cc.Node = null;
         if (this.playerBombRainPool.size() > 0) {
             spriteNode = this.playerBombRainPool.get();
             spriteNode.stopAllActions();
         } else {
             spriteNode = cc.instantiate(this.playerBombRainPrefab);
         }
-        let spriteSct:cc.Sprite = spriteNode.getComponent(cc.Sprite);
+        let spriteSct: cc.Sprite = spriteNode.getComponent(cc.Sprite);
         spriteSct.spriteFrame = this.bulletAtlas.getSpriteFrame(planeConfig.bombType);
         this.node.addChild(spriteNode);
         return spriteNode;
     }
+
     //创建敌机爆炸复用对象
-    private playEnemyExplodeAnimation(enemySprite:EnemySprite) {
-        let explodeNode:cc.Node = null;
+    private playEnemyExplodeAnimation(enemySprite: EnemySprite) {
+        let explodeNode: cc.Node = null;
         if (this.enemyExplodePool.size() > 0) {
             explodeNode = this.enemyExplodePool.get();
             explodeNode.stopAllActions();
@@ -643,46 +750,49 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.addChild(explodeNode);
 
         explodeNode.setPosition(enemySprite.node.getPosition())
-        let effectAnimation:cc.Animation = explodeNode.getComponent(cc.Animation);
+        let effectAnimation: cc.Animation = explodeNode.getComponent(cc.Animation);
         effectAnimation.on(cc.Animation.EventType.FINISHED, function () {
             this.enemyExplodePool.put(explodeNode);
         }, this);
         effectAnimation.play();
     }
+
     //冲刺
-    private itemFunctionSpurt(){
-        if(Player.player._spurt||Player.player._spurtReadying) return;
+    private itemFunctionSpurt() {
+        if (Player.player._spurt || Player.player._spurtReadying) return;
     }
-    private useBomb(){
-        if(Player.player._bomb) return;
+
+    private useBomb() {
+        if (Player.player._bomb) return;
         this.createBomb();
     }
+
     //-----------------------------------------
-    private KILL_ENEMY(enemySprite:EnemySprite, bDrop:boolean){
+    private KILL_ENEMY(enemySprite: EnemySprite, bDrop: boolean) {
         //自爆飞机将全屏其他飞机炸开
-        if(enemySprite._enemyConfig==EnemyConfig.enemyConfig.enemyBomb){
+        if (enemySprite._enemyConfig == EnemyConfig.enemyConfig.enemyBomb) {
             this.useBomb();
-        }else {
-            if(bDrop){
+        } else {
+            if (bDrop) {
                 this.doKillEnemyAward(enemySprite);
             }
         }
         this.playEnemyExplodeAnimation(enemySprite);
     }
 
-    private CHANGE_PLANE(){
+    private CHANGE_PLANE() {
         this.createBomb();
     }
 
-    private PROTECT_EFFECT(){
+    private PROTECT_EFFECT() {
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
     }
 
-    private GAME_OVER(){
+    private GAME_OVER() {
         this.playerDeadExplodeSprite.node.setPosition(this.ship.node.getPosition());
         this.playerDeadExplodeSprite.node.active = true;
         this.playerDeadExplodeSprite.play();
-        this.playerDeadExplodeSprite.on(cc.Animation.EventType.FINISHED, function (xxoo,xx2) {
+        this.playerDeadExplodeSprite.on(cc.Animation.EventType.FINISHED, function (xxoo, xx2) {
             this.playerDeadExplodeSprite.node.active = false;
         }, this)
         this.node.runAction(cc.sequence(
@@ -695,27 +805,27 @@ export default class FightScene extends cc.Component implements IMediator {
         ));
     }
 
-    private BULLET_HIT_ENEMY(pos:cc.Vec2){
-        var bulletHitEffectNode:cc.Node = this.createBulletHitEffect();
+    private BULLET_HIT_ENEMY(pos: cc.Vec2) {
+        var bulletHitEffectNode: cc.Node = this.createBulletHitEffect();
         bulletHitEffectNode.setPosition(pos);
-        this.scheduleOnce(function() {
+        this.scheduleOnce(function () {
             this.bulletHitEffectPool.put(bulletHitEffectNode);
         }, 0.02);
     }
 
-    private ITEM_COLLISION_PLAYER(itemConfig:any){
+    private ITEM_COLLISION_PLAYER(itemConfig: any) {
 
     }
 
-    private EAT_ITEM(itemConfigObj:any){
+    private EAT_ITEM(itemConfigObj: any) {
     }
 
-    private SPURT_DURATION(bSpurt:boolean){
-        if(bSpurt){
+    private SPURT_DURATION(bSpurt: boolean) {
+        if (bSpurt) {
             this.unschedule(this.scheduleNormalEnemy);
             this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_SPURT_DELAY);
             this.useBomb();
-        }else {
+        } else {
             this.unschedule(this.scheduleNormalEnemy);
             this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
             // this.USE_BOMB();

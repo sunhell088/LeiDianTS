@@ -22,18 +22,10 @@ export class CommonUtil {
         rect.height = rect.height/2;
     };
 
-    public static random(min, maxInclud){
-        return parseInt(Math.random()*(maxInclud-min+1)+min);
+    public static random(min, maxInclude){
+        return parseInt(Math.random()*(maxInclude-min+1)+min);
     };
 
-    //获得碰撞区域
-    public static getCollideRect(sprite){
-        let rect = cc.rect(sprite.x - sprite.width/2, sprite.y - sprite.height/2, sprite.width, sprite.height);
-        if(!sprite.visible) {
-            rect = cc.rect(0,0,0,0);
-        }
-        return rect;
-    };
 
     //获得预创碰撞区域(并且每次重置)
     public static getPresetCollideRect(sprite){
@@ -77,5 +69,10 @@ export class CommonUtil {
             writable: true
         });
         return className;
+    }
+    //获得两点距离
+    public static getDistanceByTwePoint(point1:cc.Vec2, point2:cc.Vec2):number {
+        let dist = point1.sub(point2).mag();
+        return dist
     }
 }

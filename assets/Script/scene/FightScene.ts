@@ -94,7 +94,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.CHANGE_PLANE, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
-            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER,GameEvent.SPURT_DURATION];
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM,GameEvent.SPURT_DURATION];
     }
 
     protected onLoad(): void {
@@ -716,7 +716,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
     }
 
-    private EAT_ITEM_NAME_FLY_OVER(itemConfigObj:any){
+    private EAT_ITEM(itemConfigObj:any){
     }
 
     private SPURT_DURATION(bSpurt:boolean){

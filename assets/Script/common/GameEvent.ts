@@ -26,7 +26,7 @@ export class GameEvent {
     public static BULLET_HIT_ENEMY:string = "BULLET_HIT_ENEMY";
 
     //功能道具飘出结束
-    public static EAT_ITEM_NAME_FLY_OVER:string = "EAT_ITEM_NAME_FLY_OVER";
+    public static EAT_ITEM:string = "EAT_ITEM";
 
     //开始冲刺（已经在冲刺中）
     public static SPURT_DURATION:string = "SPURT_DURATION";

@@ -48,7 +48,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
 
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
-            GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM_NAME_FLY_OVER,GameEvent.COLLIDER_MAGNET];
+            GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM,GameEvent.COLLIDER_MAGNET];
     }
     
     protected onLoad(): void {
@@ -274,7 +274,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
         this.hurt();
     }
 
-    private EAT_ITEM_NAME_FLY_OVER(itemConfigObj:any){
+    private EAT_ITEM(itemConfigObj:any){
         switch (itemConfigObj.name) {
             case ItemConfig.itemConfig.item_cc.name:
                 this.itemFunctionSpurt();

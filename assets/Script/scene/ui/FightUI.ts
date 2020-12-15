@@ -171,7 +171,7 @@ export default class FightUI extends cc.Component implements IMediator{
             this.showEatItemName.node.setPosition(playerPos.x, playerPos.y);
             //超过屏幕边界修正过来
             CommonUtil.pClamp(this.showEatItemName.node);
-            ObserverManager.sendNotification(GameEvent.EAT_ITEM_NAME_FLY_OVER, itemConfigObj)
+            ObserverManager.sendNotification(GameEvent.EAT_ITEM, itemConfigObj)
             this.showEatItemName.node.runAction(cc.sequence(
                 cc.scaleTo(0.1, 1.2),
                 cc.scaleTo(0.2, 1),
@@ -187,7 +187,7 @@ export default class FightUI extends cc.Component implements IMediator{
             eatCoinNameNode.setPosition(playerPos.x, playerPos.y);
             eatCoinNameNode.runAction(cc.sequence(
                 cc.delayTime(1),
-                cc.blink(0.5,2),
+                cc.moveBy(0.5,new cc.Vec2(0,30)).easing(cc.easeIn(3)),
                 cc.callFunc(function(){
                     this.eatCoinEffectPool.put(eatCoinNameNode);},this))
             );

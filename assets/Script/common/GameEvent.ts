@@ -11,7 +11,6 @@ export class GameEvent {
     public static MOVE_BG:string = "MOVE_BG";
 
     public static KILL_ENEMY:string = "KILL_ENEMY";
-    public static CHANGE_PLANE:string = "CHANGE_PLANE";
     public static PROTECT_EFFECT:string = "PROTECT_EFFECT";
     //距离等级刷新
     public static UPDATE_DISTANCE_STAGE:string = "UPDATE_DISTANCE_STAGE";

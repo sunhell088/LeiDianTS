@@ -45,8 +45,9 @@ export default class LoginScene extends cc.Component implements IMediator{
                 FormationConfig.formationConfig)
         }
         Player.player = new Player();
-        Player.player.loadData();
-        this.schedule(Player.player.saveData, 1);
+        Player.player.createPlayer();
+        // Player.player.loadData();
+        // this.schedule(Player.player.saveData, 1);
         this.initLoginScene();
         this.node.on(cc.Node.EventType.TOUCH_END, this.openScene, this);
     }

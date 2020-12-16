@@ -10,7 +10,7 @@ export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode:boolean = false;
+    public debugMode:boolean = true;
 
     //需要存盘的数据
     public data = {
@@ -66,8 +66,6 @@ export class Player {
     public _alreadyShowUpdateRecord:boolean = false;
     //普通敌机随飞行距离增加的移动速度
     public _enemyAddSpeed:number = 0;
-    //这轮普通飞机是否有自爆飞机
-    public _createBombEnemy:boolean = false;
     //道具暴落列表(暴落的道具 做成一个序列，挨个暴)
     public _itemDropArr:any = null;
 
@@ -83,8 +81,6 @@ export class Player {
     public _doubleFire:boolean = false;
     //护罩中
     public _protecting:boolean = false;
-    //升级状态中
-    public _levelUpIng:boolean = false;
     //切换战机登场中
     public _changePlaneIng:boolean = false;
     //停止发射子弹中

@@ -99,7 +99,7 @@ export class EnemyConfig {
             HPArray:[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5],
             presetCount:1,
             enterGamePreset:true,
-            classType:EnemySprite
+            classType:FlexEnemySprite
         },
         //宝箱飞机
         enemyBox:{

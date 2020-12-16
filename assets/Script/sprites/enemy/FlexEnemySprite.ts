@@ -11,7 +11,7 @@ const {ccclass, property} = cc._decorator;
 export default class FlexEnemySprite extends EnemySprite {
     getStartPosition(self:FlexEnemySprite) {
         var randomX:number = CommonUtil.random(-CommonConfig.WIDTH/2+self.node.width / 2, CommonConfig.WIDTH/2 - self.node.width / 2);
-        var randomY:number = CommonUtil.random(0, CommonConfig.HEIGHT/2 - self.node.height / 2);
+        var randomY:number = CommonUtil.random(0, CommonConfig.HEIGHT/2);
         return new cc.Vec2(randomX, randomY);
     }
 

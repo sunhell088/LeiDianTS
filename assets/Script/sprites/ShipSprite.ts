@@ -83,7 +83,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     hurt(){
-        if(Player.player._spurt||Player.player.debugMode) return;
+        if(Player.player._bomb||Player.player._spurtReadying||Player.player._spurt||Player.player.debugMode) return;
         //是否在护盾状态下
         if(Player.player._protecting){
             GameUtil.playSound(SoundConfig.shield);  //音效
@@ -190,7 +190,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
                     this.spurtEndExplode.node.active = true;
                     this.spurtEndExplode.play();
                     ObserverManager.sendNotification(GameEvent.SPURT_DURATION, false);
-                }, 0.7);
+                }, 0.3);
             }, spurtDuration);
         }, this);
     }

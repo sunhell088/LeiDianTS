@@ -39,9 +39,9 @@ export class CommonConfig {
     //产生陨石的间隔
     public static ROCK_CONFIG_DELAY = 15;
     //产生炸弹飞机的间隔
-    public static BLESS_BOMB_DELAY = 5;
+    public static BLESS_BOMB_DELAY = 17;
     //产生福利飞机的间隔
-    public static BLESS_PLANE_DELAY = 10;
+    public static BLESS_PLANE_DELAY = 13;
     //产生特殊（停留和追踪）飞机的间隔
     public static STAY_ENEMY_DELAY = 13;
     //产生冲刺敌机的间隔

@@ -8,6 +8,7 @@ import {CLEAN_TYPE, FLY_STATE} from "../../common/GameEnum";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
 import BombRainSprite from "../BombRainSprite";
+import LoginScene from "../../scene/LoginScene";
 
 
 const {ccclass, property} = cc._decorator;
@@ -60,6 +61,8 @@ export default class EnemySprite extends cc.Component {
     }
 
     hurt(bulletPower,bDrop){
+        //防止多次爆落物品
+        if(this._HP<=0) return;
         this.bloodBar.node.active = true;
         if(bulletPower==-1){
             this._HP = 0;
@@ -67,8 +70,8 @@ export default class EnemySprite extends cc.Component {
             this._HP -= bulletPower;
         }
         if(this._HP<=0){
-            ObserverManager.sendNotification(GameEvent.KILL_ENEMY, this, bDrop);
             this.death(bDrop);
+            ObserverManager.sendNotification(GameEvent.KILL_ENEMY, this, bDrop);
         }else{
             //设置血条长度
             let progress = this._HP / this._MAX_HP;
@@ -86,7 +89,6 @@ export default class EnemySprite extends cc.Component {
         this._dropItems = [];
         this._MAX_HP = hp;
         this._HP = this._MAX_HP;
-        this._dropItems = [];
         if(items instanceof Array){
             this._dropItems = items;
         }else{
@@ -109,12 +111,13 @@ export default class EnemySprite extends cc.Component {
             if(!Player.player._spurt&&!Player.player._bomb){
                 shipSprite.hurt();
             }
-            // this.hurt(-1,true);
         }
         //敌机与玩家炸弹碰撞
         let bombRainSprite:BombRainSprite = other.getComponent(BombRainSprite);
         if(bombRainSprite){
-            this.hurt(-1, true);
+            if (this._enemyConfig.classType == EnemySprite) {
+                this.hurt(-1, true);
+            }
         }
     }
 }

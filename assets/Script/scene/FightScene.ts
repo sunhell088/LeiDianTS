@@ -98,6 +98,8 @@ export default class FightScene extends cc.Component implements IMediator {
     private playerBombRainPool: cc.NodePool = new cc.NodePool();
     private planeShadowPool: cc.NodePool = new cc.NodePool();
 
+    private shadowDuration: number = 0;
+
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
             GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION];
@@ -113,7 +115,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
         //定时清理影子
-        this.schedule(this.setShadowEnd, CommonConfig.SHADOW_TIME);
+        this.schedule(this.setShadowEnd, 1);
         this.init();
     }
 
@@ -1029,10 +1031,12 @@ export default class FightScene extends cc.Component implements IMediator {
         this.shipShadowList.push(spriteNode);
         this.node.addChild(spriteNode);
         spriteNode.setPosition(this.ship.node.getPosition());
+        this.shadowDuration += CommonConfig.SHADOW_TIME;
     }
 
     private setShadowEnd() {
-        if (this.shipShadowList.length > 0) {
+        this.shadowDuration--;
+        if (this.shadowDuration > 0 && this.shadowDuration % CommonConfig.SHADOW_TIME == 0 && this.shipShadowList.length > 0) {
             this.planeShadowPool.put(this.shipShadowList.pop());
         }
     }

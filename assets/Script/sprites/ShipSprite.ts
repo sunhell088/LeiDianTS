@@ -186,11 +186,9 @@ export default class ShipSprite extends cc.Component implements IMediator{
                 this.spurtDuration.node.active = false;
                 this.spurtDuration.stop();
                 Player.player._spurt = false;
-                this.scheduleOnce(function () {
-                    this.spurtEndExplode.node.active = true;
-                    this.spurtEndExplode.play();
-                    ObserverManager.sendNotification(GameEvent.SPURT_DURATION, false);
-                }, 0.3);
+                this.spurtEndExplode.node.active = true;
+                this.spurtEndExplode.play();
+                ObserverManager.sendNotification(GameEvent.SPURT_DURATION, false);
             }, spurtDuration);
         }, this);
     }

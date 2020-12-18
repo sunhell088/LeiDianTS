@@ -24,9 +24,8 @@ export default class BulletSprite extends cc.Component {
     }
 
     update (dt) {
-        let fightNodeSize:cc.Size = CanvasNode.getCanvasNode().getFightNodeSize();
         this.node.y += CommonConfig.BULLET_SPEED * dt;
-        if (this.node.y > fightNodeSize.height/2) this.destroyBullet();
+        if (this.node.y > CommonConfig.HEIGHT/2) this.destroyBullet();
     }
 
     destroyBullet () {

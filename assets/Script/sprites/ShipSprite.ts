@@ -1,19 +1,12 @@
 import {Player} from "../classes/Player";
 import {GameUtil} from "../common/GameUtil";
 import {SoundConfig} from "../configs/SoundConfig";
-import FightScene from "../scene/FightScene";
 import {CommonConfig} from "../configs/CommonConfig";
-import FightUI from "../scene/ui/FightUI";
-import {PlaneConfig} from "../configs/PlaneConfig";
 import {GameEvent} from "../common/GameEvent";
 import {IMediator} from "../framework/mvc/IMediator";
 import {ObserverManager} from "../framework/observe/ObserverManager";
-import {CLEAN_TYPE} from "../common/GameEnum";
-import CanvasNode from "../scene/CanvasNode";
 import ItemSprite from "./ItemSprite";
-import {StoreItemConfig} from "../configs/StoreItemConfig";
 import {ItemConfig} from "../configs/ItemConfig";
-import {ConfigUtil} from "../common/ConfigUtil";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -108,17 +101,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
         Player.player._death = true;
         Player.player._stopBullet = true;
         this.destroyShipSprite();
-    }
-    //道具复活
-    storeItemRevive(){
-        Player.player._changePlaneIng = true;
-        ObserverManager.sendNotification(GameEvent.STORE_ITEM_EFFECT, StoreItemConfig.storeItemConfig.revive);
-    }
-
-    revive(){
-        Player.player._death = false;
-        this.node.active = true
-        Player.player._stopBullet = false;
     }
 
     attractItem(itemSprite:ItemSprite){

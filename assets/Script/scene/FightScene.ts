@@ -143,7 +143,6 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private moveBackground(dt) {
-        if (Player.player._changePlaneIng) return;
         if (Player.player._death) return;
         GameUtil.bgMove(dt, this.background0.node, this.background1.node);
 
@@ -281,6 +280,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 break;
         }
         if (!boss) return;
+        Player.player._bossIng = true;
         //设置坐标
         var startPosition = new cc.Vec2(0, this.node.height / 2 + boss.node.height * 2);
         boss.node.setPosition(startPosition);
@@ -316,6 +316,8 @@ export default class FightScene extends cc.Component implements IMediator {
 
     //发射子弹
     private shoot() {
+        if (Player.player._stopBullet) return;
+        if (Player.player._death) return;
         this.shootReal(this.ship.node);
         for (let key in this.shipShadowList) {
             this.shootReal(this.shipShadowList[key])
@@ -324,9 +326,6 @@ export default class FightScene extends cc.Component implements IMediator {
 
     //发射子弹
     private shootReal(ship: cc.Node) {
-        if (Player.player._stopBullet) return;
-        if (Player.player._changePlaneIng) return;
-        if (Player.player._death) return;
         let bullet = this.createBullet();
         bullet.x = ship.x;
         bullet.y = ship.y + ship.width / 2;
@@ -352,32 +351,8 @@ export default class FightScene extends cc.Component implements IMediator {
         //重置和战斗相关的数据
         Player.player.resetFightData();
 
-        this.storeItemEffect("start");
-
         //登场
         this.ship.comeOnStage();
-    }
-
-    //商城道具效果(开局时)
-    storeItemEffect(state): boolean {
-        let triggerSuccess = false;
-        //随机道具
-        let item = ConfigUtil.getStoreItemConfig(Player.player.randomItemID);
-        if (item && item.trigger == state) {
-            Player.player.randomItemID = "0";
-            triggerSuccess = true;
-        }
-        //购买的道具
-        for (var i = 0; i < Player.player.data.storeItemPackage.length; i++) {
-            var itemObj = Player.player.data.storeItemPackage[i];
-            item = ConfigUtil.getStoreItemConfig(itemObj.itemID);
-            if (item.trigger == state) {
-                if (Player.player.useStoreItem(itemObj.itemID)) {
-                    triggerSuccess = true;
-                }
-            }
-        }
-        return triggerSuccess;
     }
 
     //创建陨石
@@ -1031,6 +1006,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.shipShadowList.push(spriteNode);
         this.node.addChild(spriteNode);
         spriteNode.setPosition(this.ship.node.getPosition());
+        if(this.shadowDuration<0) this.shadowDuration=0;
         this.shadowDuration += CommonConfig.SHADOW_TIME;
     }
 

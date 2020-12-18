@@ -18,8 +18,6 @@ export class GameEvent {
     public static ITEM_COLLISION_PLAYER:string = "ITEM_COLLISION_PLAYER";
     //陨石碰到玩家
     public static ROCK_COLLISION_PLAYER:string = "ROCK_COLLISION_PLAYER";
-    //复活甲
-    public static STORE_ITEM_EFFECT:string = "STORE_ITEM_EFFECT";
 
     //子弹击中敌机
     public static BULLET_HIT_ENEMY:string = "BULLET_HIT_ENEMY";

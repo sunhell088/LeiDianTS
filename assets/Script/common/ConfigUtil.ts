@@ -1,10 +1,7 @@
 import {ItemConfig} from "../configs/ItemConfig";
-import ShipSprite from "../sprites/ShipSprite";
 import {GameUtil} from "./GameUtil";
 import {SoundConfig} from "../configs/SoundConfig";
-import FightUI from "../scene/ui/FightUI";
 import {PlaneConfig} from "../configs/PlaneConfig";
-import {StoreItemConfig} from "../configs/StoreItemConfig";
 import {CommonUtil} from "./CommonUtil";
 import {Player} from "../classes/Player";
 import {EnemyConfig} from "../configs/EnemyConfig";
@@ -172,14 +169,5 @@ export class ConfigUtil {
     public static getExpByLevel(level):number{
         if(level<0 || level>=PlaneConfig.levelExp.length) return -1;
         return PlaneConfig.levelExp[level];
-    };
-
-    public static getStoreItemConfig(itemID):any{
-        for(var p in StoreItemConfig.storeItemConfig){
-            if(StoreItemConfig.storeItemConfig[p].id == itemID){
-                return StoreItemConfig.storeItemConfig[p];
-            }
-        }
-        return null;
     };
 }

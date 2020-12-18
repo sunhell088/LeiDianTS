@@ -34,8 +34,6 @@ export class Player {
         storeItemPackage: null
     };
 
-    //当前拥有的炸弹数目
-    public bomb:number = 1;
     //本局飞行距离
     public currentDistance:number = 0;
     //本局获得金币数
@@ -45,14 +43,6 @@ export class Player {
 
     public bgIndex: number = 0;
 
-    //冲刺准备中
-    public _spurtReadying:boolean = false;
-    //冲刺中
-    public _spurt:boolean = false;
-    //使用炸弹中
-    public _bomb:boolean = false;
-    //boss战中
-    public _bossIng:boolean = false;
 
     //开局冲刺持续时间（对面玩家最好距离一半）
     public _startSpurtDuration:number = 0;
@@ -69,9 +59,15 @@ export class Player {
     //道具暴落列表(暴落的道具 做成一个序列，挨个暴)
     public _itemDropArr:any = null;
 
-    //双击状态
-    public _clicked:boolean = false;
-    //已经死亡中（用于死亡后的一些处理，PS:死亡冲刺时，该状态也为true）
+    //冲刺准备中
+    public _spurtReadying:boolean = false;
+    //冲刺中
+    public _spurt:boolean = false;
+    //使用炸弹中
+    public _bomb:boolean = false;
+    //boss战中
+    public _bossIng:boolean = false;
+    //已经死亡中
     public _death:boolean = false;
     //吸铁石中
     public _magnet:boolean = false;
@@ -81,8 +77,6 @@ export class Player {
     public _doubleFire:boolean = false;
     //护罩中
     public _protecting:boolean = false;
-    //切换战机登场中
-    public _changePlaneIng:boolean = false;
     //停止发射子弹中
     public _stopBullet:boolean = true;
 
@@ -182,73 +176,6 @@ export class Player {
         if(!this.getPlaneConfig(planeID)) return;
         this.data.currentPlaneID = planeID;
     }
-    //获得玩家身上指定商城道具
-    public getStoreItem(itemID):any{
-        for(var i=0; i<this.data.storeItemPackage.length; i++){
-            if(this.data.storeItemPackage[i].itemID == itemID){
-                return this.data.storeItemPackage[i];
-            }
-        }
-        var storeItemConfig = ConfigUtil.getStoreItemConfig(itemID);
-        if(storeItemConfig){
-            var newItem = {itemID:itemID, count:0};
-            this.data.storeItemPackage.push(newItem);
-            return newItem;
-        }
-        return null;
-    }
-    //购买商城道具
-    public buyStoreItem(itemID):boolean{
-        var storeItemConfig = ConfigUtil.getStoreItemConfig(itemID);
-        if(storeItemConfig==null) return false;
-        if(this.data.gold<storeItemConfig.price) return false;
-        this.deductGold(storeItemConfig.price);
-        var storeItem = this.getStoreItem(itemID);
-        storeItem.count++;
-        //排序，用于执行时的顺序
-        this.data.storeItemPackage.sort(
-            function(a,b){
-                var itemConfigA = ConfigUtil.getStoreItemConfig(a.itemID);
-                var itemConfigB = ConfigUtil.getStoreItemConfig(b.itemID);
-                return itemConfigA.sortValue<itemConfigB.sortValue;
-            },1);
-        return true;
-    }
-    //使用玩家的商城道具
-    public useStoreItem(itemID):boolean{
-        var storeItem = this.getStoreItem(itemID);
-        if(storeItem==null||storeItem.count <= 0) return false;
-        storeItem.count--;
-        var storeItemConfig = ConfigUtil.getStoreItemConfig(itemID);
-        ObserverManager.sendNotification(GameEvent.USE_STORE_ITEM, storeItemConfig);
-        return true;
-    }
-    //花一定金币随机获得商城道具
-    public randomItem():any{
-        if(this.data.gold<CommonConfig.RANDOM_STOREITME_PRICE) return null;
-        var randomItems = [];
-        for(var p in StoreItemConfig.storeItemConfig) {
-            //如果已经购买了怎不在随机里面
-            if(this.getStoreItem(StoreItemConfig.storeItemConfig[p].id).count!=0) continue;
-            //如果已经拥有全部飞机，跳过 切换战机 道具
-            if(StoreItemConfig.storeItemConfig[p]==StoreItemConfig.storeItemConfig.changePlane){
-                var haveAllPlane = true;
-                for(var k in PlaneConfig){
-                    if(!this.getPlaneConfig(PlaneConfig[k].id)){
-                        haveAllPlane = false;
-                        break;
-                    }
-                }
-                if(haveAllPlane) continue;
-            }
-            randomItems.push(StoreItemConfig.storeItemConfig[p]);
-        }
-        if(randomItems.length==0) return null;
-        var storeItemConfig = randomItems[CommonUtil.random(0, randomItems.length-1)];
-        this.randomItemID = storeItemConfig.id;
-        this.deductGold(CommonConfig.RANDOM_STOREITME_PRICE);
-        return storeItemConfig;
-    }
     //获得玩家子弹的威力
     public getBulletPower():number{
         var basePower = 1;
@@ -261,7 +188,7 @@ export class Player {
     }
     //每次战斗开始时，重置一次相关信息
     public resetFightData(){
-        this.bomb = 1;
+        this._stopBullet = true;
         this.currentDistance = 0;
         this.currentRewardGold = 0;
     }

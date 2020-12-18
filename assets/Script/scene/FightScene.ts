@@ -199,7 +199,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var startPosition = enemy["getStartPosition"](enemy)
         enemy.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = enemy._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+        var hp = enemy._enemyConfig.HPArray[Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID) - 1] * CommonConfig.BULLET_COUNT_PER;
         enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
     }
 
@@ -212,7 +212,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var startPosition = enemy["getStartPosition"](enemy)
         enemy.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = enemy._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+        var hp = enemy._enemyConfig.HPArray[Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID) - 1] * CommonConfig.BULLET_COUNT_PER;
         enemy.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemy));
     }
 
@@ -227,7 +227,7 @@ export default class FightScene extends cc.Component implements IMediator {
             this.node.height / 2 + enemySpriteSct.node.height);
         enemySpriteSct.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = enemySpriteSct._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+        var hp = enemySpriteSct._enemyConfig.HPArray[Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID) - 1] * CommonConfig.BULLET_COUNT_PER;
         enemySpriteSct.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
     }
 
@@ -285,7 +285,7 @@ export default class FightScene extends cc.Component implements IMediator {
         var startPosition = new cc.Vec2(0, this.node.height / 2 + boss.node.height * 2);
         boss.node.setPosition(startPosition);
         //设置血量、经验和掉落
-        var hp = boss._enemyConfig.HPArray[Player.player.getBulletGrade() - 1] * CommonConfig.BULLET_COUNT_PER;
+        var hp = boss._enemyConfig.HPArray[Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID) - 1] * CommonConfig.BULLET_COUNT_PER;
         boss.setDynamicData(hp, 1, ConfigUtil.createSpecialEnemyDrop(boss));
         Player.player._bossIng = true;
     }
@@ -328,16 +328,14 @@ export default class FightScene extends cc.Component implements IMediator {
     private shootReal(ship: cc.Node) {
         let bullet = this.createBullet();
         bullet.x = ship.x;
-        bullet.y = ship.y + ship.width / 2;
+        bullet.y = ship.y + ship.height/2;
 
         //双倍火力二条
         var bullet2: cc.Node = null;
         if (Player.player._doubleFire) {
             bullet2 = this.createBullet();
             bullet2.x = ship.x + bullet2.width / 2;
-            bullet2.y = ship.y + ship.width / 2;
-
-            bullet.x = ship.x - bullet.width / 2;
+            bullet2.y = ship.y + ship.height;
         }
     }
 
@@ -844,7 +842,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let bulletSprite = spriteNode.getComponent('BulletSprite');
         bulletSprite.initSprite(spriteNode, this.bulletAtlas, this.bulletPool);
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
-        bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletGrade(Player.player.data.currentPlaneID));
+        bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID));
         return spriteNode;
     }
 

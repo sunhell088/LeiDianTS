@@ -46,6 +46,7 @@ export default class LoginScene extends cc.Component implements IMediator{
         }
         Player.player = new Player();
         Player.player.createPlayer();
+        Player.player.data.gold = 9999;
         // Player.player.loadData();
         // this.schedule(Player.player.saveData, 1);
         this.initLoginScene();

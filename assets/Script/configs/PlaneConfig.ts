@@ -4,7 +4,7 @@ export class PlaneConfig {
     public static planeConfig:any[] = [
         {
             id: 1,
-            name: "虚空之眼",
+            name: "无名之辈",
             textureName: "#ui_role_head0.png",
             fightTextureName: "role0",
             levelUpTextureName: "#levelup1.png",
@@ -15,8 +15,8 @@ export class PlaneConfig {
             planeFunction:function(shipSprite){},
         },
         {
-            id: 2,//磁铁（且双倍金币-金币变大）
-            name: "黑暗元首",
+            id: 2,//磁铁
+            name: "万磁王",
             textureName: "#ui_role_head1.png",
             fightTextureName: "role1",
             levelUpTextureName: "#levelup2.png",
@@ -30,8 +30,8 @@ export class PlaneConfig {
             },
         },
         {
-            id: 4,//自带双倍火力
-            name: "战争之王",
+            id: 4,//自带影子
+            name: "影流之主",
             textureName: "#ui_role_head2.png",
             fightTextureName: "role2",
             levelUpTextureName: "#levelup3.png",

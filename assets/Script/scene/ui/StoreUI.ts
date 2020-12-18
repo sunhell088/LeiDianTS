@@ -1,50 +1,49 @@
 import {Player} from "../../classes/Player";
-import ShipSprite from "../../sprites/ShipSprite";
 import {GameUtil} from "../../common/GameUtil";
-import {SoundConfig} from "../../configs/SoundConfig";
-import {CommonUtil} from "../../common/CommonUtil";
-import {ItemConfig} from "../../configs/ItemConfig";
-import {IMediator} from "../../framework/mvc/IMediator";
-import {ObserverManager} from "../../framework/observe/ObserverManager";
-import {GameEvent} from "../../common/GameEvent";
 import {ConfigUtil} from "../../common/ConfigUtil";
-import CanvasNode from "../CanvasNode";
 import {CommonConfig} from "../../configs/CommonConfig";
 import BulletSprite from "../../sprites/BulletSprite";
+import StoreBulletUI from "./StoreBulletUI";
+import {IMediator} from "../../framework/mvc/IMediator";
+import {GameEvent} from "../../common/GameEvent";
+import {ObserverManager} from "../../framework/observe/ObserverManager";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
-export default class StoreUI extends cc.Component{
+export default class StoreUI extends cc.Component implements IMediator {
     @property(cc.Sprite)
-    background0:cc.Sprite = null;
+    background0: cc.Sprite = null;
     @property(cc.Sprite)
-    background1:cc.Sprite = null;
+    background1: cc.Sprite = null;
     @property([cc.SpriteFrame])
     bgSptArr: cc.SpriteFrame[] = [];
 
     //最远距离
     @property(cc.Label)
-    distanceLabel :cc.Label=  null;
+    distanceLabel: cc.Label = null;
     //金币数量
     @property(cc.Label)
-    goldCount :cc.Label =  null;
+    goldCount: cc.Label = null;
     //升级战机
     @property(cc.Button)
-    updatePlaneBtn :cc.Button =  null;
+    changePlaneBtn: cc.Button = null;
     //战机图片
     @property(cc.Node)
-    planeNode:cc.Node = null;
+    planeNode: cc.Node = null;
     @property(cc.SpriteAtlas)
-    planeSpriteAtlas:cc.SpriteAtlas = null;
+    planeSpriteAtlas: cc.SpriteAtlas = null;
     //战机描述
     @property(cc.Label)
-    planeDescribeLab:cc.Label = null;
+    planeDescribeLab: cc.Label = null;
     //出击
     @property(cc.Button)
-    startBtn :cc.Button =  null;
+    startBtn: cc.Button = null;
+    //出击
+    @property(cc.Button)
+    buyBtn: cc.Button = null;
     //购买子弹
     @property(cc.Button)
-    updateBulletBtn :cc.Button =  null;
+    buyBulletBtn: cc.Button = null;
 
     //子弹预设
     @property(cc.Prefab)
@@ -58,52 +57,105 @@ export default class StoreUI extends cc.Component{
     @property(cc.SpriteAtlas)
     itemAtlas: cc.SpriteAtlas = null;
 
+    //影子战机的影子
     @property(cc.Node)
     shipShadowNode: cc.Node = null;
 
+    //升级子弹的格子
+    @property([StoreBulletUI])
+    storeBulletList: StoreBulletUI[] = [];
+
+    //随机购买子弹图片
+    @property(cc.Sprite)
+    randomBulletSprite: cc.Sprite = null;
+    //随机子弹价格
+    @property(cc.Label)
+    randomBulletPrice: cc.Label = null;
+
+
     private bulletPool: cc.NodePool = new cc.NodePool();
+    private currentPlaneID: number = null;
+
+    getCommands(): string[] {
+        return [GameEvent.UPDATE_STORE_BULLET];
+    }
 
     protected onLoad(): void {
-        this.updatePlaneBtn.node.on(cc.Node.EventType.TOUCH_END, this.onUpdatePlaneBtn, this);
+        ObserverManager.registerObserverFun(this);
+        this.changePlaneBtn.node.on(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);
         this.startBtn.node.on(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
-        this.updateBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onUpdateBulletBtn, this);
+        this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.init();
     }
 
-    protected onDisable():void {
-        this.updatePlaneBtn.node.off(cc.Node.EventType.TOUCH_END, this.onUpdatePlaneBtn, this);
+    protected onDisable(): void {
+        ObserverManager.unRegisterObserverFun(this);
+        this.changePlaneBtn.node.off(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);
         this.startBtn.node.off(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
-        this.updateBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onUpdateBulletBtn, this);
+        this.buyBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
         this.unschedule(this.shoot);
     }
 
-    protected update (dt) {
+    protected update(dt) {
         GameUtil.bgMove(dt, this.background0.node, this.background1.node);
     }
 
-    private init(){
+    private init() {
+        this.currentPlaneID = Player.player.data.currentPlaneID
         this.setBackground();
+        this.goldCount.string = Player.player.data.gold + "";
+        this.updateBuyBullet();
+        this.updateBulletList();
+
     }
+
     private setBackground() {
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
     }
 
-    private onUpdatePlaneBtn():void {
-
+    private updateBuyBullet() {
+        let planeID: number = this.currentPlaneID;
+        let storeSoldBulletGrade: number = Player.player.storeSoldBulletGradeMap[planeID];
+        let storeSoldBulletPrice: number = ConfigUtil.getStoreSoldBulletPrice(storeSoldBulletGrade);
+        let planeConfig = ConfigUtil.getPlaneConfig(planeID);
+        let bulletType: number = planeConfig.bulletType;
+        this.randomBulletSprite.spriteFrame = this.bulletAtlas.getSpriteFrame(bulletType + '_' + storeSoldBulletGrade);
+        this.randomBulletPrice.string = storeSoldBulletPrice + "";
     }
-    private onStartBtn():void {
+
+    private updateBulletList() {
+        for (let i = 0; i < this.storeBulletList.length; i++) {
+            if (i < Player.player.data.storeBulletGridCount) {
+                this.storeBulletList[i].node.active = true;
+            } else {
+                this.storeBulletList[i].node.active = false;
+            }
+        }
+        let storeBulletList: number[] = Player.player.data.storeBulletMap[this.currentPlaneID];
+        let planeConfig = ConfigUtil.getPlaneConfig(this.currentPlaneID);
+        let bulletType: number = planeConfig.bulletType;
+        for (let i = 0; i < storeBulletList.length; i++) {
+            this.storeBulletList[i].setBullet(this.currentPlaneID, bulletType, storeBulletList[i], i);
+        }
+    }
+
+    private onChangePlaneBtn(): void {
+    }
+
+    private onStartBtn(): void {
         cc.director.loadScene('fightScene');
     }
-    private onUpdateBulletBtn():void {
 
+    private onBuyBulletBtn(): void {
+        Player.player.buyBullet(this.currentPlaneID);
     }
 
     //发射子弹
     private shoot() {
         this.shootReal(this.planeNode);
-        if(this.shipShadowNode.active){
+        if (this.shipShadowNode.active) {
             this.shootReal(this.shipShadowNode)
         }
     }
@@ -112,7 +164,7 @@ export default class StoreUI extends cc.Component{
     private shootReal(ship: cc.Node) {
         let bullet = this.createBullet();
         bullet.x = ship.x;
-        bullet.y = ship.y + ship.width+bullet.height;
+        bullet.y = ship.y + ship.height / 2;
     }
 
     //创建子弹复用对象
@@ -124,11 +176,16 @@ export default class StoreUI extends cc.Component{
         } else {
             spriteNode = cc.instantiate(this.bulletPrefab);
         }
-        this.node.addChild(spriteNode);
+        this.planeNode.addChild(spriteNode);
         let bulletSprite = spriteNode.getComponent(BulletSprite);
         bulletSprite.initSprite(spriteNode, this.bulletAtlas, this.bulletPool);
-        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
-        bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletGrade(Player.player.data.currentPlaneID));
+        let planeConfig = ConfigUtil.getPlaneConfig(this.currentPlaneID);
+        bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletMaxGrade(this.currentPlaneID));
         return spriteNode;
+    }
+
+    private UPDATE_STORE_BULLET() {
+        this.updateBuyBullet();
+        this.updateBulletList();
     }
 }

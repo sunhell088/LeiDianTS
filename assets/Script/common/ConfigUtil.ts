@@ -30,7 +30,7 @@ export class ConfigUtil {
         //默认0.1，这样非普通飞机的血量参数就是0.1
         let hp = 0.2;
         if(enemyIndex<EnemyConfig.totalHPArr.length){
-            hp = EnemyConfig.totalHPArr[enemyIndex][Player.player.getBulletGrade()-1];
+            hp = EnemyConfig.totalHPArr[enemyIndex][Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)-1];
         }
         return hp*CommonConfig.BULLET_COUNT_PER;
     };
@@ -170,4 +170,22 @@ export class ConfigUtil {
         if(level<0 || level>=PlaneConfig.levelExp.length) return -1;
         return PlaneConfig.levelExp[level];
     };
+
+    //获得当前子弹商城的随机购买库
+    public static getRandomStoreBullet(planeID):number {
+        let randomGrade:number = 0;
+        let maxGrade:number = Player.player.getBulletMaxGrade(planeID);
+        if(maxGrade<5){
+            randomGrade = 1;
+        }else if(maxGrade<7){
+            randomGrade = CommonUtil.random(1,3);
+        }else {
+            randomGrade = CommonUtil.random(1,maxGrade-3);
+        }
+        return randomGrade;
+    }
+
+    public static getStoreSoldBulletPrice(grade:number):number {
+        return grade*100;
+    }
 }

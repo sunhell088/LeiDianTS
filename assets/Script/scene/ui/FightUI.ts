@@ -1,5 +1,4 @@
 import {Player} from "../../classes/Player";
-import ShipSprite from "../../sprites/ShipSprite";
 import {GameUtil} from "../../common/GameUtil";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonUtil} from "../../common/CommonUtil";
@@ -7,7 +6,6 @@ import {ItemConfig} from "../../configs/ItemConfig";
 import {IMediator} from "../../framework/mvc/IMediator";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
-import {ConfigUtil} from "../../common/ConfigUtil";
 import CanvasNode from "../CanvasNode";
 import {CommonConfig} from "../../configs/CommonConfig";
 
@@ -64,7 +62,7 @@ export default class FightUI extends cc.Component implements IMediator{
 
     getCommands():string[] {
         return [GameEvent.SET_CURRENT_REWARD_GOLD,
-            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.STORE_ITEM_EFFECT, GameEvent.UPDATE_DISTANCE_STAGE,
+            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
             GameEvent.ITEM_COLLISION_PLAYER];
     }
 

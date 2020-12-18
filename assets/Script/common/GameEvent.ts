@@ -31,4 +31,6 @@ export class GameEvent {
     //碰到吸铁石区域了
     public static COLLIDER_MAGNET:string = "COLLIDER_MAGNET";
 
+    //更新子弹商店界面
+    public static UPDATE_STORE_BULLET:string = "UPDATE_STORE_BULLET";
 }

@@ -61,9 +61,8 @@ export default class FightUI extends cc.Component implements IMediator{
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
 
     getCommands():string[] {
-        return [GameEvent.SET_CURRENT_REWARD_GOLD,
-            GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
-            GameEvent.ITEM_COLLISION_PLAYER];
+        return [GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
+            GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD];
     }
 
     protected onLoad(): void {
@@ -83,6 +82,7 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //初始化玩家UI信息
     private init(){
+        this.schedule(Player.player.saveData, 1);
         this.goldCount.string = "0";
     }
 
@@ -180,6 +180,9 @@ export default class FightUI extends cc.Component implements IMediator{
                     },this)
             ));
         }else{
+            Player.player.addCurrentRewardGold(itemConfigObj.gold);
+            Player.player.addGold(itemConfigObj.gold);
+            ObserverManager.sendNotification(GameEvent.UPDATE_FIGHT_GOLD)
             let eatCoinNameNode:cc.Node = this.createEatCoinEffect(itemConfigObj.effectTexture);
             let playerPos:cc.Vec2 = CanvasNode.getCanvasNode().getShipNodePos();
             eatCoinNameNode.setPosition(playerPos.x, playerPos.y);
@@ -187,7 +190,8 @@ export default class FightUI extends cc.Component implements IMediator{
                 cc.delayTime(1),
                 cc.moveBy(0.5,new cc.Vec2(0,30)).easing(cc.easeIn(3)),
                 cc.callFunc(function(){
-                    this.eatCoinEffectPool.put(eatCoinNameNode);},this))
+                    this.eatCoinEffectPool.put(eatCoinNameNode);
+                    },this))
             );
         }
     }
@@ -240,5 +244,9 @@ export default class FightUI extends cc.Component implements IMediator{
 
     private ITEM_COLLISION_PLAYER(itemConfig:any){
         this.playShowEatItemName(itemConfig.name);
+    }
+
+    private UPDATE_FIGHT_GOLD(){
+        this.goldCount.string = ""+Player.player.currentRewardGold;
     }
 }

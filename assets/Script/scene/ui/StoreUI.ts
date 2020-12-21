@@ -7,10 +7,15 @@ import StoreBulletUI from "./StoreBulletUI";
 import {IMediator} from "../../framework/mvc/IMediator";
 import {GameEvent} from "../../common/GameEvent";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
+import log = cc.log;
+import {BUY_BULLET_STATE} from "../../common/GameEnum";
+import Game = cc.Game;
 
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class StoreUI extends cc.Component implements IMediator {
+    @property(cc.Button)
+    checkDataBtn: cc.Button = null;
     @property(cc.Sprite)
     background0: cc.Sprite = null;
     @property(cc.Sprite)
@@ -72,15 +77,22 @@ export default class StoreUI extends cc.Component implements IMediator {
     @property(cc.Label)
     randomBulletPrice: cc.Label = null;
 
+    //提示
+    @property(cc.Node)
+    flowHintNode: cc.Node = null;
+
 
     private bulletPool: cc.NodePool = new cc.NodePool();
     private currentPlaneID: number = null;
 
     getCommands(): string[] {
-        return [GameEvent.UPDATE_STORE_BULLET];
+        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE];
     }
 
     protected onLoad(): void {
+        this.checkDataBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
+            window.alert(localStorage.playerData);
+        }, this);
         ObserverManager.registerObserverFun(this);
         this.changePlaneBtn.node.on(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);
         this.startBtn.node.on(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
@@ -102,6 +114,7 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private init() {
+        this.schedule(Player.player.saveData, 1);
         this.currentPlaneID = Player.player.data.currentPlaneID
         this.setBackground();
         this.goldCount.string = Player.player.data.gold + "";
@@ -117,7 +130,8 @@ export default class StoreUI extends cc.Component implements IMediator {
 
     private updateBuyBullet() {
         let planeID: number = this.currentPlaneID;
-        let storeSoldBulletGrade: number = Player.player.storeSoldBulletGradeMap[planeID];
+        let storeSoldBulletGrade: number = Player.player.data.storeSoldBulletGradeMap[planeID];
+
         let storeSoldBulletPrice: number = ConfigUtil.getStoreSoldBulletPrice(storeSoldBulletGrade);
         let planeConfig = ConfigUtil.getPlaneConfig(planeID);
         let bulletType: number = planeConfig.bulletType;
@@ -187,5 +201,16 @@ export default class StoreUI extends cc.Component implements IMediator {
     private UPDATE_STORE_BULLET() {
         this.updateBuyBullet();
         this.updateBulletList();
+    }
+
+    private FLY_NOTICE(notice:string){
+        this.flowHintNode.stopAllActions();
+        let label:cc.Label = this.flowHintNode.getChildByName("label").getComponent(cc.Label);
+        label.string = notice;
+        this.flowHintNode.active = true;
+        this.flowHintNode.opacity = 255;
+        cc.tween(this.flowHintNode).delay(1).to(1, {opacity:0}).call(function () {
+            this.active = false;
+        }).start();
     }
 }

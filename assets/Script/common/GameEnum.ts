@@ -10,3 +10,10 @@ export enum CLEAN_TYPE{
     ROCK=1,
     ENEMY=2
 }
+
+//购买子弹
+export enum BUY_BULLET_STATE{
+    OK=0,
+    NO_MONEY=1,
+    NO_GRID=2
+}

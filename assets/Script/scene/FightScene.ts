@@ -333,14 +333,16 @@ export default class FightScene extends cc.Component implements IMediator {
         //双倍火力二条
         var bullet2: cc.Node = null;
         if (Player.player._doubleFire) {
+            bullet.x = ship.x-bullet.width/2;
             bullet2 = this.createBullet();
             bullet2.x = ship.x + bullet2.width / 2;
-            bullet2.y = ship.y + ship.height;
+            bullet2.y = ship.y + ship.height/2;
         }
     }
 
     //根据player信息初始化显示对象
     private initPlayer() {
+        Player.player._death = false;
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
         this.ship.shipSprite.spriteFrame = this.shipAtlas.getSpriteFrame(planeConfig.fightTextureName);
         this.ship.node.setPosition(0, 0);
@@ -1033,6 +1035,10 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private GAME_OVER() {
+        for(let key in this.shipShadowList){
+            this.shipShadowList[key].destroy();
+        }
+        this.shipShadowList.length = 0;
         this.playerDeadExplodeSprite.node.setPosition(this.ship.node.getPosition());
         this.playerDeadExplodeSprite.node.active = true;
         this.playerDeadExplodeSprite.play();
@@ -1044,7 +1050,7 @@ export default class FightScene extends cc.Component implements IMediator {
             cc.callFunc(function () {
                 cc.audioEngine.stopAllEffects();
                 this.node.stopAllActions();
-                cc.director.loadScene('loginScene');
+                cc.director.loadScene('resultScene');
             }, this)
         ));
     }

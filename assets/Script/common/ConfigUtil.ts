@@ -7,6 +7,7 @@ import {Player} from "../classes/Player";
 import {EnemyConfig} from "../configs/EnemyConfig";
 import {CommonConfig} from "../configs/CommonConfig";
 import {DifficultConfig} from "../configs/DifficultConfig";
+import {LanguageConfig} from "../configs/LanguageConfig";
 
 export class ConfigUtil {
     //根据飞行距离获取飞机库
@@ -187,5 +188,14 @@ export class ConfigUtil {
 
     public static getStoreSoldBulletPrice(grade:number):number {
         return grade*100;
+    }
+
+    //根据key 获取文字  如：getLanguage("{0} + {1} = {2}", 5, 7, 12)
+    public static getLanguage(txtKey:string, ...parameters):string {
+        let format = LanguageConfig.languageConfig[txtKey];
+        for (let i = 0, l = parameters.length; i < l; i++) {
+            format = format.replace(new RegExp("\\{" + i + "\\}", "g"), parameters[i]);
+        }
+        return format;
     }
 }

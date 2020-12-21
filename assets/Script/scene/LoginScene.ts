@@ -23,12 +23,18 @@ export default class LoginScene extends cc.Component implements IMediator{
     bgSptArr: cc.SpriteFrame[] = [];
     @property(cc.Sprite)
     startHint:cc.Sprite = null;
+    @property(cc.Button)
+    clearBtn:cc.Button = null;
 
     getCommands():string[] {
         return [];
     }
 
     protected onLoad(): void {
+        this.clearBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
+            Player.player.clearData();
+            location.reload()
+        }, this);
         ObserverManager.registerObserverFun(this);
         //开启碰撞
         var manager = cc.director.getCollisionManager();
@@ -45,10 +51,7 @@ export default class LoginScene extends cc.Component implements IMediator{
                 FormationConfig.formationConfig)
         }
         Player.player = new Player();
-        Player.player.createPlayer();
-        Player.player.data.gold = 9999;
-        // Player.player.loadData();
-        // this.schedule(Player.player.saveData, 1);
+        Player.player.loadData();
         this.initLoginScene();
         this.node.on(cc.Node.EventType.TOUCH_END, this.openSotreScene, this);
     }

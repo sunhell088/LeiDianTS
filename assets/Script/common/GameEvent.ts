@@ -1,10 +1,4 @@
 export class GameEvent {
-    public static SET_CURRENT_REWARD_GOLD:string = "SET_CURRENT_REWARD_GOLD";
-
-    public static USE_STORE_ITEM:string = "USE_STORE_ITEM";
-    public static USE_FIGHT_DROP_ITEM:string = "USE_FIGHT_DROP_ITEM";
-
-
     public static RESTART_GAME:string = "RESTART_GAME";
     public static GAME_OVER:string = "GAME_OVER";
 
@@ -33,4 +27,8 @@ export class GameEvent {
 
     //更新子弹商店界面
     public static UPDATE_STORE_BULLET:string = "UPDATE_STORE_BULLET";
+    //飘提示文字
+    public static FLY_NOTICE:string = "FLY_NOTICE";
+    //金币增加
+    public static UPDATE_FIGHT_GOLD:string = "UPDATE_FIGHT_GOLD";
 }

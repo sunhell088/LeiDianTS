@@ -3,6 +3,8 @@ import {CommonConfig} from "../configs/CommonConfig";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
 import {ConfigUtil} from "../common/ConfigUtil";
+import {BUY_BULLET_STATE} from "../common/GameEnum";
+import log = cc.log;
 
 export class Player {
     public static player: Player;
@@ -27,7 +29,9 @@ export class Player {
         //飞机们的商城子弹(-1:表示未开启，0：表示开启，但没子弹，>0：表示子弹等级)
         storeBulletMap: null,
         //当前开启子弹格子数量
-        storeBulletGridCount: 4
+        storeBulletGridCount: 4,
+        //当前子弹商店的随机子弹等级
+        storeSoldBulletGradeMap: {}
     };
 
     //本局飞行距离
@@ -61,12 +65,9 @@ export class Player {
     //停止发射子弹中
     public _stopBullet: boolean = true;
 
-    //当前子弹商店的随机子弹等级
-    public storeSoldBulletGradeMap: {} = {};
-
     //从本地读取玩家数据
     public loadData() {
-        if (!localStorage.playerData) {
+        if (localStorage.playerData) {
             this.data = JSON.parse(localStorage.playerData);
         } else {
             this.createPlayer();
@@ -75,13 +76,14 @@ export class Player {
 
     //每秒保存一次玩家数据
     public saveData() {
-        JSON.stringify(this.data);
-        localStorage.playerData = JSON.stringify(this.data);
+        let dataStr = JSON.stringify(Player.player.data);
+        localStorage.playerData = dataStr;
     }
 
     //清存档
     public clearData() {
         localStorage.clear();
+        this.data = null;
     }
 
     //第一次登录游戏，创建玩家对象
@@ -104,7 +106,7 @@ export class Player {
 
             }
             this.data.storeBulletMap[PlaneConfig.planeConfig[key].id] = storeBulletList;
-            this.storeSoldBulletGradeMap[PlaneConfig.planeConfig[key].id] = ConfigUtil.getRandomStoreBullet(PlaneConfig.planeConfig[key].id);
+            this.data.storeSoldBulletGradeMap[PlaneConfig.planeConfig[key].id] = ConfigUtil.getRandomStoreBullet(PlaneConfig.planeConfig[key].id);
         }
     }
 
@@ -133,12 +135,20 @@ export class Player {
     public buyBullet(planeID) {
         let emptyIndex: number = this.getStoreBulletEmptyIndex(planeID);
         if (emptyIndex == -1) {
-            window.alert("没有空位了，可以先合成相同的子弹");
+            let notice:string = ConfigUtil.getLanguage("buyBulletBoGrid");
+            ObserverManager.sendNotification(GameEvent.FLY_NOTICE, notice);
+            return;
         } else {
-            let bulletGrade: number = this.storeSoldBulletGradeMap[planeID]
+            let bulletGrade: number = this.data.storeSoldBulletGradeMap[planeID];
+            let bulletPrice:number = ConfigUtil.getStoreSoldBulletPrice(bulletGrade);
+            if(this.data.gold<bulletPrice){
+                let notice:string = ConfigUtil.getLanguage("noMoney", bulletPrice-this.data.gold);
+                ObserverManager.sendNotification(GameEvent.FLY_NOTICE, notice);
+                return ;
+            }
             this.data.gold -= bulletGrade;
             this.data.storeBulletMap[planeID][emptyIndex] = bulletGrade;
-            Player.player.storeSoldBulletGradeMap[planeID] = ConfigUtil.getRandomStoreBullet(planeID);
+            Player.player.data.storeSoldBulletGradeMap[planeID] = ConfigUtil.getRandomStoreBullet(planeID);
             ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET);
         }
     }
@@ -175,7 +185,6 @@ export class Player {
     public addCurrentRewardGold(value) {
         if (value <= 0) return;
         this.currentRewardGold += value;
-        ObserverManager.sendNotification(GameEvent.SET_CURRENT_REWARD_GOLD, this.currentRewardGold)
     }
 
     //刷新最远飞行距离(返回是否创记录)

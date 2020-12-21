@@ -860,11 +860,10 @@ export default class FightScene extends cc.Component implements IMediator {
 
     //创建敌机复用对象
     private createEnemy(enemyConfig: any): EnemySprite {
-        console.log(66)
         let spriteNode: cc.Node = null;
         let enemySprite: EnemySprite = null;
         let enemyPrefab: cc.Prefab = this.enemyPrefab;
-        let classNameStr: string = enemyConfig.classType;
+        let classNameStr: string = CommonUtil.getQualifiedClassName(enemyConfig.classType);
         let pool: cc.NodePool = this.enemyPool;
         switch (classNameStr) {
             case "FlexEnemySprite":
@@ -884,19 +883,15 @@ export default class FightScene extends cc.Component implements IMediator {
         }
 
         if (pool.size() > 0) {
-            console.log("pool.size()"+pool.size())
-            console.log(classNameStr)
             spriteNode = pool.get();
             enemySprite = spriteNode.getComponent(enemyConfig.classType);
             spriteNode.active = true;
             spriteNode.opacity = 255;
             spriteNode.stopAllActions();
         } else {
-            console.log("instantiate")
             spriteNode = cc.instantiate(enemyPrefab);
             enemySprite = spriteNode.addComponent(enemyConfig.classType);
         }
-        console.log(spriteNode)
         this.node.addChild(spriteNode);
         enemySprite.bloodBar = spriteNode.children[0].getComponent(cc.ProgressBar);
         enemySprite.initSprite(spriteNode, this.enemyAtlas, pool, enemyConfig);

@@ -14,6 +14,9 @@ import LoginScene from "../../scene/LoginScene";
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class EnemySprite extends cc.Component {
+    @property(cc.ProgressBar)
+    bloodBar:cc.ProgressBar = null;
+
     _spriteNode:cc.Node = null;
     _spriteAtlas:cc.SpriteAtlas = null;
     _spritePool:cc.NodePool = null;
@@ -23,8 +26,6 @@ export default class EnemySprite extends cc.Component {
     _HP:number = 0;
     _dropItems:any[] = null;
 
-    @property(cc.ProgressBar)
-    bloodBar:cc.ProgressBar = null;
 
     //飞行状态
     flyState:FLY_STATE = FLY_STATE.ENTER;
@@ -85,15 +86,10 @@ export default class EnemySprite extends cc.Component {
     }
 
     //动态设置敌机的血量、经验和掉落物品
-    setDynamicData(hp, exp, items){
-        this._dropItems = [];
+    setDynamicData(hp, items){
+        this._dropItems = items;
         this._MAX_HP = hp;
         this._HP = this._MAX_HP;
-        if(items instanceof Array){
-            this._dropItems = items;
-        }else{
-            this._dropItems.push(items);
-        }
     }
     //死亡音效（子类重载）
     playDeathSound(){
@@ -115,9 +111,7 @@ export default class EnemySprite extends cc.Component {
         //敌机与玩家炸弹碰撞
         let bombRainSprite:BombRainSprite = other.getComponent(BombRainSprite);
         if(bombRainSprite){
-            if (this._enemyConfig.classType == EnemySprite) {
-                this.hurt(-1, true);
-            }
+            this.hurt(-1, true);
         }
     }
 }

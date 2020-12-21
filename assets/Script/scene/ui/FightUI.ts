@@ -105,8 +105,6 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //暂停游戏
     private OnPauseGame(sender,type){
-        cc.director.loadScene('storeScene');
-        return;
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         //游戏暂停
         cc.director.pause();
@@ -127,7 +125,7 @@ export default class FightUI extends cc.Component implements IMediator{
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         cc.director.resume();
         this.node.stopAllActions();
-        cc.director.loadScene('loginScene');
+        cc.director.loadScene('storeScene');
     }
 
     //吃道具飘名字

@@ -22,13 +22,13 @@ export class CommonConfig {
     //冲刺中敌机速度
     public static ENEMY_SPURT_SPEED = 640;
     //陨石速度
-    public static ROCK_SPEED = 420;
+    public static ROCK_SPEED = 420/1.3;
     //陨石跟踪速度
     public static ROCK_FOLLOW_SPEED = 40;
     //炸弹飞行时间
     public static ROCK_BOMB_SPEED = 1;
     //追踪飞机的速度
-    public static FOLLOW_ENEMY_SPEED = 250;
+    public static FOLLOW_ENEMY_SPEED = 500/1.5;
 
     //子弹产生间隔
     public static BULLET_DELAY = 0.03;
@@ -39,11 +39,13 @@ export class CommonConfig {
     //产生陨石的间隔
     public static ROCK_CONFIG_DELAY = 15;
     //产生炸弹飞机的间隔
-    public static BLESS_BOMB_DELAY = 17;
+    public static BLESS_BOMB_DELAY = 10;
     //产生福利飞机的间隔
-    public static BLESS_PLANE_DELAY = 13;
-    //产生特殊（停留和追踪）飞机的间隔
-    public static STAY_ENEMY_DELAY = 13;
+    public static BLESS_PLANE_DELAY = 15;
+    //产生特殊停留飞机的间隔
+    public static STAY_ENEMY_DELAY = 30;
+    //产生特殊追踪飞机的间隔
+    public static FOLLOW_ENEMY_DELAY = 15;
     //产生冲刺敌机的间隔
     public static ENEMY_SPURT_DELAY = 0.3;
     //同一批陨石出现的间隔时间
@@ -65,8 +67,6 @@ export class CommonConfig {
     public static ENEMY_HEIGHT = 60;
 
     //-----------------------逻辑部分的配置---------------------------------------
-    //随机获得商城道具的花费
-    public static RANDOM_STOREITME_PRICE = 199;
     //玩家可携带炸弹最大数量
     public static BOMB_MAX_COUNT = 4;
     //多少米后才刷新记录时，才出现新记录图片
@@ -82,7 +82,7 @@ export class CommonConfig {
     //护盾时间
     public static PROTECT_TIME = 15;
     //双倍火力时间
-    public static DOUBLE_FIRE_TIME = 15;
+    public static DOUBLE_FIRE_TIME = 5;
     //影子时间
-    public static SHADOW_TIME = 15;
+    public static SHADOW_TIME = 7;
 }

@@ -16,6 +16,17 @@ export default class FollowEnemySprite extends EnemySprite {
     followSpeed:cc.Vec2 = new cc.Vec2();
     //追踪时的音效（用于死亡时停止）
     followAudio:any = null;
+    //闪烁时不受伤
+    bBlink:boolean = true;
+
+    hurt(bulletPower, bDrop) {
+        if(!this.bBlink)
+        super.hurt(bulletPower, bDrop);
+    }
+    destroySprite() {
+        super.destroySprite();
+        this.bBlink = true;
+    }
 
     update(dt){
         let fightNodeSize:cc.Size = CanvasNode.getCanvasNode().getFightNodeSize();
@@ -32,9 +43,9 @@ export default class FollowEnemySprite extends EnemySprite {
                     this.followAudio = GameUtil.playSound(SoundConfig.followEnemy_follow);
                     this.node.runAction(
                         cc.sequence(
-                            cc.delayTime(1),
                             cc.blink(1,5),
                             cc.callFunc(function(){
+                                this.bBlink = false;
                                 let playerPos:cc.Vec2 =  CanvasNode.getCanvasNode().getShipNodePos();
                                 let x2 = Math.pow(Math.abs(this.node.x-playerPos.x),2);
                                 let y2 = Math.pow(Math.abs(this.node.y-playerPos.y),2);

@@ -5,6 +5,7 @@ import EnemySprite from "./EnemySprite";
 import FightScene from "../../scene/FightScene";
 import {FLY_STATE} from "../../common/GameEnum";
 import CanvasNode from "../../scene/CanvasNode";
+import {EnemyConfig} from "../../configs/EnemyConfig";
 
 
 const {ccclass, property} = cc._decorator;
@@ -14,14 +15,13 @@ export default class StayEnemySprite extends EnemySprite {
         let fightNodeSize:cc.Size = CanvasNode.getCanvasNode().getFightNodeSize();
         var speed = CommonConfig.SMALL_BOSS_SPEED;
         if (this.flyState == FLY_STATE.ENTER) {
-
             if (this.node.y > fightNodeSize.height / 2 * 0.75) {
                 this.node.y -= speed * dt;
             } else {
                 this.flyState = FLY_STATE.RUN;
                 this.node.runAction(
                     cc.sequence(
-                        cc.delayTime(CommonConfig.SMALL_BOSS_STAYTIME),
+                        cc.delayTime(this._enemyConfig.id==EnemyConfig.enemyConfig.enemyBomb.id?0:CommonConfig.SMALL_BOSS_STAYTIME),
                         cc.callFunc(function () {
                                 this.flyState = FLY_STATE.EXIT;
                             },

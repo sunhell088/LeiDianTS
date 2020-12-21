@@ -19,23 +19,6 @@ export class ConfigUtil {
         return DifficultConfig.NormalEnemyForStage[stageIndex];
     };
 
-    //根据子弹威力获取敌机血量
-    public static getEnemyHPByPower(enemyConfig):number{
-        let enemyIndex = 0;
-        for(let k in EnemyConfig){
-            if(enemyConfig==EnemyConfig[k]){
-                break;
-            }
-            enemyIndex++;
-        }
-        //默认0.1，这样非普通飞机的血量参数就是0.1
-        let hp = 0.2;
-        if(enemyIndex<EnemyConfig.totalHPArr.length){
-            hp = EnemyConfig.totalHPArr[enemyIndex][Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)-1];
-        }
-        return hp*CommonConfig.BULLET_COUNT_PER;
-    };
-
     //根据飞行距离获取陨石库
     public static getRockConfigByStage = function(){
         var diff1 = 0;
@@ -76,13 +59,48 @@ export class ConfigUtil {
 
     public static createSpecialEnemyDrop(enemySpriteSct){
         var dropArray = [];
+        //宝箱飞机爆 影子
         if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBox){
-            dropArray.push(ItemConfig.itemConfig.item_green);
-            dropArray.push(ItemConfig.itemConfig.item_green);
-            dropArray.push(ConfigUtil.getSpecialDropItem());
+            dropArray.push(ItemConfig.itemConfig.item_shadow);
+        }
+        //追踪飞机爆 影子
+        else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyFollow){
+            dropArray.push(ItemConfig.itemConfig.item_shadow);
+        }
+        //停留飞机爆 冲刺
+        else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyStay1
+        ||enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyStay2){
+            dropArray.push(ItemConfig.itemConfig.item_cc);
+        }
+        //boss飞机爆 全部
+        else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1
+            ||enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1
+            || enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1){
+            dropArray.push(ItemConfig.itemConfig.item_xts);
+            dropArray.push(ItemConfig.itemConfig.item_protect);
+            dropArray.push(ItemConfig.itemConfig.item_shadow);
         }else {
-            let item = ConfigUtil.getSpecialDropItem();
-            dropArray.push(item);
+            //普通飞机根据飞行距离等级爆落
+            let randomItem = null;
+            if(Player.player.getDistanceStage()<6){
+                if(CommonUtil.random(0,100)>99){
+                    randomItem = ConfigUtil.getSpecialDropItem();
+                }
+                dropArray.push(ItemConfig.itemConfig.item_coin);
+            }else if(Player.player.getDistanceStage()<10){
+                if(CommonUtil.random(0,100)>90){
+                    randomItem = ConfigUtil.getSpecialDropItem();
+                }
+                dropArray.push(ItemConfig.itemConfig.item_red);
+            } else{
+                if(CommonUtil.random(0,100)>80){
+                    randomItem = ConfigUtil.getSpecialDropItem();
+                }
+                dropArray.push(ItemConfig.itemConfig.item_green);
+            }
+            if(randomItem!=null){
+                dropArray.push(randomItem);
+            }
         }
         return dropArray;
     };
@@ -197,5 +215,67 @@ export class ConfigUtil {
             format = format.replace(new RegExp("\\{" + i + "\\}", "g"), parameters[i]);
         }
         return format;
+    }
+
+    //根据飞机类型生成血量
+    public static getEnemyHP(enemyConfig):number{
+        let hp:number = 0;
+        switch (enemyConfig.id) {
+            case EnemyConfig.enemyConfig.enemy0.id:
+                hp = 10;
+                break;
+            case EnemyConfig.enemyConfig.enemy1.id:
+                hp = 10;
+                break;
+            case EnemyConfig.enemyConfig.enemy2.id:
+                hp = 15;
+                break;
+            case EnemyConfig.enemyConfig.enemy3.id:
+                hp = 20;
+                break;
+            case EnemyConfig.enemyConfig.enemy4.id:
+                hp = 40;
+                break;
+            case EnemyConfig.enemyConfig.enemy5.id:
+                hp = 60;
+                break;
+            case EnemyConfig.enemyConfig.enemy6.id:
+                hp = 120;
+                break;
+            case EnemyConfig.enemyConfig.enemy7.id:
+                hp = 240;
+                break;
+            case EnemyConfig.enemyConfig.enemy8.id:
+                hp = 480;
+                break;
+            case EnemyConfig.enemyConfig.enemy9.id:
+                hp = 1000;
+                break;
+            case EnemyConfig.enemyConfig.enemyBomb.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*50;
+                break;
+            case EnemyConfig.enemyConfig.enemyBox.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*50;
+                break;
+            case EnemyConfig.enemyConfig.enemyFollow.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*50;
+                break;
+            case EnemyConfig.enemyConfig.enemyStay1.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*200;
+                break;
+            case EnemyConfig.enemyConfig.enemyStay2.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*200;
+                break;
+            case EnemyConfig.enemyConfig.enemyBoss1.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*500;
+                break;
+            case EnemyConfig.enemyConfig.enemyBoss2.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*1500;
+                break;
+            case EnemyConfig.enemyConfig.enemyBoss3.id:
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*5000;
+                break;
+        }
+        return hp;
     }
 }

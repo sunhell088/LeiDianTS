@@ -4,42 +4,36 @@ export class ItemConfig {
         item_cc:{
             name:"item_cc",
             textureName:"item_cc",
-            presetCount:2,
             effectTexture:"fly_buff0"
         },
         //磁铁
         item_xts:{
             name:"item_xts",
             textureName:"item_xts",
-            presetCount:2,
             effectTexture:"fly_buff1"
         },
         //能量护盾
         item_protect:{
             name:"item_protect",
             textureName:"item_protect",
-            presetCount:2,
             effectTexture:"fly_buff2"
         },
         //火力全开（影子）
         item_shadow:{
             name:"item_shadow",
             textureName:"item_powerUp",
-            presetCount:2,
             effectTexture:"fly_buff3"
         },
         //双倍攻击（二条）
         item_double:{
             name:"item_double",
             textureName:"item_double",
-            presetCount:2,
             effectTexture:"fly_buff4"
         },
         //10金币
         item_coin:{
             name:"item_coin",
             textureName:"item_coin",
-            presetCount:20,
             gold:10,
             effectTexture:"fly_gold_10"
         },
@@ -47,7 +41,6 @@ export class ItemConfig {
         item_red:{
             name:"item_red",
             textureName:"item_red",
-            presetCount:7,
             gold:50,
             effectTexture:"fly_gold_50"
         },
@@ -55,7 +48,6 @@ export class ItemConfig {
         item_green:{
             name:"item_green",
             textureName:"item_green",
-            presetCount:5,
             gold:100,
             effectTexture:"fly_gold_100"
         }

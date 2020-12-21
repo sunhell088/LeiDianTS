@@ -28,13 +28,10 @@ export class DifficultConfig {
         EnemyConfig.enemyConfig.enemy9//10000
     ];
 
-    //爆金币和钻石的概率
+    //爆金币和钻石的概率-----------增加或删除时，注意修改几率--------------
     public static SPECIAL_DROP_ODDS = [
-        {min:1,max:20, itemConfig:ItemConfig.itemConfig.item_cc},
-        {min:21,max:40, itemConfig:ItemConfig.itemConfig.item_xts},
-        {min:41,max:60, itemConfig:ItemConfig.itemConfig.item_protect},
-        {min:61,max:80, itemConfig:ItemConfig.itemConfig.item_shadow},
-        {min:81,max:100, itemConfig:ItemConfig.itemConfig.item_double}
+        {min:0,max:60, itemConfig:ItemConfig.itemConfig.item_xts},
+        {min:61,max:100, itemConfig:ItemConfig.itemConfig.item_protect}
     ];
 
     //初级陨石库
@@ -45,8 +42,6 @@ export class DifficultConfig {
         [[4]],
         [[0,5]],
         [[2,3]],
-        [[0,1,2]],
-        [[3,4,5]],
         [[0],[1],[2]],
         [[5],[4],[3]],
         [["1"]],
@@ -54,8 +49,8 @@ export class DifficultConfig {
     ];
     //中级陨石库
     public static rockConfigForStage2 = [
-        [[0,1,2,3]],
-        [[2,3,4,5]],
+        [[0,1,2]],
+        [[3,4,5]],
         [["0","5"]],
         [[0,1,"2"]],
         [["3",4,5]],
@@ -67,6 +62,6 @@ export class DifficultConfig {
         [[1,2,3,4,5]]
     ];
 
-    public static stayEnemyArr = [EnemyConfig.enemyConfig.enemyStay1, EnemyConfig.enemyConfig.enemyStay2, EnemyConfig.enemyConfig.enemyFollow];
+    public static stayEnemyArr = [EnemyConfig.enemyConfig.enemyStay1, EnemyConfig.enemyConfig.enemyStay2];
 
 }

@@ -9,10 +9,22 @@ import {FLY_STATE} from "../../common/GameEnum";
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class FlexEnemySprite extends EnemySprite {
+    bBlink:boolean = true;
+
     getStartPosition(self:FlexEnemySprite) {
         var randomX:number = CommonUtil.random(-CommonConfig.WIDTH/2+self.node.width / 2, CommonConfig.WIDTH/2 - self.node.width / 2);
-        var randomY:number = CommonUtil.random(0, CommonConfig.HEIGHT/2);
+        var randomY:number = CommonUtil.random(CommonConfig.HEIGHT/4, CommonConfig.HEIGHT/2);
         return new cc.Vec2(randomX, randomY);
+    }
+
+    hurt(bulletPower, bDrop) {
+        if(!this.bBlink){
+            super.hurt(bulletPower, bDrop);
+        }
+    }
+    destroySprite() {
+        super.destroySprite();
+        this.bBlink = true;
     }
 
     //重载update
@@ -31,6 +43,9 @@ export default class FlexEnemySprite extends EnemySprite {
                 cc.fadeIn(0.5),
                 cc.blink(0.7, 5),
                 cc.delayTime(0.5),
+                cc.callFunc(function () {
+                    this.bBlink = false;
+                }, this),
                 action1,
                 cc.delayTime(0.5),
                 cc.fadeOut(0.5),

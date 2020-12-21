@@ -6,163 +6,107 @@ import StayEnemySprite from "../sprites/enemy/StayEnemySprite";
 
 
 export class EnemyConfig {
-    public static totalHPArr = [
-        [0.3,0.2,0.2,0.1,0.1,0.1,0.1,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-        [0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-        [0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.3,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.1,0.1,0.1,0.1,0.1,0.0,0.0,0.0],
-        [0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.3,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2],
-        [1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.2,0.2,0.2,0.2,0.2],
-        [1.2,1.2,1.2,1.2,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.3,0.2],
-        [1.4,1.4,1.4,1.4,1.2,1.2,1.2,1.2,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3],
-        [1.6,1.6,1.6,1.6,1.4,1.4,1.4,1.4,1.2,1.2,1.2,1.2,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3],
-        [1.8,1.8,1.8,1.8,1.6,1.6,1.6,1.6,1.4,1.4,1.4,1.4,1.2,1.2,1.2,1.2,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4,0.4,0.4,0.4,0.3],
-        [2.0,2.0,2.0,2.0,1.8,1.8,1.8,1.8,1.6,1.6,1.6,1.6,1.4,1.4,1.4,1.4,1.2,1.2,1.2,1.2,1.0,1.0,1.0,1.0,0.8,0.8,0.8,0.6,0.6,0.5,0.5,0.5,0.5,0.4,0.4]
-    ];
 
     public static enemyConfig:any = {
         enemy0:{
             id:"enemy0",
             textureName:"enemy0",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
             enterGamePreset:true,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy1:{
             id:"enemy1",
             textureName:"enemy1",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy2:{
             id:"enemy2",
             textureName:"enemy2",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy3:{
             id:"enemy3",
             textureName:"enemy3",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy4:{
             id:"enemy4",
             textureName:"enemy4",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy5:{
             id:"enemy5",
             textureName:"enemy5",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy6:{
             id:"enemy6",
             textureName:"enemy6",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy7:{
             id:"enemy7",
             textureName:"enemy7",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy8:{
             id:"enemy8",
             textureName:"enemy8",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
         enemy9:{
             id:"enemy9",
             textureName:"enemy9",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:20,
-            classType:EnemySprite
+            classType:"EnemySprite"
         },
-
+        //------------------特殊飞机---------------------------
         //自爆飞机
         enemyBomb:{
             id:"enemyBomb",
             textureName:"enemy20",
-            HPArray:[0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:FlexEnemySprite
+            classType:"StayEnemySprite"
         },
         //宝箱飞机
         enemyBox:{
             id:"enemyBox",
             textureName:"enemy21",
-            HPArray:[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-            presetCount:2,
-            enterGamePreset:true,
-            classType:FlexEnemySprite
-        },
-        //停留飞机
-        enemyStay1:{
-            id:"enemyStay1",
-            textureName:"enemy22",
-            HPArray:[2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:StayEnemySprite
-        },
-        //停留大飞机2
-        enemyStay2:{
-            id:"enemyStay2",
-            textureName:"enemy26",
-            HPArray:[2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:StayEnemySprite
+            classType:"FlexEnemySprite"
         },
         //追踪飞机
         enemyFollow:{
             id:"enemyFollow",
             textureName:"enemy27",
-            HPArray:[0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5 ,0.5],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:FollowEnemySprite
+            classType:"FollowEnemySprite"
+        },
+        //停留飞机
+        enemyStay1:{
+            id:"enemyStay1",
+            textureName:"enemy22",
+            classType:"StayEnemySprite"
+        },
+        //停留大飞机2
+        enemyStay2:{
+            id:"enemyStay2",
+            textureName:"enemy26",
+            classType:"StayEnemySprite"
         },
         //boss1
         enemyBoss1:{
             id:"enemyBoss1",
             textureName:"enemy23",
-            HPArray:[5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:BossEnemySprite
+            classType:"BossEnemySprite"
         },
         //boss2
         enemyBoss2:{
             id:"enemyBoss2",
             textureName:"enemy24",
-            HPArray:[5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:BossEnemySprite
+            classType:"BossEnemySprite"
         },
         //boss3
         enemyBoss3:{
             id:"enemyBoss3",
             textureName:"enemy25",
-            HPArray:[5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0],
-            presetCount:1,
-            enterGamePreset:true,
-            classType:BossEnemySprite
+            classType:"BossEnemySprite"
         }
     };
 }

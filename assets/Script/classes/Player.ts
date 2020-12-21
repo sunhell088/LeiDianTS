@@ -110,7 +110,7 @@ export class Player {
         }
     }
 
-    //获得指定飞机最高等级
+    //获得指定飞机子弹的最高等级
     public getBulletMaxGrade(planeID: number): number {
         let storeBulletList = this.data.storeBulletMap[planeID];
         let maxGrade: number = 0;
@@ -233,12 +233,10 @@ export class Player {
 
     //获得玩家子弹的威力
     public getBulletPower(): number {
-        var basePower = 1;
-        var ratio = 1;
-        return basePower * ratio;
+        return this.getBulletMaxGrade(this.data.currentPlaneID);
     }
 
-    //飞行距离对应的难度等级
+    //飞行距离对应的难度等级(500米一个等级)
     public getDistanceStage(): number {
         return parseInt("" + this.currentDistance / CommonConfig.DISTANCE_STAGE_UNIT);
     }

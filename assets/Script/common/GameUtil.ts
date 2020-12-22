@@ -1,6 +1,7 @@
 import {CommonConfig} from "../configs/CommonConfig";
 import {CommonUtil} from "./CommonUtil";
 import {Player} from "../classes/Player";
+import {ConfigUtil} from "./ConfigUtil";
 
 export class GameUtil {
     public static bgMove(dt, bg1, bg2) {
@@ -59,6 +60,5 @@ export class GameUtil {
         }
         return null;
     };
-
 
 }

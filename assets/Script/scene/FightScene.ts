@@ -442,6 +442,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 bomb.runAction(cc.sequence(
                     cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT - bomb.height)),
                     cc.callFunc(function (sender) {
+                        bomb.stopAllActions()
                         this.playerBombRainPool.put(bomb);
                     }, this)
                 ));
@@ -456,6 +457,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 this.dark.node.active = false;
                 this.bombEffect.node.active = false;
                 Player.player._bomb = false;
+                this.bombEffect.node.stopAllActions();
             }, {dark: this.darkSprite, bombEffect: this.bombEffect}
         );
         actionArray.push(overFunc);

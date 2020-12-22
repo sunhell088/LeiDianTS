@@ -113,7 +113,7 @@ export class Player {
 
             }
             this.data.storeBulletMap[PlaneConfig.planeConfig[key].id] = storeBulletList;
-            this.data.storeSoldBulletGradeMap[PlaneConfig.planeConfig[key].id] = ConfigUtil.getRandomStoreBullet(PlaneConfig.planeConfig[key].id);
+            this.data.storeSoldBulletGradeMap[PlaneConfig.planeConfig[key].id] = 1;
         }
     }
 
@@ -155,7 +155,24 @@ export class Player {
             }
             this.data.gold -= bulletGrade;
             this.data.storeBulletMap[planeID][emptyIndex] = bulletGrade;
-            Player.player.data.storeSoldBulletGradeMap[planeID] = ConfigUtil.getRandomStoreBullet(planeID);
+            let randomGrade:number = ConfigUtil.getRandomStoreBullet(planeID);
+            //如果只有一个格子了，并且随机到了所有都不相同的等级
+            let storeBulletList: number[] = this.data.storeBulletMap[planeID];
+            let emptyCount:number = 0;
+            for (let i = 0; i < storeBulletList.length; i++) {
+                if (storeBulletList[i] == 0) emptyCount++;
+            }
+            if(emptyCount==1){
+                while (true){
+                    let bSame:boolean = this.checkSameBulletGrid(planeID, randomGrade);
+                    if(bSame){
+                        break;
+                    }else {
+                        randomGrade = ConfigUtil.getRandomStoreBullet(planeID);
+                    }
+                }
+            }
+            Player.player.data.storeSoldBulletGradeMap[planeID] = randomGrade;
             ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET);
         }
     }
@@ -174,6 +191,20 @@ export class Player {
 
         }
         ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET);
+    }
+
+    //检查新产生的子弹在里面是否已经没有重复的了
+    public checkSameBulletGrid(planeID:number, newBulletGrade:number):boolean{
+        let storeBulletList: number[] = this.data.storeBulletMap[planeID];
+        let bHave:boolean = false;
+        for (let i = 0; i < storeBulletList.length; i++) {
+            if (storeBulletList[i] <= 0) continue;
+            if(storeBulletList[i]==newBulletGrade){
+                bHave = true;
+                break;
+            }
+        }
+        return bHave;
     }
 
     //加金币

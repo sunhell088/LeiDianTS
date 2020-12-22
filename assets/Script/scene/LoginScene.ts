@@ -68,7 +68,7 @@ export default class LoginScene extends cc.Component implements IMediator{
     private initLoginScene() {
         //加载当前使用战机
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
-        this.planeSpt.spriteFrame = this.planeSptArr[planeConfig.bigPngName];
+        this.planeSpt.spriteFrame = this.planeSptArr[planeConfig.nameIndex];
         //随机背景图片
         Player.player.bgIndex = parseInt("" + Math.random() * 3);
         const bgIndex = Player.player.bgIndex;

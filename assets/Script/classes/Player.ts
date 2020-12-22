@@ -3,14 +3,12 @@ import {CommonConfig} from "../configs/CommonConfig";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
 import {ConfigUtil} from "../common/ConfigUtil";
-import {BUY_BULLET_STATE} from "../common/GameEnum";
-import log = cc.log;
 
 export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode: boolean = false;
+    public debugMode: boolean = true;
 
     //需要存盘的数据
     public data = {

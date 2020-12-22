@@ -209,8 +209,10 @@ export default class StoreUI extends cc.Component implements IMediator {
         label.string = notice;
         this.flowHintNode.active = true;
         this.flowHintNode.opacity = 255;
+
         cc.tween(this.flowHintNode).delay(1).to(1, {opacity:0}).call(function () {
-            this.active = false;
-        }).start();
+            this.flowHintNode.active = false;
+            // @ts-ignore
+        }, this).start();
     }
 }

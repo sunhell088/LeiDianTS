@@ -8,6 +8,7 @@ import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
 import CanvasNode from "../CanvasNode";
 import {CommonConfig} from "../../configs/CommonConfig";
+import {ConfigUtil} from "../../common/ConfigUtil";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -58,6 +59,13 @@ export default class FightUI extends cc.Component implements IMediator{
     @property(cc.Prefab)
     eatCoinEffectPrefab:cc.Prefab = null;
 
+    @property(cc.Sprite)
+    progressBarSpt:cc.Sprite = null;
+    @property(cc.Sprite)
+    progressRoleSpt:cc.Sprite = null;
+    @property([cc.SpriteFrame])
+    progressRoleSptFrame:cc.SpriteFrame[] = [];
+
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
 
     getCommands():string[] {
@@ -84,6 +92,9 @@ export default class FightUI extends cc.Component implements IMediator{
     private init(){
         this.schedule(Player.player.saveData, 1);
         this.goldCount.string = "0";
+        this.progressRoleSpt.node.runAction(cc.repeatForever(cc.blink(1, 1)))
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
+        this.progressRoleSpt.spriteFrame = this.progressRoleSptFrame[planeConfig.nameIndex];
     }
 
     //刷新飞行距离
@@ -219,7 +230,9 @@ export default class FightUI extends cc.Component implements IMediator{
     }
 
     public MOVE_BG(currentDistance:number){
-        this.setDistanceLabel(currentDistance)
+        this.setDistanceLabel(currentDistance);
+        let periodDis:number = currentDistance/CommonConfig.MAX_DISTANCE
+        this.progressRoleSpt.node.y = -this.progressBarSpt.node.getContentSize().width/2+this.progressBarSpt.node.getContentSize().width*periodDis;
     }
 
     private UPDATE_DISTANCE_STAGE(){

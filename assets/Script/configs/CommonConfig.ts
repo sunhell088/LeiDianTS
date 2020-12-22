@@ -22,7 +22,7 @@ export class CommonConfig {
     //冲刺中敌机速度
     public static ENEMY_SPURT_SPEED = 640;
     //陨石速度
-    public static ROCK_SPEED = 420/1.3;
+    public static ROCK_SPEED = 420;
     //陨石跟踪速度
     public static ROCK_FOLLOW_SPEED = 40;
     //炸弹飞行时间
@@ -37,9 +37,9 @@ export class CommonConfig {
     //产生飞机的间隔
     public static ENEMY_DELAY = 2;
     //产生陨石的间隔
-    public static ROCK_CONFIG_DELAY = 15;
+    public static ROCK_CONFIG_DELAY = 11;
     //产生炸弹飞机的间隔
-    public static BLESS_BOMB_DELAY = 10;
+    public static BLESS_BOMB_DELAY = 13;
     //产生福利飞机的间隔
     public static BLESS_PLANE_DELAY = 15;
     //产生特殊停留飞机的间隔
@@ -66,9 +66,6 @@ export class CommonConfig {
     public static ENEMY_WIDTH = 60;
     public static ENEMY_HEIGHT = 60;
 
-    //-----------------------逻辑部分的配置---------------------------------------
-    //玩家可携带炸弹最大数量
-    public static BOMB_MAX_COUNT = 4;
     //多少米后才刷新记录时，才出现新记录图片
     public static NEW_RECORD_DISTANCE = 50;
     //飞行距离对应的难度等级
@@ -85,4 +82,7 @@ export class CommonConfig {
     public static DOUBLE_FIRE_TIME = 5;
     //影子时间
     public static SHADOW_TIME = 7;
+
+    //最大距离
+    public static MAX_DISTANCE:number = 10000;
 }

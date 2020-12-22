@@ -47,7 +47,7 @@ export default class ResultUI extends cc.Component{
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
-        this.planeSpt.spriteFrame = this.planeSptArr[planeConfig.bigPngName];
+        this.planeSpt.spriteFrame = this.planeSptArr[planeConfig.nameIndex];
         this.awardGoldLab.string = Player.player.currentRewardGold + "";
         let currentDis:number = Math.round(Player.player.currentDistance);
         let maxDistance:number = Math.round(Player.player.data.maxDistance);

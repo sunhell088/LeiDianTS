@@ -205,7 +205,7 @@ export class ConfigUtil {
     }
 
     public static getStoreSoldBulletPrice(grade:number):number {
-        return grade*100;
+        return grade*1000;
     }
 
     //根据key 获取文字  如：getLanguage("{0} + {1} = {2}", 5, 7, 12)
@@ -258,7 +258,7 @@ export class ConfigUtil {
                 hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*50;
                 break;
             case EnemyConfig.enemyConfig.enemyFollow.id:
-                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*50;
+                hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*30;
                 break;
             case EnemyConfig.enemyConfig.enemyStay1.id:
                 hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*200;

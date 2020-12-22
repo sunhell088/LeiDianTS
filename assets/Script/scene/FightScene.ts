@@ -163,7 +163,7 @@ export default class FightScene extends cc.Component implements IMediator {
             //普通飞机速度变快
             this.addEnemySpeed(Player.player._preDistanceStage);
             //创建BOSS
-            this.createBoos(Player.player._preDistanceStage);
+            this.createBoss(Player.player._preDistanceStage);
         }
     }
 
@@ -260,16 +260,16 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     //根据飞行距离创建BOSS
-    private createBoos(distanceStage) {
+    private createBoss(distanceStage) {
         let boss: BossEnemySprite = null;
         switch (distanceStage) {
             case 10:
                 boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss1);
                 break;
-            case 12:
+            case 14:
                 boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss2);
                 break;
-            case 16:
+            case 20:
                 boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss3);
                 window.alert("二周目")
                 break;
@@ -863,11 +863,14 @@ export default class FightScene extends cc.Component implements IMediator {
         let spriteNode: cc.Node = null;
         let enemySprite: EnemySprite = null;
         let enemyPrefab: cc.Prefab = this.enemyPrefab;
-        let classNameStr: string = CommonUtil.getQualifiedClassName(enemyConfig.classType);
+        let classNameStr: string = enemyConfig.enemyClassName;
         let pool: cc.NodePool = this.enemyPool;
         switch (classNameStr) {
             case "FlexEnemySprite":
                 pool = this.enemyFlexPool;
+                break;
+            case "FollowEnemySprite":
+                pool = this.enemyFollowPool;
                 break;
             case "StayEnemySprite":
                 pool = this.enemyStayPool;
@@ -876,9 +879,6 @@ export default class FightScene extends cc.Component implements IMediator {
             case "BossEnemySprite":
                 pool = this.enemyBossPool;
                 enemyPrefab = this.enemyBossPrefab;
-                break;
-            case "FollowEnemySprite":
-                pool = this.enemyFollowPool;
                 break;
         }
 

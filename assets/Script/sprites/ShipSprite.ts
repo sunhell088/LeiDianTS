@@ -38,7 +38,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
     eatItemEffect:cc.Node = null;
 
 
-
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
             GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM,GameEvent.COLLIDER_MAGNET];
@@ -49,13 +48,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
-    }
-
-    //重置飞机能力
-    resetEffect(){
-        this.setMagnetEnd();
-        this.setProtectEnd();
-        this.setDoubleFireEnd();
     }
 
     comeOnStage(){
@@ -86,7 +78,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             this.protectExplodeSprite.on(cc.Animation.EventType.FINISHED, function () {
                 this.protectExplodeSprite.node.active = false;
             }, this);
-            this.setProtectEnd();
+            this.deductProtectTime();
         }
         else{
             this.death();
@@ -177,46 +169,60 @@ export default class ShipSprite extends cc.Component implements IMediator{
     //吸铁石效果
     private itemFunctionXTS(){
         this.setMagnetStart();
-        this.unschedule(this.setMagnetEnd);
-        this.scheduleOnce(this.setMagnetEnd, CommonConfig.XTS_TIME);
+        this.schedule(this.deductMagnetTime, 0.1);
     }
     private itemFunctionProtect(){
         this.setProtectStart();
-        this.unschedule(this.setProtectEnd);
-        this.scheduleOnce(this.setProtectEnd, CommonConfig.PROTECT_TIME);
+        this.schedule(this.deductProtectTime, 0.1);
     }
 
     private itemFunctionDoubleFight(){
         this.setDoubleFireStart();
-        this.unschedule(this.setDoubleFireEnd);
-        this.scheduleOnce(this.setDoubleFireEnd, CommonConfig.DOUBLE_FIRE_TIME);
+        this.schedule(this.deductDoubleFireTime, 0.1);
     }
 
     //显示磁铁
     setMagnetStart(){
         Player.player._magnet = true;
         this.magnetSprite.node.active = true;
+        Player.player.magnetRemainTime = CommonConfig.MAGNET_TIME;
     }
-    setMagnetEnd(){
-        Player.player._magnet = false;
-        this.magnetSprite.node.active = false;
+    deductMagnetTime(){
+        if(Player.player.magnetRemainTime>0){
+            Player.player.magnetRemainTime -= 0.1;
+            ObserverManager.sendNotification(GameEvent.DEDUCT_BUFF_TIME, ItemConfig.itemConfig.item_xts.name);
+        }else {
+            Player.player._magnet = false;
+            this.magnetSprite.node.active = false;
+        }
     }
     //显示护盾
     setProtectStart(){
         Player.player._protecting = true;
         this.protectSprite.node.active = true;
+        Player.player.protectRemainTime = CommonConfig.PROTECT_TIME;
     }
-    setProtectEnd(){
-        Player.player._protecting = false;
-        this.protectSprite.node.active = false;
+    deductProtectTime(){
+        if(Player.player.protectRemainTime>0){
+            Player.player.protectRemainTime -= 0.1;
+            ObserverManager.sendNotification(GameEvent.DEDUCT_BUFF_TIME, ItemConfig.itemConfig.item_protect.name);
+        }else {
+            Player.player._protecting = false;
+            this.protectSprite.node.active = false;
+        }
     }
-
     //双倍火力
     setDoubleFireStart(){
         Player.player._doubleFire = true;
+        Player.player.doubleFireRemainTime = CommonConfig.DOUBLE_FIRE_TIME;
     }
-    setDoubleFireEnd(){
-        Player.player._doubleFire = false;
+    deductDoubleFireTime(){
+        if(Player.player.doubleFireRemainTime>0){
+            Player.player.doubleFireRemainTime -= 0.1;
+            ObserverManager.sendNotification(GameEvent.DEDUCT_BUFF_TIME, ItemConfig.itemConfig.item_double.name);
+        }else {
+            Player.player._doubleFire = false;
+        }
     }
     //--------游戏事件监听方法---------
 

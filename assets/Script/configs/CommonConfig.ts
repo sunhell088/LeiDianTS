@@ -75,13 +75,13 @@ export class CommonConfig {
     public static PRESET_COUNT_BOMB = 10;
 
     //吸铁石时间
-    public static XTS_TIME = 15;
+    public static MAGNET_TIME = 15;
     //护盾时间
     public static PROTECT_TIME = 15;
     //双倍火力时间
     public static DOUBLE_FIRE_TIME = 5;
-    //影子时间
-    public static SHADOW_TIME = 7;
+    //影子时间10秒（*10解决小数点精度问题）
+    public static SHADOW_TIME = 100;
 
     //最大距离
     public static MAX_DISTANCE:number = 10000;

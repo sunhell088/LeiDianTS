@@ -82,7 +82,7 @@ export class ConfigUtil {
         }else {
             //普通飞机根据飞行距离等级爆落
             let randomItem = null;
-            if(Player.player.getDistanceStage()<6){
+            if(Player.player.getDistanceStage()<5){
                 if(CommonUtil.random(0,100)>99){
                     randomItem = ConfigUtil.getSpecialDropItem();
                 }

@@ -63,6 +63,15 @@ export class Player {
     //停止发射子弹中
     public _stopBullet: boolean = true;
 
+    //吸铁石剩余时间
+    public magnetRemainTime:number = 0;
+    //护盾剩余时间
+    public protectRemainTime:number = 0;
+    //二条剩余时间
+    public doubleFireRemainTime:number = 0;
+    //影子剩余时间
+    public shadowRemainTime:number = 0;
+
     //从本地读取玩家数据
     public loadData() {
         if (localStorage.playerData) {

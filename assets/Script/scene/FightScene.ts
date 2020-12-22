@@ -99,7 +99,6 @@ export default class FightScene extends cc.Component implements IMediator {
     private playerBombRainPool: cc.NodePool = new cc.NodePool();
     private planeShadowPool: cc.NodePool = new cc.NodePool();
 
-    private shadowDuration: number = 0;
 
     getCommands(): string[] {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
@@ -121,7 +120,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
 
         //定时清理影子
-        this.schedule(this.setShadowEnd, 1);
+        this.schedule(this.setShadowEnd, 0.1);
         this.init();
     }
 
@@ -155,6 +154,9 @@ export default class FightScene extends cc.Component implements IMediator {
         //记录飞行距离
         var showSpeed = Player.player._spurt ? CommonConfig.DISTANCE_SPURT_SPEED : CommonConfig.DISTANCE_SPEED;
         Player.player.currentDistance += showSpeed * dt;
+        if(Player.player.currentDistance>=CommonConfig.MAX_DISTANCE){
+            Player.player.currentDistance = CommonConfig.MAX_DISTANCE;
+        }
         ObserverManager.sendNotification(GameEvent.MOVE_BG, Math.round(Player.player.currentDistance));
         //每500M报数
         if (Player.player.getDistanceStage() > Player.player._preDistanceStage) {
@@ -440,10 +442,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 bomb.runAction(cc.sequence(
                     cc.moveBy(CommonConfig.ROCK_BOMB_SPEED, new cc.Vec2(0, CommonConfig.HEIGHT - bomb.height)),
                     cc.callFunc(function (sender) {
-                        console.log(this.playerBombRainPool.size())
                         this.playerBombRainPool.put(bomb);
-                        console.log(bomb)
-                        console.log(this.playerBombRainPool.size())
                     }, this)
                 ));
             }, this
@@ -1002,16 +1001,16 @@ export default class FightScene extends cc.Component implements IMediator {
         this.shipShadowList.push(spriteNode);
         this.node.addChild(spriteNode);
         spriteNode.setPosition(this.ship.node.getPosition());
-        if(this.shadowDuration<0) this.shadowDuration=0;
-        this.shadowDuration += CommonConfig.SHADOW_TIME;
+        Player.player.shadowRemainTime += CommonConfig.SHADOW_TIME;
     }
 
     private setShadowEnd() {
-        if(this.shadowDuration<=0) return;
-        this.shadowDuration--;
-        if (this.shadowDuration >= 0 && this.shadowDuration % CommonConfig.SHADOW_TIME == 0 && this.shipShadowList.length > 0) {
+        if(Player.player.shadowRemainTime<=0) return;
+        Player.player.shadowRemainTime -= 1;
+        if (Player.player.shadowRemainTime % CommonConfig.SHADOW_TIME <= 0 && this.shipShadowList.length > 0) {
             this.planeShadowPool.put(this.shipShadowList.pop());
         }
+        ObserverManager.sendNotification(GameEvent.DEDUCT_BUFF_TIME, ItemConfig.itemConfig.item_shadow.name);
     }
 
     //-----------------------------------------

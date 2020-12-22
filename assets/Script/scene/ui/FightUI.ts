@@ -66,11 +66,24 @@ export default class FightUI extends cc.Component implements IMediator{
     @property([cc.SpriteFrame])
     progressRoleSptFrame:cc.SpriteFrame[] = [];
 
+    @property(cc.ProgressBar)
+    shadowProgress:cc.ProgressBar = null;
+    @property(cc.ProgressBar)
+    magnetProgress:cc.ProgressBar = null;
+    @property(cc.ProgressBar)
+    protectProgress:cc.ProgressBar = null;
+    @property(cc.ProgressBar)
+    doubleFireProgress:cc.ProgressBar = null;
+    @property(cc.Label)
+    shadowCountLab:cc.Label = null;
+
+
+
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
 
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
-            GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD];
+            GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD, GameEvent.EAT_ITEM, GameEvent.DEDUCT_BUFF_TIME];
     }
 
     protected onLoad(): void {
@@ -95,6 +108,11 @@ export default class FightUI extends cc.Component implements IMediator{
         this.progressRoleSpt.node.runAction(cc.repeatForever(cc.blink(1, 1)))
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
         this.progressRoleSpt.spriteFrame = this.progressRoleSptFrame[planeConfig.nameIndex];
+        this.shadowProgress.node.parent.active = false;
+        this.magnetProgress.node.parent.active = false;
+        this.protectProgress.node.parent.active = false;
+        this.doubleFireProgress.node.parent.active = false;
+        this.shadowCountLab.node.active = false;
     }
 
     //刷新飞行距离
@@ -259,5 +277,60 @@ export default class FightUI extends cc.Component implements IMediator{
 
     private UPDATE_FIGHT_GOLD(){
         this.goldCount.string = ""+Player.player.currentRewardGold;
+    }
+
+    private EAT_ITEM(itemConfigObj){
+        let progressBar:cc.ProgressBar = null;
+        switch (itemConfigObj.name) {
+            case ItemConfig.itemConfig.item_xts.name:
+                progressBar = this.magnetProgress;
+                break;
+            case ItemConfig.itemConfig.item_protect.name:
+                progressBar = this.protectProgress;
+                break;
+            case ItemConfig.itemConfig.item_shadow.name:
+                progressBar = this.shadowProgress;
+                break;
+            case ItemConfig.itemConfig.item_double.name:
+                progressBar = this.doubleFireProgress;
+                break;
+        }
+        if(progressBar){
+            progressBar.node.parent.active = true;
+        }
+    }
+
+    private DEDUCT_BUFF_TIME(itemName:string){
+        let percent:number = 0;
+        let buffProgress:cc.ProgressBar = null;
+        switch (itemName) {
+            case ItemConfig.itemConfig.item_xts.name:
+                percent = Player.player.magnetRemainTime/CommonConfig.MAGNET_TIME;
+                buffProgress = this.magnetProgress;
+                break;
+            case ItemConfig.itemConfig.item_protect.name:
+                percent = Player.player.protectRemainTime/CommonConfig.PROTECT_TIME;
+                buffProgress = this.protectProgress;
+                break;
+            case ItemConfig.itemConfig.item_shadow.name:
+                percent = Player.player.shadowRemainTime%CommonConfig.SHADOW_TIME/CommonConfig.SHADOW_TIME;
+                //如果只要有一个影子，就一直显示进度条
+                if(Player.player.shadowRemainTime>=CommonConfig.SHADOW_TIME) percent = 1;
+                buffProgress = this.shadowProgress;
+                let shadowCount:number = Player.player.shadowRemainTime/CommonConfig.SHADOW_TIME;
+                if(shadowCount>1){
+                    this.shadowCountLab.node.active = true;
+                    this.shadowCountLab.string = "x"+Math.ceil(Player.player.shadowRemainTime/CommonConfig.SHADOW_TIME);
+                }else {
+                    this.shadowCountLab.node.active = false;
+                }
+                break;
+            case ItemConfig.itemConfig.item_double.name:
+                percent = Player.player.doubleFireRemainTime/CommonConfig.DOUBLE_FIRE_TIME;
+                buffProgress = this.doubleFireProgress;
+                break;
+        }
+        buffProgress.progress = percent;
+        if(percent<=0) buffProgress.node.parent.active = false;
     }
 }

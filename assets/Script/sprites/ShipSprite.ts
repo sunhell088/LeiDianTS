@@ -154,6 +154,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             this.spurtDuration.node.active = true;
             this.spurtDuration.play();
             this.spurtStartExplode.node.active = false;
+            this.spurtStartExplode.off(cc.Animation.EventType.FINISHED);
             ObserverManager.sendNotification(GameEvent.SPURT_DURATION, true);
             this.scheduleOnce(function() {
                 //持续指定时间播放爆炸动画

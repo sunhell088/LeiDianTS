@@ -273,7 +273,6 @@ export default class FightScene extends cc.Component implements IMediator {
                 break;
             case 20:
                 boss = this.createEnemy(EnemyConfig.enemyConfig.enemyBoss3);
-                window.alert("二周目")
                 break;
         }
         if (!boss) return;
@@ -426,17 +425,18 @@ export default class FightScene extends cc.Component implements IMediator {
         GameUtil.playSound(SoundConfig.useBomb);
         Player.player._bomb = true;
         this.cleanEnemy(CLEAN_TYPE.ALL, true);
-        var actionArray = [];
         //屏幕变暗
         this.darkSprite.node.active = true;
         //创建光圈并且变大
         this.bombEffect.node.active = true;
         this.bombEffect.node.scale = 1
         this.bombEffect.node.setPosition(this.ship.node.x, this.ship.node.y);
-        this.bombEffect.node.runAction(cc.scaleBy(0.6, 30));
+        cc.tween(this.bombEffect.node).by(0.6, {scale: 30 }).start();
         //创建炸弹效果
-        var createBombAction = cc.callFunc(
-            function () {
+        let tweenCreateBomb = cc.tween();
+        for (var i = 0; i < CommonConfig.PRESET_COUNT_BOMB; i++) {
+
+            tweenCreateBomb.call(function () {
                 let bomb: cc.Node = this.createPlayerBombRainSprite(Player.player.data.currentPlaneID);
                 bomb.setPosition(GameUtil.randomWidth(bomb), -CommonConfig.HEIGHT / 2 - bomb.height);
                 bomb.runAction(cc.sequence(
@@ -446,22 +446,17 @@ export default class FightScene extends cc.Component implements IMediator {
                         this.playerBombRainPool.put(bomb);
                     }, this)
                 ));
-            }, this
-        );
-        for (var i = 0; i < CommonConfig.PRESET_COUNT_BOMB; i++) {
-            actionArray.push(createBombAction);
-            actionArray.push(cc.delayTime(0.2));
+                // @ts-ignore
+            },this);
+            tweenCreateBomb.delay(0.2)
         }
-        var overFunc = cc.callFunc(
-            function () {
-                this.dark.node.active = false;
-                this.bombEffect.node.active = false;
-                Player.player._bomb = false;
-                this.bombEffect.node.stopAllActions();
-            }, {dark: this.darkSprite, bombEffect: this.bombEffect}
-        );
-        actionArray.push(overFunc);
-        this.bombEffect.node.runAction(cc.sequence(actionArray));
+        tweenCreateBomb.call(function () {
+            this.darkSprite.node.active = false;
+            this.bombEffect.node.active = false;
+            Player.player._bomb = false;
+            // @ts-ignore
+        }, this);
+        cc.tween(this.node).then(tweenCreateBomb).start();
     }
 
     //杀敌奖励

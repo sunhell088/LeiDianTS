@@ -1797,7 +1797,8 @@ declare namespace cc {
 	}	
 	/** !#en Base class cc.Action for action classes.
 	!#zh Action 类是所有动作类型的基类。 */
-	export class Action {		
+	export class Action {
+        stop: any;
 		/**
 		!#en
 		to copy object with deep copy.
@@ -1897,7 +1898,9 @@ declare namespace cc {
 	<p>For example, you can simulate a Ping Pong effect running the action normally and<br/>
 	then running it again in Reverse mode. </p>
 	!#zh 时间间隔动作，这种动作在已定时间内完成，继承 FiniteTimeAction。 */
-	export class ActionInterval extends FiniteTimeAction {		
+	export class ActionInterval extends FiniteTimeAction {
+        initWithDuration: any;
+        startWithTarget: any;
 		/**
 		!#en Implementation of ease motion.
 		!#zh 缓动运动。

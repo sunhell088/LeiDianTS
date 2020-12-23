@@ -91,6 +91,7 @@ export default class FightUI extends cc.Component implements IMediator{
         this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
         this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
         this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
+        this.schedule(Player.player.saveData, 1);
         this.init();
     }
 
@@ -99,11 +100,11 @@ export default class FightUI extends cc.Component implements IMediator{
         this.pauseBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
         this.backBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
         this.restartBtn.node.off(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
+        this.unschedule(Player.player.saveData);
     }
 
     //初始化玩家UI信息
     private init(){
-        this.schedule(Player.player.saveData, 1);
         this.goldCount.string = "0";
         this.progressRoleSpt.node.runAction(cc.repeatForever(cc.blink(1, 1)))
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
@@ -196,7 +197,7 @@ export default class FightUI extends cc.Component implements IMediator{
             this.showEatItemName.node.setPosition(playerPos.x, playerPos.y);
             //超过屏幕边界修正过来
             CommonUtil.pClamp(this.showEatItemName.node);
-            ObserverManager.sendNotification(GameEvent.EAT_ITEM, itemConfigObj)
+            ObserverManager.sendNotification(GameEvent.EAT_ITEM, itemConfigObj);
             this.showEatItemName.node.runAction(cc.sequence(
                 cc.scaleTo(0.1, 1.2),
                 cc.scaleTo(0.2, 1),

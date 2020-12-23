@@ -131,8 +131,10 @@ export default class FightScene extends cc.Component implements IMediator {
         this.unschedule(this.scheduleNormalEnemy);
         this.unschedule(this.scheduleRockGroup);
         this.unschedule(this.scheduleBombEnemy);
+        this.unschedule(this.scheduleFollowEnemy);
         this.unschedule(this.scheduleBlessEnemy);
         this.unschedule(this.scheduleStayEnemy);
+        this.unschedule(this.setShadowEnd);
     }
 
     protected update(dt) {
@@ -346,7 +348,7 @@ export default class FightScene extends cc.Component implements IMediator {
         Player.player.resetFightData();
 
         //登场
-        this.ship.comeOnStage();
+        this.ship.init();
     }
 
     //创建陨石
@@ -400,12 +402,16 @@ export default class FightScene extends cc.Component implements IMediator {
                 }
             }
             if (cleanType == CLEAN_TYPE.ALL || cleanType == CLEAN_TYPE.ENEMY) {
-                enemy = childrenArray[key].getComponent(EnemySprite);
-                if (enemy) {
-                    if (enemy._enemyConfig.classType == EnemySprite) {
-                        enemyList.push(enemy);
+                enemy = childrenArray[key].getComponent(BossEnemySprite);
+                if(!enemy){
+                    enemy = childrenArray[key].getComponent(EnemySprite);
+                    if (enemy) {
+                        if (enemy._enemyConfig.classType == EnemySprite) {
+                            enemyList.push(enemy);
+                        }
                     }
                 }
+
             }
         }
         for (let key in rockLineSpriteList) {
@@ -979,6 +985,7 @@ export default class FightScene extends cc.Component implements IMediator {
         let effectAnimation: cc.Animation = explodeNode.getComponent(cc.Animation);
         effectAnimation.on(cc.Animation.EventType.FINISHED, function () {
             this.enemyExplodePool.put(explodeNode);
+            effectAnimation.off(cc.Animation.EventType.FINISHED);
         }, this);
         effectAnimation.play();
     }
@@ -1037,6 +1044,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.playerDeadExplodeSprite.play();
         this.playerDeadExplodeSprite.on(cc.Animation.EventType.FINISHED, function (xxoo, xx2) {
             this.playerDeadExplodeSprite.node.active = false;
+            this.playerDeadExplodeSprite.off(cc.Animation.EventType.FINISHED);
         }, this)
         this.node.runAction(cc.sequence(
             cc.delayTime(2),

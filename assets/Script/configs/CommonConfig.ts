@@ -43,7 +43,7 @@ export class CommonConfig {
     //产生福利飞机的间隔
     public static BLESS_PLANE_DELAY = 15;
     //产生特殊停留飞机的间隔
-    public static STAY_ENEMY_DELAY = 10;
+    public static STAY_ENEMY_DELAY = 30;
     //产生特殊追踪飞机的间隔
     public static FOLLOW_ENEMY_DELAY = 15;
     //产生冲刺敌机的间隔

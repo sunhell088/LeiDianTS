@@ -7,9 +7,9 @@ import StoreBulletUI from "./StoreBulletUI";
 import {IMediator} from "../../framework/mvc/IMediator";
 import {GameEvent} from "../../common/GameEvent";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
-import log = cc.log;
 import {BUY_BULLET_STATE} from "../../common/GameEnum";
-import Game = cc.Game;
+import SkakeActionInterval from "../../common/SkakeActionInterval";
+import ShakeActionInterval from "../../common/SkakeActionInterval";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -43,12 +43,12 @@ export default class StoreUI extends cc.Component implements IMediator {
     //出击
     @property(cc.Button)
     startBtn: cc.Button = null;
-    //出击
-    @property(cc.Button)
-    buyBtn: cc.Button = null;
     //购买子弹
     @property(cc.Button)
     buyBulletBtn: cc.Button = null;
+    //自动合成
+    @property(cc.Button)
+    autoBuyBtn: cc.Button = null;
 
     //子弹预设
     @property(cc.Prefab)
@@ -86,7 +86,7 @@ export default class StoreUI extends cc.Component implements IMediator {
     private currentPlaneID: number = null;
 
     getCommands(): string[] {
-        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE];
+        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE,GameEvent.UPDATE_STORE_GOLD];
     }
 
     protected onLoad(): void {
@@ -98,6 +98,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.startBtn.node.on(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
         this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
+        this.schedule(Player.player.saveData, 1);
         this.init();
     }
 
@@ -107,6 +108,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.startBtn.node.off(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
         this.buyBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
         this.unschedule(this.shoot);
+        this.unschedule(Player.player.saveData);
     }
 
     protected update(dt) {
@@ -114,7 +116,6 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private init() {
-        this.schedule(Player.player.saveData, 1);
         this.currentPlaneID = Player.player.data.currentPlaneID
         this.setBackground();
         this.goldCount.string = Player.player.data.gold + "";
@@ -163,7 +164,38 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private onBuyBulletBtn(): void {
-        Player.player.buyBullet(this.currentPlaneID);
+        // this.checkDataBtn.node.runAction(GameUtil.shakeBy(0.5,10,5));
+        // return;
+        let state:BUY_BULLET_STATE = Player.player.buyBullet(this.currentPlaneID);
+        //如果没有格子了，抖动两个相同的子弹
+        if(state==BUY_BULLET_STATE.NO_GRID){
+            let grid0:StoreBulletUI = null;
+            let grid1:StoreBulletUI = null;
+            let bHaveSame:boolean = false;
+            for(let i=0;i<this.storeBulletList.length;i++){
+                grid0 = this.storeBulletList[i];
+                for(let k=i+1;k<this.storeBulletList.length;k++){
+                    grid1 = this.storeBulletList[k];
+                    if(grid0.bulletLevel==grid1.bulletLevel){
+                        bHaveSame = true;
+                        break;
+                    }
+                }
+                if(bHaveSame){
+                    break;
+                }
+            }
+            grid0.node.stopAllActions();
+            grid1.node.stopAllActions();
+            grid0.node.runAction(GameUtil.shakeBy(0.5,10,5));
+            grid1.node.runAction(GameUtil.shakeBy(0.5,10,5));
+            this.buyBulletBtn.interactable  = false;
+            this.buyBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
+            this.scheduleOnce(function () {
+                this.buyBulletBtn.interactable = true;
+                this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
+            }, 0.5);
+        }
     }
 
     //发射子弹
@@ -214,5 +246,9 @@ export default class StoreUI extends cc.Component implements IMediator {
             this.flowHintNode.active = false;
             // @ts-ignore
         }, this).start();
+    }
+
+    private UPDATE_STORE_GOLD(){
+        this.goldCount.string = ""+Player.player.data.gold;
     }
 }

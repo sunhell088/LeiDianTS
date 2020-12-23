@@ -45,12 +45,22 @@ export default class ShipSprite extends cc.Component implements IMediator{
     
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
+        this.schedule(this.deductMagnetTime, 0.1);
+        this.schedule(this.deductProtectTime, 0.1);
+        this.schedule(this.deductDoubleFireTime, 0.1);
     }
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
+        this.unschedule(this.deductMagnetTime);
+        this.unschedule(this.deductProtectTime);
+        this.unschedule(this.deductDoubleFireTime);
     }
 
-    comeOnStage(){
+    init(){
+        this.comeOnStage();
+    }
+
+    private comeOnStage(){
         //登场动画;
         this.node.setPosition(0,-CommonConfig.HEIGHT/2-this.node.height);
         this.node.runAction(cc.sequence(
@@ -77,6 +87,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             this.protectExplodeSprite.play();
             this.protectExplodeSprite.on(cc.Animation.EventType.FINISHED, function () {
                 this.protectExplodeSprite.node.active = false;
+                this.protectExplodeSprite.off(cc.Animation.EventType.FINISHED);
             }, this);
             this.deductProtectTime();
         }
@@ -147,6 +158,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
         this.spurtStartExplode.node.active = true;
         this.spurtStartExplode.play();
         this.spurtStartExplode.on(cc.Animation.EventType.FINISHED, function () {
+            this.spurtStartExplode.off(cc.Animation.EventType.FINISHED);
             //冲刺蓄能结束
             Player.player._spurtReadying = false;
             Player.player._spurt = true;
@@ -170,16 +182,13 @@ export default class ShipSprite extends cc.Component implements IMediator{
     //吸铁石效果
     private itemFunctionXTS(){
         this.setMagnetStart();
-        this.schedule(this.deductMagnetTime, 0.1);
     }
     private itemFunctionProtect(){
         this.setProtectStart();
-        this.schedule(this.deductProtectTime, 0.1);
     }
 
     private itemFunctionDoubleFight(){
         this.setDoubleFireStart();
-        this.schedule(this.deductDoubleFireTime, 0.1);
     }
 
     //显示磁铁

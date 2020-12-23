@@ -1,7 +1,7 @@
 import {CommonConfig} from "../configs/CommonConfig";
 import {CommonUtil} from "./CommonUtil";
 import {Player} from "../classes/Player";
-import {ConfigUtil} from "./ConfigUtil";
+import ShakeActionInterval from "./SkakeActionInterval";
 
 export class GameUtil {
     public static bgMove(dt, bg1, bg2) {
@@ -36,10 +36,7 @@ export class GameUtil {
     }
 
     public static shakeBy(duration, shakeCount, strength):cc.ActionInterval {
-        return new cc.ActionInterval();
-        // duration = duration/2/shakeCount;
-        // return cc.tween().repeat(shakeCount,
-        //     cc.tween().to(duration, {angle: strength}).to(duration, {angle: -strength}));
+        return new ShakeActionInterval(duration, shakeCount, strength, strength);
     };
 
     //播放背景音乐

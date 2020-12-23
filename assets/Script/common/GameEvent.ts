@@ -30,4 +30,6 @@ export class GameEvent {
     public static UPDATE_FIGHT_GOLD:string = "UPDATE_FIGHT_GOLD";
     //buff时间减少
     public static DEDUCT_BUFF_TIME:string = "DEDUCT_BUFF_TIME";
+    //刷新商城金币
+    public static UPDATE_STORE_GOLD:string = "UPDATE_STORE_GOLD";
 }

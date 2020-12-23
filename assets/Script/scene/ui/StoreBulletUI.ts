@@ -14,7 +14,7 @@ export default class StoreBulletUI extends cc.Component{
     levelLab:cc.Label =  null;
 
     private cloneNode:cc.Node = null;
-    private bulletLevel:number = -1;
+    public bulletLevel:number = -1;
     private planeID:number = -1;
     private gridIndex:number = -1;
 

@@ -3,6 +3,7 @@ import {CommonConfig} from "../configs/CommonConfig";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
 import {ConfigUtil} from "../common/ConfigUtil";
+import {BUY_BULLET_STATE} from "../common/GameEnum";
 
 export class Player {
     public static player: Player;
@@ -139,21 +140,21 @@ export class Player {
         return -1;
     }
 
-    public buyBullet(planeID) {
+    public buyBullet(planeID):BUY_BULLET_STATE {
         let emptyIndex: number = this.getStoreBulletEmptyIndex(planeID);
         if (emptyIndex == -1) {
-            let notice:string = ConfigUtil.getLanguage("buyBulletBoGrid");
+            let notice:string = ConfigUtil.getLanguage("buyBulletNoGrid");
             ObserverManager.sendNotification(GameEvent.FLY_NOTICE, notice);
-            return;
+            return BUY_BULLET_STATE.NO_GRID;
         } else {
             let bulletGrade: number = this.data.storeSoldBulletGradeMap[planeID];
             let bulletPrice:number = ConfigUtil.getStoreSoldBulletPrice(bulletGrade);
             if(this.data.gold<bulletPrice){
                 let notice:string = ConfigUtil.getLanguage("noMoney", bulletPrice-this.data.gold);
                 ObserverManager.sendNotification(GameEvent.FLY_NOTICE, notice);
-                return ;
+                return BUY_BULLET_STATE.NO_MONEY;
             }
-            this.data.gold -= bulletGrade;
+            this.deductGold(bulletPrice)
             this.data.storeBulletMap[planeID][emptyIndex] = bulletGrade;
             let randomGrade:number = ConfigUtil.getRandomStoreBullet(planeID);
             //如果只有一个格子了，并且随机到了所有都不相同的等级
@@ -175,6 +176,7 @@ export class Player {
             Player.player.data.storeSoldBulletGradeMap[planeID] = randomGrade;
             ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET);
         }
+        return BUY_BULLET_STATE.OK;
     }
 
     public combineStoreBullet(planeID: number, sourceIndex: number, targetIndex: number) {
@@ -217,6 +219,7 @@ export class Player {
     public deductGold(value) {
         if (value <= 0) return;
         this.data.gold -= value;
+        ObserverManager.sendNotification(GameEvent.UPDATE_STORE_GOLD);
     }
 
     //增加本局金币数量
@@ -250,17 +253,6 @@ export class Player {
             return ConfigUtil.getPlaneConfig(planeID);
         }
         return null;
-    }
-
-    //购买战机
-    public buyPlane(planeID): boolean {
-        let planeConfig = ConfigUtil.getPlaneConfig(planeID);
-        if (!planeConfig) return false;
-        if (this.data.gold < planeConfig.price) return false;
-        this.deductGold(planeConfig.price);
-        this.data.planeStorage += planeConfig.id;
-        this.data.currentPlaneID = planeConfig.id;
-        return true;
     }
 
     //设置当前战机

@@ -117,16 +117,6 @@ export default class ShipSprite extends cc.Component implements IMediator{
         ));
     }
 
-    getPlayerSprintExplodeAnimation(){
-        // this.playerSprintExplode.active = true;
-        // this.playerSprintExplode.getComponent(cc.Animation).play();
-        return new cc.ActionInterval;
-    }
-
-    playEatItemEffectAnimation(){
-        this.eatItemEffect.getComponent(cc.Animation).play();
-    }
-
 
     //吃道具闪一下光
     private eatItemBlink(itemConfig:any){

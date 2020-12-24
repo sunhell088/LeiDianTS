@@ -9,12 +9,12 @@ export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode: boolean = true;
+    public debugMode: boolean = false;
 
     //需要存盘的数据
     public data = {
         //当前金币
-        gold: 0,
+        gold: 999999,
         //飞行最远距离
         maxDistance: 0,
         //当前拥有的飞机（用掩码记录）

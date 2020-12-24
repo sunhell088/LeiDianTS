@@ -31,7 +31,7 @@ export class DifficultConfig {
     //爆金币和钻石的概率-----------增加或删除时，注意修改几率--------------
     public static SPECIAL_DROP_ODDS = [
         // {min:0,max:60, itemConfig:ItemConfig.itemConfig.item_xts},
-        {min:99,max:100, itemConfig:ItemConfig.itemConfig.item_protect}
+        {min:95,max:100, itemConfig:ItemConfig.itemConfig.item_protect}
     ];
 
     //初级陨石库
@@ -76,9 +76,6 @@ export class DifficultConfig {
         [[4],[3],[0,1,2]],
         [[1],[2],[3,4,5]],
 
-        [[0],[1],[2],[3],[4]],
-        [[5],[4],[3],[2],[1]],
-
         [["0","5"]],
 
         [[0,1,"2"]],
@@ -91,6 +88,10 @@ export class DifficultConfig {
     ];
     //高级陨石库
     public static rockConfigForStage3 = [
+        [[0],[1],[2],[3],[4]],
+
+        [[5],[4],[3],[2],[1]],
+
         [[0,1,2,3,4]],
         [[1,2,3,4,5]],
 

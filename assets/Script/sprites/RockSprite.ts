@@ -18,7 +18,6 @@ export default class RockSprite extends cc.Component {
     }
 
     destroySprite () {
-        console.log("destroySprite Rock")
         this._spritePool.put(this._spriteNode);
     }
 

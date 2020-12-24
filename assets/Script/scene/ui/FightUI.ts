@@ -83,7 +83,8 @@ export default class FightUI extends cc.Component implements IMediator{
 
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
-            GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD, GameEvent.EAT_ITEM, GameEvent.DEDUCT_BUFF_TIME];
+            GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD, GameEvent.EAT_ITEM, GameEvent.DEDUCT_BUFF_TIME
+        ,GameEvent.PROTECT_EFFECT];
     }
 
     protected onLoad(): void {
@@ -334,5 +335,9 @@ export default class FightUI extends cc.Component implements IMediator{
         }
         buffProgress.progress = percent;
         if(percent<=0) buffProgress.node.parent.active = false;
+    }
+
+    private PROTECT_EFFECT(){
+        this.protectProgress.node.parent.active = false;
     }
 }

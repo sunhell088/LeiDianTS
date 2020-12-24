@@ -37,7 +37,7 @@ export class CommonConfig {
     //产生飞机的间隔
     public static ENEMY_DELAY = 2;
     //产生陨石的间隔
-    public static ROCK_CONFIG_DELAY = 10;
+    public static ROCK_CONFIG_DELAY = 11;
     //产生炸弹飞机的间隔
     public static BLESS_BOMB_DELAY = 13;
     //产生福利飞机的间隔
@@ -85,5 +85,5 @@ export class CommonConfig {
     //最大距离
     public static MAX_DISTANCE:number = 10000;
     //自动合成的最大时间
-    public static AUTO_COMBINE_MAX_TIME:number = 10;
+    public static AUTO_COMBINE_MAX_TIME:number = 99;
 }

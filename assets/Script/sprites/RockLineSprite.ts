@@ -20,7 +20,8 @@ export default class RockLineSprite extends cc.Component {
         this._spriteNode = node;
         this._spritePool = pool;
         //重新设置line宽，和警告标识为可见
-        this.node.scaleX = 1;
+        this.node.scale = 1;
+        this.node.active = true;
         this.warningSprite.node.active = true;
     }
 
@@ -35,7 +36,6 @@ export default class RockLineSprite extends cc.Component {
     }
 
     destroySprite () {
-        console.log("destroySprite line")
         this._spritePool.put(this._spriteNode);
     }
 }

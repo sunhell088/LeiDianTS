@@ -177,7 +177,7 @@
       "array": [
         0,
         0,
-        519.8317486216093,
+        518.0996978140405,
         0,
         0,
         0,
@@ -2431,8 +2431,8 @@
     },
     "_size": {
       "__type__": "cc.Size",
-      "width": 5,
-      "height": 5
+      "width": 20,
+      "height": 20
     },
     "_id": "0agIGRjaZHCatSrHAJ7npF"
   },

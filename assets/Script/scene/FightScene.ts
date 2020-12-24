@@ -108,19 +108,19 @@ export default class FightScene extends cc.Component implements IMediator {
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
-        // this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
-        // this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
+        this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
+        this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
         this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
-        // this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
+        this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
         //这里延迟5秒执行，是和追踪飞机分开
         this.scheduleOnce(function () {
-            // this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
+            this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
         },7.5);
-        // this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
-        // this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
+        this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
 
         //定时清理影子
-        // this.schedule(this.setShadowEnd, 0.1);
+        this.schedule(this.setShadowEnd, 0.1);
         this.init();
     }
 
@@ -359,7 +359,6 @@ export default class FightScene extends cc.Component implements IMediator {
         } else {
             spriteNode = cc.instantiate(this.rockLinePrefab);
         }
-        console.log("createRockLineSprite")
         this.node.addChild(spriteNode);
         let rockLineSprite: RockLineSprite = spriteNode.getComponent('RockLineSprite');
         rockLineSprite.initSprite(spriteNode, this.rockLinePool);
@@ -935,7 +934,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 );
                 //line宽 缩小到0
                 this.node.runAction(cc.sequence(
-                    cc.scaleTo(0.5, 0, this.scaleY),
+                    cc.scaleTo(0.5, 0, 0),
                     createRockAction,
                     cc.callFunc(line.destroySprite, line)
                 ));

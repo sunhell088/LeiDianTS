@@ -10,6 +10,7 @@ import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {BUY_BULLET_STATE} from "../../common/GameEnum";
 import SkakeActionInterval from "../../common/SkakeActionInterval";
 import ShakeActionInterval from "../../common/SkakeActionInterval";
+import log = cc.log;
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -76,11 +77,14 @@ export default class StoreUI extends cc.Component implements IMediator {
     //随机子弹价格
     @property(cc.Label)
     randomBulletPrice: cc.Label = null;
-
     //提示
     @property(cc.Node)
     flowHintNode: cc.Node = null;
-
+    //提示
+    @property(cc.Animation)
+    combineAnim: cc.Animation = null;
+    @property(cc.Animation)
+    levelUpEffectAnimation: cc.Animation = null;
 
     private bulletPool: cc.NodePool = new cc.NodePool();
     private currentPlaneID: number = null;
@@ -121,7 +125,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.goldCount.string = Player.player.data.gold + "";
         this.updateBuyBullet();
         this.updateBulletList();
-
+        this.combineAnim.node.active = false;
     }
 
     private setBackground() {
@@ -164,8 +168,6 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private onBuyBulletBtn(): void {
-        // this.checkDataBtn.node.runAction(GameUtil.shakeBy(0.5,10,5));
-        // return;
         let state:BUY_BULLET_STATE = Player.player.buyBullet(this.currentPlaneID);
         //如果没有格子了，抖动两个相同的子弹
         if(state==BUY_BULLET_STATE.NO_GRID){
@@ -230,9 +232,31 @@ export default class StoreUI extends cc.Component implements IMediator {
         return spriteNode;
     }
 
-    private UPDATE_STORE_BULLET() {
+    private UPDATE_STORE_BULLET(levelUp:boolean, sourceIndex:number, targetIndex:number) {
+        log(levelUp)
+        if(levelUp){
+            this.levelUpEffectAnimation.node.active = true;
+            this.levelUpEffectAnimation.play();
+            this.levelUpEffectAnimation.on(cc.Animation.EventType.FINISHED, function () {
+                this.levelUpEffectAnimation.node.active = false;
+                this.levelUpEffectAnimation.off(cc.Animation.EventType.FINISHED)
+            }, this)
+        }
         this.updateBuyBullet();
         this.updateBulletList();
+        if(targetIndex!=undefined){
+            let targetGrid:StoreBulletUI = this.storeBulletList[targetIndex];
+            let worldPos = this.node.parent.convertToNodeSpaceAR(targetGrid.node.getPosition());
+            worldPos.y -= (targetGrid.node.parent.height/2);
+            worldPos.y += targetGrid.node.height/4;
+            this.combineAnim.node.setPosition(worldPos);
+            this.combineAnim.node.active = true;
+            this.combineAnim.play();
+            this.combineAnim.on(cc.Animation.EventType.FINISHED, function () {
+                this.combineAnim.node.active = false
+                this.combineAnim.off(cc.Animation.EventType.FINISHED);
+            }, this);
+        }
     }
 
     private FLY_NOTICE(notice:string){

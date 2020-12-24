@@ -205,7 +205,7 @@ export class ConfigUtil {
     }
 
     public static getStoreSoldBulletPrice(grade:number):number {
-        return grade*1000;
+        return grade*1;
     }
 
     //根据key 获取文字  如：getLanguage("{0} + {1} = {2}", 5, 7, 12)

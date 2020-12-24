@@ -72,11 +72,17 @@ export class Player {
     public doubleFireRemainTime:number = 0;
     //影子剩余时间
     public shadowRemainTime:number = 0;
+    //当前子弹最高等级
+    public bulletLevelMaxMap:{} = {};
 
     //从本地读取玩家数据
     public loadData() {
         if (localStorage.playerData) {
             this.data = JSON.parse(localStorage.playerData);
+            for (let key in PlaneConfig.planeConfig) {
+                let planeID:number = PlaneConfig.planeConfig[key].id;
+                this.bulletLevelMaxMap[planeID] = this.calculateBulletMaxGrade(planeID);
+            }
         } else {
             this.createPlayer();
         }
@@ -115,11 +121,15 @@ export class Player {
             }
             this.data.storeBulletMap[PlaneConfig.planeConfig[key].id] = storeBulletList;
             this.data.storeSoldBulletGradeMap[PlaneConfig.planeConfig[key].id] = 1;
+            this.bulletLevelMaxMap[PlaneConfig.planeConfig[key].id] = 1;
         }
     }
 
+    public getBulletMaxGrade(planeID:number):number {
+        return this.bulletLevelMaxMap[planeID];
+    }
     //获得指定飞机子弹的最高等级
-    public getBulletMaxGrade(planeID: number): number {
+    public calculateBulletMaxGrade(planeID: number): number {
         let storeBulletList = this.data.storeBulletMap[planeID];
         let maxGrade: number = 0;
         for (let key in storeBulletList) {
@@ -174,12 +184,14 @@ export class Player {
                 }
             }
             Player.player.data.storeSoldBulletGradeMap[planeID] = randomGrade;
-            ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET);
+            //新购买不可能购买到高于当前等级的，所以为false
+            ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET, false, -1, emptyIndex);
         }
         return BUY_BULLET_STATE.OK;
     }
 
     public combineStoreBullet(planeID: number, sourceIndex: number, targetIndex: number) {
+        let oldLevel:number = this.calculateBulletMaxGrade(planeID);
         let storeBulletList: number[] = this.data.storeBulletMap[planeID];
         let sourceValue: number = storeBulletList[sourceIndex];
         let targetValue: number = storeBulletList[targetIndex];
@@ -190,9 +202,11 @@ export class Player {
             //开启新格子
             this.data.storeBulletMap[planeID][Player.player.data.storeBulletGridCount] = 0;
             Player.player.data.storeBulletGridCount += 1;
-
         }
-        ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET);
+        let newLevel:number = this.calculateBulletMaxGrade(planeID);
+        this.bulletLevelMaxMap[planeID] = newLevel;
+        console.log(oldLevel+"==="+newLevel)
+        ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET, newLevel>oldLevel, sourceIndex, targetIndex);
     }
 
     //检查新产生的子弹在里面是否已经没有重复的了

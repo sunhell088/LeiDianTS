@@ -2,8 +2,14 @@ import {CommonConfig} from "../configs/CommonConfig";
 import {CommonUtil} from "./CommonUtil";
 import {Player} from "../classes/Player";
 import ShakeActionInterval from "./SkakeActionInterval";
+import AudioClip = cc.AudioClip;
+import {SoundConfig} from "../configs/SoundConfig";
 
 export class GameUtil {
+    //同时播放通一个音效（实际是很短的时间内播放音效），那么只播放一次
+    private static ignoreSameSound:{} = {};
+    private static resumeMusicFileName:string = null;
+
     public static bgMove(dt, bg1, bg2) {
         let speed = Player.player._spurt?CommonConfig.BG_SPURT_SPEED:CommonConfig.BG_SPEED;
         bg1.y -= speed*dt;
@@ -39,23 +45,37 @@ export class GameUtil {
         return new ShakeActionInterval(duration, shakeCount, strength, strength);
     };
 
-    //播放背景音乐
-    public static  playMusic(file){
-        return;
-        if(!navigator.onLine) return;
+    public static resumeMusic(){
         if (CommonConfig.MUSIC){
-            cc.audioEngine.stopMusic();
-            cc.audioEngine.playMusic(file, true);
+            cc.resources.load(GameUtil.resumeMusicFileName, cc.AudioClip,function (err, audioClip:AudioClip) {
+                cc.audioEngine.playMusic(audioClip, true);
+            });
+        }
+    }
+    //播放背景音乐
+    public static playMusic(fileName){
+        if(fileName!=SoundConfig.shadowStart){
+            GameUtil.resumeMusicFileName = fileName;
+        }
+        if (CommonConfig.MUSIC){
+            cc.resources.load(fileName, cc.AudioClip,function (err, audioClip:AudioClip) {
+                cc.audioEngine.playMusic(audioClip, true);
+            });
         }
     };
     //播放音效
-    public static playSound(file){
-        return;
-        if(!navigator.onLine) return;
+    public static playSound(fileUrl){
         if (CommonConfig.EFFECT){
-            return cc.audioEngine.playEffect(file, false);
+            let lastTime:number = GameUtil.ignoreSameSound[fileUrl];
+            let nowTime:number = (new Date()).getTime();
+            if (lastTime && nowTime - lastTime < 50) {
+                return;
+            }
+            this.ignoreSameSound[fileUrl] = nowTime;
+            cc.resources.load(fileUrl, cc.AudioClip, function (err, audioClip:AudioClip) {
+                cc.audioEngine.playEffect(audioClip, false);
+            });
         }
-        return null;
     };
 
 }

@@ -193,20 +193,22 @@ export class ConfigUtil {
             randomGrade = 1;
         }else if(maxGrade<7){
             randomGrade = CommonUtil.random(1,3);
+        }else if(maxGrade<10){
+            randomGrade = CommonUtil.random(0,10)>9?CommonUtil.random(1,maxGrade-3):CommonUtil.random(3,maxGrade-3);
         }else {
-            randomGrade = CommonUtil.random(1,maxGrade-3);
+            randomGrade = CommonUtil.random(0,10)>9?CommonUtil.random(1,maxGrade-3):CommonUtil.random(10,maxGrade-3);
         }
         return randomGrade;
     }
 
     public static getStoreSoldBulletPrice(grade:number):number {
-        let priceRatio:number = 10000;
-        if(grade<5){
-            priceRatio = 500;
+        let priceRatio:number = 100;
+        if(grade<10){
+            priceRatio = 10;
         }else if(grade<10){
-            priceRatio = 1000;
+            priceRatio = 100;
         }else if(grade<20){
-            priceRatio = 5000;
+            priceRatio = 200;
         }
         return grade*priceRatio;
     }

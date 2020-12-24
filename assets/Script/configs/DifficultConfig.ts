@@ -73,8 +73,8 @@ export class DifficultConfig {
         [[2,3,4,5]],
         [[1,2,3,4]],
 
-        [[4],[3],[0,1,2]],
-        [[1],[2],[3,4,5]],
+        [[3],[0,1,2]],
+        [[2],[3,4,5]],
 
         [["0","5"]],
 
@@ -88,15 +88,15 @@ export class DifficultConfig {
     ];
     //高级陨石库
     public static rockConfigForStage3 = [
-        [[0],[1],[2],[3],[4]],
+        [[1],[2],[3],[4]],
 
-        [[5],[4],[3],[2],[1]],
+        [[4],[3],[2],[1]],
 
-        [[0,1,2,3,4]],
-        [[1,2,3,4,5]],
+        [[1,2,3,4]],
+        [[1,2,3,4]],
 
-        [["5"],[0,1,2,3]],
-        [["0"],[2,3,4,5]]
+        // [["5"],[0,1,2,3]],
+        // [["0"],[2,3,4,5]]
     ];
 
     public static stayEnemyArr = [EnemyConfig.enemyConfig.enemyStay1, EnemyConfig.enemyConfig.enemyStay2];

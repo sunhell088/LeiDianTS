@@ -285,9 +285,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         let animation:cc.Animation = sourceIndex==-1?this.createBulletAnim:this.combineAnim;
         if(targetIndex!=undefined){
             let targetGrid:StoreBulletUI = this.storeBulletList[targetIndex];
-            let worldPos = this.node.parent.convertToNodeSpaceAR(targetGrid.node.getPosition());
-            worldPos.y -= (targetGrid.node.parent.height/2);
-            worldPos.y += targetGrid.node.height/4;
+            let worldPos = targetGrid.node.getPosition();
             animation.node.setPosition(worldPos);
             animation.node.active = true;
             animation.play();

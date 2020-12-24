@@ -8,6 +8,7 @@ import {EnemyConfig} from "../configs/EnemyConfig";
 import {CommonConfig} from "../configs/CommonConfig";
 import {DifficultConfig} from "../configs/DifficultConfig";
 import {LanguageConfig} from "../configs/LanguageConfig";
+import game = cc.game;
 
 export class ConfigUtil {
     //根据飞行距离获取飞机库
@@ -205,7 +206,15 @@ export class ConfigUtil {
     }
 
     public static getStoreSoldBulletPrice(grade:number):number {
-        return grade*1;
+        let priceRatio:number = 10000;
+        if(grade<5){
+            priceRatio = 500;
+        }else if(grade<10){
+            priceRatio = 1000;
+        }else if(grade<20){
+            priceRatio = 5000;
+        }
+        return grade*priceRatio;
     }
 
     //根据key 获取文字  如：getLanguage("{0} + {1} = {2}", 5, 7, 12)

@@ -3,7 +3,7 @@
   "_name": "levelUpTitle",
   "_objFlags": 0,
   "_native": "",
-  "_duration": 2,
+  "_duration": 1.5,
   "sample": 60,
   "speed": 1,
   "wrapMode": 1,
@@ -17,15 +17,15 @@
               "value": -321.467
             },
             {
-              "frame": 0.5,
+              "frame": 0.25,
+              "value": 0
+            },
+            {
+              "frame": 1.2666666666666666,
               "value": 0
             },
             {
               "frame": 1.5,
-              "value": 0
-            },
-            {
-              "frame": 2,
               "value": 320.611
             }
           ]
@@ -39,15 +39,15 @@
               "value": 320.038
             },
             {
-              "frame": 0.5,
+              "frame": 0.25,
+              "value": 0
+            },
+            {
+              "frame": 1.2666666666666666,
               "value": 0
             },
             {
               "frame": 1.5,
-              "value": 0
-            },
-            {
-              "frame": 2,
               "value": -320.611
             }
           ]

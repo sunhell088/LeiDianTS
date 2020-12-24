@@ -11,6 +11,8 @@ import {BUY_BULLET_STATE} from "../../common/GameEnum";
 import SkakeActionInterval from "../../common/SkakeActionInterval";
 import ShakeActionInterval from "../../common/SkakeActionInterval";
 import log = cc.log;
+import {SoundConfig} from "../../configs/SoundConfig";
+import {CommonUtil} from "../../common/CommonUtil";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -50,6 +52,8 @@ export default class StoreUI extends cc.Component implements IMediator {
     //自动合成
     @property(cc.Button)
     autoBuyBtn: cc.Button = null;
+    @property(cc.Label)
+    autoCombineTimeLab: cc.Label = null;
 
     //子弹预设
     @property(cc.Prefab)
@@ -80,9 +84,11 @@ export default class StoreUI extends cc.Component implements IMediator {
     //提示
     @property(cc.Node)
     flowHintNode: cc.Node = null;
-    //提示
+    //合成动画
     @property(cc.Animation)
     combineAnim: cc.Animation = null;
+    @property(cc.Animation)
+    createBulletAnim: cc.Animation = null;
     @property(cc.Animation)
     levelUpEffectAnimation: cc.Animation = null;
 
@@ -96,13 +102,17 @@ export default class StoreUI extends cc.Component implements IMediator {
     protected onLoad(): void {
         this.checkDataBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
             window.alert(localStorage.playerData);
+            this.updateBuyBullet();
+            this.updateBulletList();
         }, this);
         ObserverManager.registerObserverFun(this);
         this.changePlaneBtn.node.on(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);
         this.startBtn.node.on(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
         this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
+        this.autoBuyBtn.node.on(cc.Node.EventType.TOUCH_END, this.onAutoBuyBtn, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(Player.player.saveData, 1);
+        this.schedule(this.autoCombineBullet, 1);
         this.init();
     }
 
@@ -113,6 +123,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.buyBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
         this.unschedule(this.shoot);
         this.unschedule(Player.player.saveData);
+        this.unschedule(this.autoCombineBullet);
     }
 
     protected update(dt) {
@@ -120,12 +131,14 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private init() {
+        this.autoCombineTimeLab.string = "自动合成"+CommonConfig.AUTO_COMBINE_MAX_TIME+"秒"
         this.currentPlaneID = Player.player.data.currentPlaneID
         this.setBackground();
         this.goldCount.string = Player.player.data.gold + "";
         this.updateBuyBullet();
         this.updateBulletList();
         this.combineAnim.node.active = false;
+        this.createBulletAnim.node.active = false;
     }
 
     private setBackground() {
@@ -164,10 +177,12 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private onStartBtn(): void {
+        GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         cc.director.loadScene('fightScene');
     }
 
     private onBuyBulletBtn(): void {
+        GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         let state:BUY_BULLET_STATE = Player.player.buyBullet(this.currentPlaneID);
         //如果没有格子了，抖动两个相同的子弹
         if(state==BUY_BULLET_STATE.NO_GRID){
@@ -197,6 +212,28 @@ export default class StoreUI extends cc.Component implements IMediator {
                 this.buyBulletBtn.interactable = true;
                 this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
             }, 0.5);
+            //如果在自动合成中
+            if(Player.player.autoCombineBulletTime>0){
+                grid0.autoCombineTarget(grid1);
+            }
+        }
+    }
+
+    private onAutoBuyBtn() {
+        Player.player.autoCombineBulletTime = CommonConfig.AUTO_COMBINE_MAX_TIME;
+        this.autoBuyBtn.interactable  = false;
+        this.autoBuyBtn.node.off(cc.Node.EventType.TOUCH_END, this.onAutoBuyBtn, this);
+
+    }
+
+    private autoCombineBullet(){
+        if(Player.player.autoCombineBulletTime<=0) return;
+        Player.player.autoCombineBulletTime--;
+        this.autoCombineTimeLab.string = "剩余时间："+Player.player.autoCombineBulletTime+"秒"
+        if(Player.player.autoCombineBulletTime==0){
+            this.autoBuyBtn.interactable = true;
+            this.autoBuyBtn.node.on(cc.Node.EventType.TOUCH_END, this.onAutoBuyBtn, this);
+            this.autoCombineTimeLab.string = "剩余时间："+CommonConfig.AUTO_COMBINE_MAX_TIME+"秒"
         }
     }
 
@@ -232,9 +269,9 @@ export default class StoreUI extends cc.Component implements IMediator {
         return spriteNode;
     }
 
-    private UPDATE_STORE_BULLET(levelUp:boolean, sourceIndex:number, targetIndex:number) {
-        log(levelUp)
+    private UPDATE_STORE_BULLET(levelUp:boolean, sourceIndex:number, targetIndex:number, bAuto:boolean) {
         if(levelUp){
+            GameUtil.playSound(SoundConfig.levelUpReady);
             this.levelUpEffectAnimation.node.active = true;
             this.levelUpEffectAnimation.play();
             this.levelUpEffectAnimation.on(cc.Animation.EventType.FINISHED, function () {
@@ -242,19 +279,21 @@ export default class StoreUI extends cc.Component implements IMediator {
                 this.levelUpEffectAnimation.off(cc.Animation.EventType.FINISHED)
             }, this)
         }
+        GameUtil.playSound(SoundConfig.bulletCombine);
         this.updateBuyBullet();
         this.updateBulletList();
+        let animation:cc.Animation = sourceIndex==-1?this.createBulletAnim:this.combineAnim;
         if(targetIndex!=undefined){
             let targetGrid:StoreBulletUI = this.storeBulletList[targetIndex];
             let worldPos = this.node.parent.convertToNodeSpaceAR(targetGrid.node.getPosition());
             worldPos.y -= (targetGrid.node.parent.height/2);
             worldPos.y += targetGrid.node.height/4;
-            this.combineAnim.node.setPosition(worldPos);
-            this.combineAnim.node.active = true;
-            this.combineAnim.play();
-            this.combineAnim.on(cc.Animation.EventType.FINISHED, function () {
-                this.combineAnim.node.active = false
-                this.combineAnim.off(cc.Animation.EventType.FINISHED);
+            animation.node.setPosition(worldPos);
+            animation.node.active = true;
+            animation.play();
+            animation.on(cc.Animation.EventType.FINISHED, function () {
+                animation.node.active = false;
+                animation.off(cc.Animation.EventType.FINISHED);
             }, this);
         }
     }

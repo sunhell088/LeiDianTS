@@ -1014,9 +1014,6 @@ export default class FightScene extends cc.Component implements IMediator {
         if (Player.player.shadowRemainTime % CommonConfig.SHADOW_TIME <= 0 && this.shipShadowList.length > 0) {
             this.planeShadowPool.put(this.shipShadowList.pop());
         }
-        if(Player.player.shadowRemainTime==0){
-            GameUtil.resumeMusic();
-        }
         ObserverManager.sendNotification(GameEvent.DEDUCT_BUFF_TIME, ItemConfig.itemConfig.item_shadow.name);
     }
 
@@ -1076,9 +1073,6 @@ export default class FightScene extends cc.Component implements IMediator {
             case ItemConfig.itemConfig.item_shadow.name:
                 if (this.shipShadowList.length == 5) {
                     return;
-                }
-                if (this.shipShadowList.length >= 1) {
-                    GameUtil.playMusic(SoundConfig.shadowStart);
                 }
                 this.setShadowStart();
                 break;

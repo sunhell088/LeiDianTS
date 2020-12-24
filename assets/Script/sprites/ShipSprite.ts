@@ -89,7 +89,9 @@ export default class ShipSprite extends cc.Component implements IMediator{
                 this.protectExplodeSprite.node.active = false;
                 this.protectExplodeSprite.off(cc.Animation.EventType.FINISHED);
             }, this);
-            this.deductProtectTime();
+            Player.player._protecting = true;
+            this.protectSprite.node.active = true;
+            Player.player.protectRemainTime = 0;
         }
         else{
             this.death();

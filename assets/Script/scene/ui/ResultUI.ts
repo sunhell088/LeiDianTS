@@ -3,6 +3,8 @@ import {CommonConfig} from "../../configs/CommonConfig";
 import {GameUtil} from "../../common/GameUtil";
 import {Player} from "../../classes/Player";
 import {ConfigUtil} from "../../common/ConfigUtil";
+import {SoundConfig} from "../../configs/SoundConfig";
+import {CommonUtil} from "../../common/CommonUtil";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -67,6 +69,7 @@ export default class ResultUI extends cc.Component{
     }
 
     private onResetBtn(){
+        GameUtil.playMusic(SoundConfig.mainMusic_mp3+""+CommonUtil.random(0,2));
         cc.director.loadScene('storeScene');
     }
 }

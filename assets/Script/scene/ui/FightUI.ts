@@ -156,6 +156,7 @@ export default class FightUI extends cc.Component implements IMediator{
         cc.director.resume();
         this.node.stopAllActions();
         cc.director.loadScene('storeScene');
+        GameUtil.playMusic(SoundConfig.mainMusic_mp3+""+CommonUtil.random(0,2));
     }
 
     //吃道具飘名字

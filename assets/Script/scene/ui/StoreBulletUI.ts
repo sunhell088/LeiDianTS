@@ -53,13 +53,16 @@ export default class StoreBulletUI extends cc.Component{
             if(storeBulletUI.gridIndex==this.gridIndex) continue;
             if(touchPos.x>node.x-node.width/2&&touchPos.x<node.x+node.width/2
             &&touchPos.y>node.y-node.height/2&&touchPos.y<node.y+node.height/2){
-                Player.player.combineStoreBullet(this.planeID, this.gridIndex, storeBulletUI.gridIndex);
+                Player.player.combineStoreBullet(this.planeID, this.gridIndex, storeBulletUI.gridIndex, false);
                 break;
             }
         }
     }
 
     public setBullet(planeID:number, type:number, level:number, gridIndex:number){
+        if(this.cloneNode&&this.cloneNode.parent){
+            this.cloneNode.destroy();
+        }
         this.planeID = planeID;
         this.bulletLevel = level;
         this.gridIndex = gridIndex;
@@ -72,6 +75,18 @@ export default class StoreBulletUI extends cc.Component{
             this.levelLab.string = "Lv."+level;
             this.bulletSprite.spriteFrame = this.bulletAtlas.getSpriteFrame(type + '_' + level);
         }
+    }
+
+    public autoCombineTarget(targetGrid:StoreBulletUI){
+        this.cloneNode = cc.instantiate(this.node);
+        this.node.parent.addChild(this.cloneNode);
+        this.bulletSprite.node.active = false;
+        this.levelLab.node.active = false;
+        cc.tween(this.cloneNode).to(0.5, {x:targetGrid.node.x, y:targetGrid.node.y})
+            .call(function () {
+                Player.player.combineStoreBullet(this.planeID, this.gridIndex, targetGrid.gridIndex, true);
+        // @ts-ignore
+        },this).start();
     }
 
 }

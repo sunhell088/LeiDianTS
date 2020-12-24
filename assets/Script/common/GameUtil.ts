@@ -45,18 +45,8 @@ export class GameUtil {
         return new ShakeActionInterval(duration, shakeCount, strength, strength);
     };
 
-    public static resumeMusic(){
-        if (CommonConfig.MUSIC){
-            cc.resources.load(GameUtil.resumeMusicFileName, cc.AudioClip,function (err, audioClip:AudioClip) {
-                cc.audioEngine.playMusic(audioClip, true);
-            });
-        }
-    }
     //播放背景音乐
     public static playMusic(fileName){
-        if(fileName!=SoundConfig.shadowStart){
-            GameUtil.resumeMusicFileName = fileName;
-        }
         if (CommonConfig.MUSIC){
             cc.resources.load(fileName, cc.AudioClip,function (err, audioClip:AudioClip) {
                 cc.audioEngine.playMusic(audioClip, true);

@@ -45,7 +45,6 @@ export class SoundConfig {
     public static levelUpIng:string= "sound/b2";
     //追踪飞机追踪时音效
     public static followEnemy_follow:string= "sound/magnet_end";
-
-    //获得影子
-    public static shadowStart:string= "sound/music/shadowStart";
+    //合成子弹
+    public static bulletCombine:string= "sound/buy_item";
 }

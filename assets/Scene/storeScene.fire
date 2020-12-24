@@ -106,18 +106,21 @@
       },
       {
         "__id__": 248
+      },
+      {
+        "__id__": 251
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 255
+        "__id__": 258
       },
       {
-        "__id__": 256
+        "__id__": 259
       },
       {
-        "__id__": 257
+        "__id__": 260
       }
     ],
     "_prefab": null,
@@ -207,7 +210,7 @@
       "array": [
         0,
         0,
-        523.079343885801,
+        522.2133184820166,
         0,
         0,
         0,
@@ -966,7 +969,7 @@
       "ctor": "Float64Array",
       "array": [
         -107.798,
-        262.003,
+        257.975,
         0,
         0,
         0,
@@ -1337,7 +1340,7 @@
         "__id__": 27
       }
     ],
-    "_active": false,
+    "_active": true,
     "_components": [
       {
         "__id__": 32
@@ -1369,8 +1372,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        -83.47800000000001,
-        215.386,
+        81.685,
+        219.414,
         0,
         0,
         0,
@@ -1713,9 +1716,9 @@
     "alignMode": 1,
     "_target": null,
     "_alignFlags": 9,
-    "_left": -0.9780000000000086,
+    "_left": 164.185,
     "_right": 0,
-    "_top": 48.614000000000004,
+    "_top": 44.58600000000001,
     "_bottom": 0,
     "_verticalCenter": 0,
     "_horizontalCenter": 0,
@@ -10067,6 +10070,124 @@
   },
   {
     "__type__": "cc.Node",
+    "_name": "createBulletAnim",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 2
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [
+      {
+        "__id__": 249
+      },
+      {
+        "__id__": 250
+      }
+    ],
+    "_prefab": null,
+    "_opacity": 255,
+    "_color": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
+    },
+    "_contentSize": {
+      "__type__": "cc.Size",
+      "width": 61,
+      "height": 63
+    },
+    "_anchorPoint": {
+      "__type__": "cc.Vec2",
+      "x": 0.5,
+      "y": 0.5
+    },
+    "_trs": {
+      "__type__": "TypedArray",
+      "ctor": "Float64Array",
+      "array": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "_eulerAngles": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_skewX": 0,
+    "_skewY": 0,
+    "_is3DNode": false,
+    "_groupIndex": 0,
+    "groupIndex": 0,
+    "_id": "1933gNZ19EyIAIRGn2gTkV"
+  },
+  {
+    "__type__": "cc.Sprite",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 248
+    },
+    "_enabled": true,
+    "_materials": [
+      {
+        "__uuid__": "eca5d2f2-8ef6-41c2-bbe6-f9c79d09c432"
+      }
+    ],
+    "_srcBlendFactor": 770,
+    "_dstBlendFactor": 771,
+    "_spriteFrame": {
+      "__uuid__": "f81da5bf-1875-4ca9-90ad-56c2e15f2a8f"
+    },
+    "_type": 0,
+    "_sizeMode": 1,
+    "_fillType": 0,
+    "_fillCenter": {
+      "__type__": "cc.Vec2",
+      "x": 0,
+      "y": 0
+    },
+    "_fillStart": 0,
+    "_fillRange": 0,
+    "_isTrimmedMode": true,
+    "_atlas": {
+      "__uuid__": "1c9c16d7-96e3-4ebf-b47a-f0890f0eaed8"
+    },
+    "_id": "37wevt4jlMSL7IapHkusoX"
+  },
+  {
+    "__type__": "cc.Animation",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 248
+    },
+    "_enabled": true,
+    "_defaultClip": {
+      "__uuid__": "cfa25028-2696-4fc2-8a57-a5b2c8e4072d"
+    },
+    "_clips": [
+      {
+        "__uuid__": "cfa25028-2696-4fc2-8a57-a5b2c8e4072d"
+      }
+    ],
+    "playOnLoad": false,
+    "_id": "62mC0G1HNM+5wpXHauyZRZ"
+  },
+  {
+    "__type__": "cc.Node",
     "_name": "levelUpEffectNode",
     "_objFlags": 0,
     "_parent": {
@@ -10074,19 +10195,19 @@
     },
     "_children": [
       {
-        "__id__": 249
+        "__id__": 252
       },
       {
-        "__id__": 251
+        "__id__": 254
       }
     ],
     "_active": false,
     "_components": [
       {
-        "__id__": 253
+        "__id__": 256
       },
       {
-        "__id__": 254
+        "__id__": 257
       }
     ],
     "_prefab": null,
@@ -10142,13 +10263,13 @@
     "_name": "levelUpTitle",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 248
+      "__id__": 251
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 250
+        "__id__": 253
       }
     ],
     "_prefab": null,
@@ -10204,7 +10325,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 249
+      "__id__": 252
     },
     "_enabled": true,
     "_materials": [
@@ -10238,13 +10359,13 @@
     "_name": "levelUpMan",
     "_objFlags": 0,
     "_parent": {
-      "__id__": 248
+      "__id__": 251
     },
     "_children": [],
     "_active": true,
     "_components": [
       {
-        "__id__": 252
+        "__id__": 255
       }
     ],
     "_prefab": null,
@@ -10300,7 +10421,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 251
+      "__id__": 254
     },
     "_enabled": true,
     "_materials": [
@@ -10334,7 +10455,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 248
+      "__id__": 251
     },
     "_enabled": true,
     "_defaultClip": {
@@ -10353,7 +10474,7 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 248
+      "__id__": 251
     },
     "_enabled": true,
     "alignMode": 1,
@@ -10474,6 +10595,9 @@
     "autoBuyBtn": {
       "__id__": 32
     },
+    "autoCombineTimeLab": {
+      "__id__": 29
+    },
     "bulletPrefab": {
       "__uuid__": "17c4e858-7f90-4d28-ad29-5612318728e6"
     },
@@ -10551,8 +10675,11 @@
     "combineAnim": {
       "__id__": 247
     },
+    "createBulletAnim": {
+      "__id__": 250
+    },
     "levelUpEffectAnimation": {
-      "__id__": 253
+      "__id__": 256
     },
     "_id": "75mzi7pARDDYRuWfFO5ubi"
   }

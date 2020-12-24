@@ -82,7 +82,8 @@ export class CommonConfig {
     public static DOUBLE_FIRE_TIME = 5;
     //影子时间10秒（*10解决小数点精度问题）
     public static SHADOW_TIME = 100;
-
     //最大距离
     public static MAX_DISTANCE:number = 10000;
+    //自动合成的最大时间
+    public static AUTO_COMBINE_MAX_TIME:number = 99;
 }

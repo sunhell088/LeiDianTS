@@ -35,6 +35,7 @@ export default class RockLineSprite extends cc.Component {
     }
 
     destroySprite () {
+        console.log("destroySprite line")
         this._spritePool.put(this._spriteNode);
     }
 }

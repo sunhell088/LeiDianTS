@@ -27,22 +27,22 @@ export class ConfigUtil {
         var diff3 = 0;
         var stageIndex = Player.player.getDistanceStage();
         if(stageIndex<3){
-            diff1 = 10;
-            diff2 = 0;
-            diff3 = 0;
-        }else if(stageIndex<6){
             diff1 = 7;
             diff2 = 3;
             diff3 = 0;
+        }else if(stageIndex<6){
+            diff1 = 5;
+            diff2 = 3;
+            diff3 = 2;
         }
         else if(stageIndex<10){
-            diff1 = 4;
-            diff2 = 6;
-            diff3 = 0;
-        }else{
             diff1 = 3;
-            diff2 = 6;
-            diff3 = 1;
+            diff2 = 3;
+            diff3 = 4;
+        }else{
+            diff1 = 1;
+            diff2 = 2;
+            diff3 = 7;
         }
         diff2 += diff1;
         diff3 += diff2;
@@ -84,19 +84,13 @@ export class ConfigUtil {
             //普通飞机根据飞行距离等级爆落
             let randomItem = null;
             if(Player.player.getDistanceStage()<5){
-                if(CommonUtil.random(0,100)>99){
-                    randomItem = ConfigUtil.getSpecialDropItem();
-                }
+                randomItem = ConfigUtil.getSpecialDropItem();
                 dropArray.push(ItemConfig.itemConfig.item_coin);
             }else if(Player.player.getDistanceStage()<10){
-                if(CommonUtil.random(0,100)>90){
-                    randomItem = ConfigUtil.getSpecialDropItem();
-                }
+                randomItem = ConfigUtil.getSpecialDropItem();
                 dropArray.push(ItemConfig.itemConfig.item_red);
             } else{
-                if(CommonUtil.random(0,100)>80){
-                    randomItem = ConfigUtil.getSpecialDropItem();
-                }
+                randomItem = ConfigUtil.getSpecialDropItem();
                 dropArray.push(ItemConfig.itemConfig.item_green);
             }
             if(randomItem!=null){

@@ -111,7 +111,9 @@ export default class EnemySprite extends cc.Component {
         //敌机与玩家炸弹碰撞
         let bombRainSprite:BombRainSprite = other.getComponent(BombRainSprite);
         if(bombRainSprite){
-            this.hurt(-1, true);
+            if(this._enemyConfig.enemyClassName != "BossEnemySprite"){
+                this.hurt(-1, true);
+            }
         }
     }
 }

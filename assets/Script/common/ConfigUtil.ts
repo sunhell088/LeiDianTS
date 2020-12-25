@@ -62,16 +62,20 @@ export class ConfigUtil {
         var dropArray = [];
         //宝箱飞机爆 影子
         if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBox){
-            dropArray.push(ItemConfig.itemConfig.item_shadow);
+            dropArray.push(ConfigUtil.getSpecialDropItem());
         }
         //追踪飞机爆 影子
         else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyFollow){
-            dropArray.push(ItemConfig.itemConfig.item_shadow);
+            for(let i=0;i<5;i++){
+                dropArray.push(ItemConfig.itemConfig.item_red);
+            }
         }
         //停留飞机爆 冲刺
         else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyStay1
         ||enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyStay2){
-            dropArray.push(ItemConfig.itemConfig.item_cc);
+            for(let i=0;i<5;i++){
+                dropArray.push(ItemConfig.itemConfig.item_green);
+            }
         }
         //boss飞机爆 全部
         else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1
@@ -80,22 +84,12 @@ export class ConfigUtil {
             dropArray.push(ItemConfig.itemConfig.item_xts);
             dropArray.push(ItemConfig.itemConfig.item_protect);
             dropArray.push(ItemConfig.itemConfig.item_shadow);
-        }else {
-            //普通飞机根据飞行距离等级爆落
-            let randomItem = null;
-            if(Player.player.getDistanceStage()<5){
-                randomItem = ConfigUtil.getSpecialDropItem();
-                dropArray.push(ItemConfig.itemConfig.item_coin);
-            }else if(Player.player.getDistanceStage()<10){
-                randomItem = ConfigUtil.getSpecialDropItem();
-                dropArray.push(ItemConfig.itemConfig.item_red);
-            } else{
-                randomItem = ConfigUtil.getSpecialDropItem();
+            dropArray.push(ItemConfig.itemConfig.item_double);
+            for (let i=0;i<10;i++){
                 dropArray.push(ItemConfig.itemConfig.item_green);
             }
-            if(randomItem!=null){
-                dropArray.push(randomItem);
-            }
+        }else {
+            dropArray.push(ItemConfig.itemConfig.item_coin);
         }
         return dropArray;
     };
@@ -110,6 +104,9 @@ export class ConfigUtil {
                 itemConfig = oddsItem.itemConfig;
                 break;
             }
+        }
+        if(itemConfig==null){
+            console.error("getSpecialDropItem null")
         }
         return itemConfig;
     };
@@ -187,29 +184,20 @@ export class ConfigUtil {
 
     //获得当前子弹商城的随机购买库
     public static getRandomStoreBullet(planeID):number {
-        let randomGrade:number = 0;
         let maxGrade:number = Player.player.getBulletMaxGrade(planeID);
-        if(maxGrade<5){
-            randomGrade = 1;
-        }else if(maxGrade<7){
-            randomGrade = CommonUtil.random(1,3);
-        }else if(maxGrade<10){
-            randomGrade = CommonUtil.random(0,10)>9?CommonUtil.random(1,maxGrade-3):CommonUtil.random(3,maxGrade-3);
-        }else {
-            randomGrade = CommonUtil.random(0,10)>9?CommonUtil.random(1,maxGrade-3):CommonUtil.random(10,maxGrade-3);
-        }
+        let randomGrade:number = CommonUtil.random(1,maxGrade-1);
         return randomGrade;
     }
 
     public static getStoreSoldBulletPrice(grade:number):number {
-        let priceRatio:number = 100;
-        if(grade<10){
-            priceRatio = 10;
-        }else if(grade<10){
-            priceRatio = 100;
-        }else if(grade<20){
-            priceRatio = 200;
-        }
+        let priceRatio:number = 500;
+        // if(grade<10){
+        //     priceRatio = 10;
+        // }else if(grade<10){
+        //     priceRatio = 100;
+        // }else if(grade<20){
+        //     priceRatio = 200;
+        // }
         return grade*priceRatio;
     }
 
@@ -230,31 +218,31 @@ export class ConfigUtil {
                 hp = 10;
                 break;
             case EnemyConfig.enemyConfig.enemy1.id:
-                hp = 10;
-                break;
-            case EnemyConfig.enemyConfig.enemy2.id:
-                hp = 15;
-                break;
-            case EnemyConfig.enemyConfig.enemy3.id:
                 hp = 20;
                 break;
-            case EnemyConfig.enemyConfig.enemy4.id:
+            case EnemyConfig.enemyConfig.enemy2.id:
+                hp = 30;
+                break;
+            case EnemyConfig.enemyConfig.enemy3.id:
                 hp = 40;
                 break;
+            case EnemyConfig.enemyConfig.enemy4.id:
+                hp = 50;
+                break;
             case EnemyConfig.enemyConfig.enemy5.id:
-                hp = 60;
+                hp = 100;
                 break;
             case EnemyConfig.enemyConfig.enemy6.id:
-                hp = 120;
+                hp = 150;
                 break;
             case EnemyConfig.enemyConfig.enemy7.id:
-                hp = 240;
+                hp = 200;
                 break;
             case EnemyConfig.enemyConfig.enemy8.id:
-                hp = 480;
+                hp = 400;
                 break;
             case EnemyConfig.enemyConfig.enemy9.id:
-                hp = 1000;
+                hp = 800;
                 break;
             case EnemyConfig.enemyConfig.enemyBomb.id:
                 hp = Player.player.getBulletMaxGrade(Player.player.data.currentPlaneID)*50;

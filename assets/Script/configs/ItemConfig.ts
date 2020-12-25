@@ -30,6 +30,12 @@ export class ItemConfig {
             textureName:"item_double",
             effectTexture:"fly_buff4"
         },
+        //双倍攻击（二条）
+        item_bomb:{
+            name:"item_bomb",
+            textureName:"item_bomb",
+            effectTexture:"fly_buff5"
+        },
         //10金币
         item_coin:{
             name:"item_coin",
@@ -41,14 +47,14 @@ export class ItemConfig {
         item_red:{
             name:"item_red",
             textureName:"item_red",
-            gold:50,
+            gold:100,
             effectTexture:"fly_gold_50"
         },
         //100金币
         item_green:{
             name:"item_green",
             textureName:"item_green",
-            gold:100,
+            gold:1000,
             effectTexture:"fly_gold_100"
         }
     };

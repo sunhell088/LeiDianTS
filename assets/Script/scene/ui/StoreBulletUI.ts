@@ -50,6 +50,8 @@ export default class StoreBulletUI extends cc.Component{
         for(let i=0;i<this.node.parent.children.length;i++){
             let node:cc.Node = this.node.parent.children[i];
             let storeBulletUI:StoreBulletUI = node.getComponent(StoreBulletUI);
+            //因为升级特效是放在父节点的
+            if(!storeBulletUI) continue;
             if(storeBulletUI.gridIndex==this.gridIndex) continue;
             if(touchPos.x>node.x-node.width/2&&touchPos.x<node.x+node.width/2
             &&touchPos.y>node.y-node.height/2&&touchPos.y<node.y+node.height/2){

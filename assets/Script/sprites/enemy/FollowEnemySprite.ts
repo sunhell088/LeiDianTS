@@ -20,7 +20,7 @@ export default class FollowEnemySprite extends EnemySprite {
     bBlink:boolean = true;
 
     hurt(bulletPower, bDrop) {
-        if(!this.bBlink)
+        // if(!this.bBlink)
         super.hurt(bulletPower, bDrop);
     }
     destroySprite() {

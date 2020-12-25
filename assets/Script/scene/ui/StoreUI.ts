@@ -102,8 +102,6 @@ export default class StoreUI extends cc.Component implements IMediator {
     protected onLoad(): void {
         this.checkDataBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
             window.alert(localStorage.playerData);
-            this.updateBuyBullet();
-            this.updateBulletList();
         }, this);
         ObserverManager.registerObserverFun(this);
         this.changePlaneBtn.node.on(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);

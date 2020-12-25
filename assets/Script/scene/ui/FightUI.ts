@@ -76,6 +76,9 @@ export default class FightUI extends cc.Component implements IMediator{
     doubleFireProgress:cc.ProgressBar = null;
     @property(cc.Label)
     shadowCountLab:cc.Label = null;
+    //炸弹图标
+    @property([cc.Node])
+    bombBuffList:cc.Node[] = [];
 
 
 
@@ -84,7 +87,7 @@ export default class FightUI extends cc.Component implements IMediator{
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
             GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD, GameEvent.EAT_ITEM, GameEvent.DEDUCT_BUFF_TIME
-        ,GameEvent.PROTECT_EFFECT];
+        ,GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB_EFFECT];
     }
 
     protected onLoad(): void {
@@ -115,6 +118,9 @@ export default class FightUI extends cc.Component implements IMediator{
         this.protectProgress.node.parent.active = false;
         this.doubleFireProgress.node.parent.active = false;
         this.shadowCountLab.node.active = false;
+        for(let i=0;i<this.bombBuffList.length;i++){
+            this.bombBuffList[i].active = false;
+        }
     }
 
     //刷新飞行距离
@@ -179,6 +185,9 @@ export default class FightUI extends cc.Component implements IMediator{
             case ItemConfig.itemConfig.item_double.name:
                 itemConfigObj = ItemConfig.itemConfig.item_double;
                 break;
+            case ItemConfig.itemConfig.item_bomb.name:
+                itemConfigObj = ItemConfig.itemConfig.item_bomb;
+                break;
             case ItemConfig.itemConfig.item_coin.name:
                 itemConfigObj = ItemConfig.itemConfig.item_coin;
                 break;
@@ -240,6 +249,15 @@ export default class FightUI extends cc.Component implements IMediator{
         this.node.addChild(spriteNode);
         return spriteNode;
     }
+
+    private updateBombCount(){
+        for(let i=0;i<this.bombBuffList.length;i++){
+            this.bombBuffList[i].active = false;
+            if(i<=Player.player.bombCount-1){
+                this.bombBuffList[i].active = true;
+            }
+        }
+    }
     //--------游戏事件监听方法---------
 
     private SET_CURRENT_REWARD_GOLD(count:number){
@@ -297,6 +315,12 @@ export default class FightUI extends cc.Component implements IMediator{
             case ItemConfig.itemConfig.item_double.name:
                 progressBar = this.doubleFireProgress;
                 break;
+            case ItemConfig.itemConfig.item_bomb.name:
+                if(Player.player.bombCount<CommonConfig.BOMB_MAX_COUNT){
+                    Player.player.bombCount++;
+                    this.updateBombCount();
+                }
+                break;
         }
         if(progressBar){
             progressBar.node.parent.active = true;
@@ -339,5 +363,9 @@ export default class FightUI extends cc.Component implements IMediator{
 
     private PROTECT_EFFECT(){
         this.protectProgress.node.parent.active = false;
+    }
+
+    private USE_BOMB_EFFECT(){
+        this.updateBombCount();
     }
 }

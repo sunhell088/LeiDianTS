@@ -4,7 +4,7 @@ import {SoundConfig} from "../../configs/SoundConfig";
 import {CommonConfig} from "../../configs/CommonConfig";
 import BulletSprite from "../BulletSprite";
 import ShipSprite from "../ShipSprite";
-import {CLEAN_TYPE, FLY_STATE} from "../../common/GameEnum";
+import {ENEMY_TYPE, FLY_STATE} from "../../common/GameEnum";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
 import BombRainSprite from "../BombRainSprite";

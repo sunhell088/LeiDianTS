@@ -9,7 +9,7 @@ export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode: boolean = false;
+    public debugMode: boolean = true;
 
     //需要存盘的数据
     public data = {
@@ -76,6 +76,8 @@ export class Player {
     public bulletLevelMaxMap:{} = {};
     //自动合成剩余时间
     public autoCombineBulletTime:number = 0;
+    //炸弹数量
+    public bombCount:number = 0;
 
     //从本地读取玩家数据
     public loadData() {

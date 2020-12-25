@@ -32,4 +32,6 @@ export class GameEvent {
     public static DEDUCT_BUFF_TIME:string = "DEDUCT_BUFF_TIME";
     //刷新商城金币
     public static UPDATE_STORE_GOLD:string = "UPDATE_STORE_GOLD";
+    //使用炸弹
+    public static USE_BOMB_EFFECT:string = "USE_BOMB_EFFECT";
 }

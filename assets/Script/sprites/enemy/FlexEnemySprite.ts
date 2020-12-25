@@ -18,9 +18,9 @@ export default class FlexEnemySprite extends EnemySprite {
     }
 
     hurt(bulletPower, bDrop) {
-        if(!this.bBlink){
+        // if(!this.bBlink){
             super.hurt(bulletPower, bDrop);
-        }
+        // }
     }
     destroySprite() {
         super.destroySprite();
@@ -33,7 +33,7 @@ export default class FlexEnemySprite extends EnemySprite {
             this.flyState = FLY_STATE.RUN;
             var array = [];
             array.push(new cc.Vec2(this.node.x, this.node.y));
-            for (var i = 0; i < 10; i++) {
+            for (var i = 0; i < 7; i++) {
                 var x = CommonUtil.random(-CommonConfig.WIDTH/2, CommonConfig.WIDTH/2);
                 var y = CommonUtil.random(0, CommonConfig.HEIGHT/2);
                 array.push(new cc.Vec2(x, y));

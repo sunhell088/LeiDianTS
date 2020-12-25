@@ -1,26 +1,6 @@
 import {CommonConfig} from "../configs/CommonConfig";
 
 export class CommonUtil {
-    public static scaleFullRect(rect){
-        rect.x = 0;
-        rect.width = CommonConfig.WIDTH;
-        rect.height += rect.height*(3-1);
-    };
-
-    public static scale2Rect(rect){
-        rect.x -= rect.width/2;
-        rect.y -= rect.height/2;
-        rect.width += rect.width*(2-1);
-        rect.height += rect.height*(2-1);
-    };
-
-    public static scaleHalfRect(rect){
-        rect.x += rect.width/4;
-        rect.width = rect.width/2;
-
-        rect.y += rect.width/4;
-        rect.height = rect.height/2;
-    };
 
     public static random(min, maxInclude){
         return parseInt(Math.random()*(maxInclude-min+1)+min);

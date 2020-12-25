@@ -11,118 +11,100 @@ export class EnemyConfig {
         enemy0:{
             id:"enemy0",
             textureName:"enemy0",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy1:{
             id:"enemy1",
             textureName:"enemy1",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy2:{
             id:"enemy2",
             textureName:"enemy2",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy3:{
             id:"enemy3",
             textureName:"enemy3",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy4:{
             id:"enemy4",
             textureName:"enemy4",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy5:{
             id:"enemy5",
             textureName:"enemy5",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy6:{
             id:"enemy6",
             textureName:"enemy6",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy7:{
             id:"enemy7",
             textureName:"enemy7",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy8:{
             id:"enemy8",
             textureName:"enemy8",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         enemy9:{
             id:"enemy9",
             textureName:"enemy9",
-            classType:EnemySprite,
             enemyClassName:"EnemySprite"
         },
         //------------------特殊飞机---------------------------
         //自爆飞机
         enemyBomb:{
             id:"enemyBomb",
-            textureName:"enemy20",
-            classType:StayEnemySprite,
+            textureName:"enemy10",
             enemyClassName:"StayEnemySprite"
         },
         //宝箱飞机
         enemyBox:{
             id:"enemyBox",
             textureName:"enemy21",
-            classType:FlexEnemySprite,
             enemyClassName:"FlexEnemySprite"
         },
         //追踪飞机
         enemyFollow:{
             id:"enemyFollow",
             textureName:"enemy27",
-            classType:FollowEnemySprite,
             enemyClassName:"FollowEnemySprite"
         },
         //停留飞机
         enemyStay1:{
             id:"enemyStay1",
             textureName:"enemy22",
-            classType:StayEnemySprite,
             enemyClassName:"StayEnemySprite"
         },
         //停留大飞机2
         enemyStay2:{
             id:"enemyStay2",
             textureName:"enemy26",
-            classType:StayEnemySprite,
             enemyClassName:"StayEnemySprite"
         },
         //boss1
         enemyBoss1:{
             id:"enemyBoss1",
             textureName:"enemy23",
-            classType:BossEnemySprite,
             enemyClassName:"BossEnemySprite"
         },
         //boss2
         enemyBoss2:{
             id:"enemyBoss2",
             textureName:"enemy24",
-            classType:BossEnemySprite,
             enemyClassName:"BossEnemySprite"
         },
         //boss3
         enemyBoss3:{
             id:"enemyBoss3",
             textureName:"enemy25",
-            classType:BossEnemySprite,
             enemyClassName:"BossEnemySprite"
         }
     };

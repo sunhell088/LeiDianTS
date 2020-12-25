@@ -54,7 +54,7 @@ export class Observer {
             }
             fun = oneObserver[command];
             if (fun == null) {
-                console.error("Observer send , function is null!")
+                console.error("Observer send , function is null! command = "+command)
             }
             else if (arg == null || arg.length == 0)
                 fun.call(oneObserver);

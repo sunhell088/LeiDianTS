@@ -78,6 +78,9 @@ export default class StoreUI extends cc.Component implements IMediator {
     //随机购买子弹图片
     @property(cc.Sprite)
     randomBulletSprite: cc.Sprite = null;
+    //随机购买子弹等级
+    @property(cc.Label)
+    bulletLevelLab: cc.Label = null;
     //随机子弹价格
     @property(cc.Label)
     randomBulletPrice: cc.Label = null;
@@ -152,17 +155,11 @@ export default class StoreUI extends cc.Component implements IMediator {
         let planeConfig = ConfigUtil.getPlaneConfig(planeID);
         let bulletType: number = planeConfig.bulletType;
         this.randomBulletSprite.spriteFrame = this.bulletAtlas.getSpriteFrame(bulletType + '_' + storeSoldBulletGrade);
+        this.bulletLevelLab.string = "Lv."+storeSoldBulletGrade;
         this.randomBulletPrice.string = storeSoldBulletPrice + "";
     }
 
     private updateBulletList() {
-        for (let i = 0; i < this.storeBulletList.length; i++) {
-            if (i < Player.player.data.storeBulletGridCount) {
-                this.storeBulletList[i].node.active = true;
-            } else {
-                this.storeBulletList[i].node.active = false;
-            }
-        }
         let storeBulletList: number[] = Player.player.data.storeBulletMap[this.currentPlaneID];
         let planeConfig = ConfigUtil.getPlaneConfig(this.currentPlaneID);
         let bulletType: number = planeConfig.bulletType;
@@ -187,10 +184,27 @@ export default class StoreUI extends cc.Component implements IMediator {
             let grid0:StoreBulletUI = null;
             let grid1:StoreBulletUI = null;
             let bHaveSame:boolean = false;
-            for(let i=0;i<this.storeBulletList.length;i++){
-                grid0 = this.storeBulletList[i];
-                for(let k=i+1;k<this.storeBulletList.length;k++){
+            //先根据从大到小排序
+            let temp:StoreBulletUI= null;
+            let tempList:StoreBulletUI[] = []
+            for (let i = 0; i < this.storeBulletList.length; i++) {
+                tempList.push(this.storeBulletList[i]);
+            }
+            for (let i = 0; i < tempList.length; i++) {
+                for (let j = i+1; j<tempList.length; j++) {
+                    if (tempList[i].bulletLevel<tempList[j].bulletLevel) {
+                        temp = tempList[i];
+                        tempList[i] = tempList[j];
+                        tempList[j] = temp; // 两个数交换位置 
+                    }
+                }
+            }
+            for(let i=0;i<tempList.length;i++){
+                grid0 = tempList[i];
+                if(grid0.bulletLevel<=0) continue;
+                for(let k=0;k<this.storeBulletList.length;k++){
                     grid1 = this.storeBulletList[k];
+                    if(grid0 == grid1) continue;
                     if(grid0.bulletLevel==grid1.bulletLevel){
                         bHaveSame = true;
                         break;
@@ -285,6 +299,7 @@ export default class StoreUI extends cc.Component implements IMediator {
             let targetGrid:StoreBulletUI = this.storeBulletList[targetIndex];
             let worldPos = targetGrid.node.getPosition();
             animation.node.setPosition(worldPos);
+            animation.node.setSiblingIndex(100);
             animation.node.active = true;
             animation.play();
             animation.on(cc.Animation.EventType.FINISHED, function () {

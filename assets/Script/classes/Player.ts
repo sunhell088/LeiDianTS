@@ -14,7 +14,7 @@ export class Player {
     //需要存盘的数据
     public data = {
         //当前金币
-        gold: 0,
+        gold: 999999,
         //飞行最远距离
         maxDistance: 0,
         //当前拥有的飞机（用掩码记录）
@@ -27,8 +27,6 @@ export class Player {
         bornTime: 0,
         //飞机们的商城子弹(-1:表示未开启，0：表示开启，但没子弹，>0：表示子弹等级)
         storeBulletMap: null,
-        //当前开启子弹格子数量
-        storeBulletGridCount: 4,
         //当前子弹商店的随机子弹等级
         storeSoldBulletGradeMap: {}
     };
@@ -115,12 +113,8 @@ export class Player {
         for (let key in PlaneConfig.planeConfig) {
             let storeBulletList: number[] = [];
             storeBulletList.push(1);
-            for (let i = 1; i < 16; i++) {
-                if (i < this.data.storeBulletGridCount) {
-                    storeBulletList.push(0);
-                } else {
-                    storeBulletList.push(-1);
-                }
+            for (let i = 1; i < 9; i++) {
+                storeBulletList.push(0);
 
             }
             this.data.storeBulletMap[PlaneConfig.planeConfig[key].id] = storeBulletList;
@@ -203,13 +197,10 @@ export class Player {
         let sourceValue: number = storeBulletList[sourceIndex];
         let targetValue: number = storeBulletList[targetIndex];
         if (sourceValue != targetValue) return false;
+        if (sourceIndex >= storeBulletList.length) return false;
+        if (targetIndex >= storeBulletList.length) return false;
         storeBulletList[sourceIndex] = 0;
         storeBulletList[targetIndex] = targetValue + 1;
-        if (storeBulletList[targetIndex] >= Player.player.data.storeBulletGridCount) {
-            //开启新格子
-            this.data.storeBulletMap[planeID][Player.player.data.storeBulletGridCount] = 0;
-            Player.player.data.storeBulletGridCount += 1;
-        }
         let newLevel:number = this.calculateBulletMaxGrade(planeID);
         this.bulletLevelMaxMap[planeID] = newLevel;
         ObserverManager.sendNotification(GameEvent.UPDATE_STORE_BULLET, newLevel>oldLevel, sourceIndex, targetIndex, bAuto);

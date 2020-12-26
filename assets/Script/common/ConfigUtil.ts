@@ -185,7 +185,8 @@ export class ConfigUtil {
     //获得当前子弹商城的随机购买库
     public static getRandomStoreBullet(planeID):number {
         let maxGrade:number = Player.player.getBulletMaxGrade(planeID);
-        let randomGrade:number = CommonUtil.random(1,maxGrade-1);
+        let randomGrade:number = CommonUtil.random(maxGrade-3,maxGrade);
+        if(randomGrade<1) randomGrade = 1;
         return randomGrade;
     }
 

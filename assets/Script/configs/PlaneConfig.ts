@@ -1,5 +1,4 @@
 export class PlaneConfig {
-    public static levelExp:number[] = [0,60,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150,150];
 
     public static planeConfig:any[] = [
         {

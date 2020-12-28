@@ -176,17 +176,17 @@ export class ConfigUtil {
         return null;
     };
 
-    //获得指定等级升到下一级需要的经验（如：1级升2级所需要的经验，参数为1）
-    public static getExpByLevel(level):number{
-        if(level<0 || level>=PlaneConfig.levelExp.length) return -1;
-        return PlaneConfig.levelExp[level];
-    };
-
     //获得当前子弹商城的随机购买库
     public static getRandomStoreBullet(planeID):number {
+        let randomGrade:number = 0;
         let maxGrade:number = Player.player.getBulletMaxGrade(planeID);
-        let randomGrade:number = CommonUtil.random(maxGrade-3,maxGrade);
-        if(randomGrade<1) randomGrade = 1;
+        if(maxGrade<5){
+            randomGrade = 1;
+        }else if(maxGrade<7){
+            randomGrade = CommonUtil.random(1,3);
+        }else {
+            randomGrade = CommonUtil.random(maxGrade-6,maxGrade-3);
+        }
         return randomGrade;
     }
 

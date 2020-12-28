@@ -54,6 +54,9 @@ export default class StoreUI extends cc.Component implements IMediator {
     autoBuyBtn: cc.Button = null;
     @property(cc.Label)
     autoCombineTimeLab: cc.Label = null;
+    //卖出最低等级
+    @property(cc.Button)
+    sellBulletBtn: cc.Button = null;
 
     //子弹预设
     @property(cc.Prefab)
@@ -99,7 +102,7 @@ export default class StoreUI extends cc.Component implements IMediator {
     private currentPlaneID: number = null;
 
     getCommands(): string[] {
-        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE,GameEvent.UPDATE_STORE_GOLD];
+        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE, GameEvent.UPDATE_STORE_GOLD];
     }
 
     protected onLoad(): void {
@@ -111,6 +114,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.startBtn.node.on(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
         this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
         this.autoBuyBtn.node.on(cc.Node.EventType.TOUCH_END, this.onAutoBuyBtn, this);
+        this.sellBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onSellBulletBtn, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(Player.player.saveData, 1);
         this.schedule(this.autoCombineBullet, 1);
@@ -122,6 +126,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.changePlaneBtn.node.off(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);
         this.startBtn.node.off(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
         this.buyBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
+        this.sellBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onSellBulletBtn, this);
         this.unschedule(this.shoot);
         this.unschedule(Player.player.saveData);
         this.unschedule(this.autoCombineBullet);
@@ -132,7 +137,7 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private init() {
-        this.autoCombineTimeLab.string = "自动合成"+CommonConfig.AUTO_COMBINE_MAX_TIME+"秒"
+        this.autoCombineTimeLab.string = "自动合成" + CommonConfig.AUTO_COMBINE_MAX_TIME + "秒"
         this.currentPlaneID = Player.player.data.currentPlaneID
         this.setBackground();
         this.goldCount.string = Player.player.data.gold + "";
@@ -155,7 +160,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         let planeConfig = ConfigUtil.getPlaneConfig(planeID);
         let bulletType: number = planeConfig.bulletType;
         this.randomBulletSprite.spriteFrame = this.bulletAtlas.getSpriteFrame(bulletType + '_' + storeSoldBulletGrade);
-        this.bulletLevelLab.string = "Lv."+storeSoldBulletGrade;
+        this.bulletLevelLab.string = "Lv." + storeSoldBulletGrade;
         this.randomBulletPrice.string = storeSoldBulletPrice + "";
     }
 
@@ -178,54 +183,64 @@ export default class StoreUI extends cc.Component implements IMediator {
 
     private onBuyBulletBtn(): void {
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
-        let state:BUY_BULLET_STATE = Player.player.buyBullet(this.currentPlaneID);
+        let state: BUY_BULLET_STATE = Player.player.buyBullet(this.currentPlaneID);
         //如果没有格子了，抖动两个相同的子弹
-        if(state==BUY_BULLET_STATE.NO_GRID){
-            let grid0:StoreBulletUI = null;
-            let grid1:StoreBulletUI = null;
-            let bHaveSame:boolean = false;
+        if (state == BUY_BULLET_STATE.NO_GRID) {
+            let grid0: StoreBulletUI = null;
+            let grid1: StoreBulletUI = null;
+            let bHaveSame: boolean = false;
             //先根据从大到小排序
-            let temp:StoreBulletUI= null;
-            let tempList:StoreBulletUI[] = []
-            for (let i = 0; i < this.storeBulletList.length; i++) {
+            let temp: StoreBulletUI = null;
+            let tempList: StoreBulletUI[] = []
+            for (let i = 0; i < this.storeBulletList.length; i++) {
                 tempList.push(this.storeBulletList[i]);
             }
-            for (let i = 0; i < tempList.length; i++) {
-                for (let j = i+1; j<tempList.length; j++) {
-                    if (tempList[i].bulletLevel<tempList[j].bulletLevel) {
+            for (let i = 0; i < tempList.length; i++) {
+                for (let j = i + 1; j < tempList.length; j++) {
+                    if (tempList[i].bulletLevel < tempList[j].bulletLevel) {
                         temp = tempList[i];
                         tempList[i] = tempList[j];
                         tempList[j] = temp; // 两个数交换位置 
                     }
                 }
             }
-            for(let i=0;i<tempList.length;i++){
+            for (let i = 0; i < tempList.length; i++) {
                 grid0 = tempList[i];
-                if(grid0.bulletLevel<=0) continue;
-                for(let k=0;k<this.storeBulletList.length;k++){
+                if (grid0.bulletLevel <= 0) continue;
+                for (let k = 0; k < this.storeBulletList.length; k++) {
                     grid1 = this.storeBulletList[k];
-                    if(grid0 == grid1) continue;
-                    if(grid0.bulletLevel==grid1.bulletLevel){
+                    if (grid0 == grid1) continue;
+                    if (grid0.bulletLevel == grid1.bulletLevel) {
                         bHaveSame = true;
                         break;
                     }
                 }
-                if(bHaveSame){
+                if (bHaveSame) {
                     break;
                 }
             }
-            grid0.node.stopAllActions();
-            grid1.node.stopAllActions();
-            grid0.node.runAction(GameUtil.shakeBy(0.5,10,5));
-            grid1.node.runAction(GameUtil.shakeBy(0.5,10,5));
-            this.buyBulletBtn.interactable  = false;
+            //如果格子已满，并且已经没有相同等级的子弹，抖动最低等级的格子和卖出按钮
+            if (grid0.bulletLevel != grid1.bulletLevel) {
+                this.sellBulletBtn.node.runAction(GameUtil.shakeBy(0.5, 10, 5));
+                let minGrid: StoreBulletUI = this.storeBulletList[0];
+                for (let key in this.storeBulletList) {
+                    if (this.storeBulletList[key].bulletLevel < minGrid.bulletLevel) {
+                        minGrid = this.storeBulletList[key];
+                    }
+                }
+                minGrid.node.runAction(GameUtil.shakeBy(0.5, 10, 5));
+                return;
+            }
+            grid0.node.runAction(GameUtil.shakeBy(0.5, 10, 5));
+            grid1.node.runAction(GameUtil.shakeBy(0.5, 10, 5));
+            this.buyBulletBtn.interactable = false;
             this.buyBulletBtn.node.off(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
             this.scheduleOnce(function () {
                 this.buyBulletBtn.interactable = true;
                 this.buyBulletBtn.node.on(cc.Node.EventType.TOUCH_END, this.onBuyBulletBtn, this);
             }, 0.5);
             //如果在自动合成中
-            if(Player.player.autoCombineBulletTime>0){
+            if (Player.player.autoCombineBulletTime > 0) {
                 grid0.autoCombineTarget(grid1);
             }
         }
@@ -233,19 +248,43 @@ export default class StoreUI extends cc.Component implements IMediator {
 
     private onAutoBuyBtn() {
         Player.player.autoCombineBulletTime = CommonConfig.AUTO_COMBINE_MAX_TIME;
-        this.autoBuyBtn.interactable  = false;
+        this.autoBuyBtn.interactable = false;
         this.autoBuyBtn.node.off(cc.Node.EventType.TOUCH_END, this.onAutoBuyBtn, this);
-
     }
 
-    private autoCombineBullet(){
-        if(Player.player.autoCombineBulletTime<=0) return;
+    private onSellBulletBtn() {
+        let storeBulletList: number[] = Player.player.data.storeBulletMap[this.currentPlaneID];
+        let minGridIndex: number = null;
+        let minLevel:number = 0;
+        let validGridCount:number = 0;
+        //找到最后一个有等级的子弹位
+        for (let i = 0; i < storeBulletList.length; i++) {
+            if(storeBulletList[i]==0) continue;
+            minLevel = storeBulletList[i];
+            minGridIndex = i;
+            validGridCount++;
+        }
+        console.log(validGridCount)
+        if(validGridCount==1) return;
+        for (let i = 0; i < storeBulletList.length; i++) {
+            if(storeBulletList[i]==0) continue;
+            if(storeBulletList[i]<minLevel){
+                minLevel = storeBulletList[i]
+                minGridIndex = i;
+            }
+        }
+        storeBulletList[minGridIndex] = 0;
+        this.updateBulletList()
+    }
+
+    private autoCombineBullet() {
+        if (Player.player.autoCombineBulletTime <= 0) return;
         Player.player.autoCombineBulletTime--;
-        this.autoCombineTimeLab.string = "剩余时间："+Player.player.autoCombineBulletTime+"秒"
-        if(Player.player.autoCombineBulletTime==0){
+        this.autoCombineTimeLab.string = "剩余时间：" + Player.player.autoCombineBulletTime + "秒"
+        if (Player.player.autoCombineBulletTime == 0) {
             this.autoBuyBtn.interactable = true;
             this.autoBuyBtn.node.on(cc.Node.EventType.TOUCH_END, this.onAutoBuyBtn, this);
-            this.autoCombineTimeLab.string = "剩余时间："+CommonConfig.AUTO_COMBINE_MAX_TIME+"秒"
+            this.autoCombineTimeLab.string = "自动合成" + CommonConfig.AUTO_COMBINE_MAX_TIME + "秒"
         }
     }
 
@@ -281,8 +320,8 @@ export default class StoreUI extends cc.Component implements IMediator {
         return spriteNode;
     }
 
-    private UPDATE_STORE_BULLET(levelUp:boolean, sourceIndex:number, targetIndex:number, bAuto:boolean) {
-        if(levelUp){
+    private UPDATE_STORE_BULLET(levelUp: boolean, sourceIndex: number, targetIndex: number, bAuto: boolean) {
+        if (levelUp) {
             GameUtil.playSound(SoundConfig.levelUpReady);
             this.levelUpEffectAnimation.node.active = true;
             this.levelUpEffectAnimation.play();
@@ -294,9 +333,9 @@ export default class StoreUI extends cc.Component implements IMediator {
         GameUtil.playSound(SoundConfig.bulletCombine);
         this.updateBuyBullet();
         this.updateBulletList();
-        let animation:cc.Animation = sourceIndex==-1?this.createBulletAnim:this.combineAnim;
-        if(targetIndex!=undefined){
-            let targetGrid:StoreBulletUI = this.storeBulletList[targetIndex];
+        let animation: cc.Animation = sourceIndex == -1 ? this.createBulletAnim : this.combineAnim;
+        if (targetIndex != undefined) {
+            let targetGrid: StoreBulletUI = this.storeBulletList[targetIndex];
             let worldPos = targetGrid.node.getPosition();
             animation.node.setPosition(worldPos);
             animation.node.setSiblingIndex(100);
@@ -309,20 +348,20 @@ export default class StoreUI extends cc.Component implements IMediator {
         }
     }
 
-    private FLY_NOTICE(notice:string){
+    private FLY_NOTICE(notice: string) {
         this.flowHintNode.stopAllActions();
-        let label:cc.Label = this.flowHintNode.getChildByName("label").getComponent(cc.Label);
+        let label: cc.Label = this.flowHintNode.getChildByName("label").getComponent(cc.Label);
         label.string = notice;
         this.flowHintNode.active = true;
         this.flowHintNode.opacity = 255;
 
-        cc.tween(this.flowHintNode).delay(1).to(1, {opacity:0}).call(function () {
+        cc.tween(this.flowHintNode).delay(1).to(1, {opacity: 0}).call(function () {
             this.flowHintNode.active = false;
             // @ts-ignore
         }, this).start();
     }
 
-    private UPDATE_STORE_GOLD(){
-        this.goldCount.string = ""+Player.player.data.gold;
+    private UPDATE_STORE_GOLD() {
+        this.goldCount.string = "" + Player.player.data.gold;
     }
 }

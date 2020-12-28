@@ -85,7 +85,7 @@ export class CommonConfig {
     //最大距离
     public static MAX_DISTANCE:number = 10000;
     //自动合成的最大时间
-    public static AUTO_COMBINE_MAX_TIME:number = 99;
+    public static AUTO_COMBINE_MAX_TIME:number = 30;
     //最大携带炸弹数量
     public static BOMB_MAX_COUNT:number = 4;
 }

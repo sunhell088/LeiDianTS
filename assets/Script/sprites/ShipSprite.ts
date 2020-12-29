@@ -38,7 +38,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     eatItemEffect:cc.Node = null;
 
 
-    getCommands():string[] {
+    getCommands(){
         return [GameEvent.RESTART_GAME, GameEvent.GAME_OVER, GameEvent.ITEM_COLLISION_PLAYER,
             GameEvent.ROCK_COLLISION_PLAYER, GameEvent.EAT_ITEM,GameEvent.COLLIDER_MAGNET];
     }
@@ -69,6 +69,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             cc.moveTo(0.3, this.node.x, -CommonConfig.HEIGHT/3),
             cc.callFunc(function(){
                 Player.player._stopBullet = false;
+                ObserverManager.sendNotification(GameEvent.GUIDE_TRIGGER_COME_ON_STAGE);
             })
         ));
     }

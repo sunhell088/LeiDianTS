@@ -10,6 +10,8 @@ import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {BUY_BULLET_STATE} from "../../common/GameEnum";
 import {SoundConfig} from "../../configs/SoundConfig";
 import {SceneManager} from "../../manager/scene/SceneManager";
+import DialogUI from "./common/DialogUI";
+import {DialogManager} from "../../manager/widget/DialogManager";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -98,7 +100,7 @@ export default class StoreUI extends cc.Component implements IMediator {
     private bulletPool: cc.NodePool = new cc.NodePool();
     private currentPlaneID: number = null;
 
-    getCommands(): string[] {
+    getCommands(){
         return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE, GameEvent.UPDATE_STORE_GOLD];
     }
 

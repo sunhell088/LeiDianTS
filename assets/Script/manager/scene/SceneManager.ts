@@ -22,6 +22,7 @@ export class SceneManager{
                 }
             }, (error)=>{
                 cc.director.loadScene(newSceneName);
+                cc.director.getScene().opacity = 0;
             })
         });
     }

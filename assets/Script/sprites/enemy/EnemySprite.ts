@@ -26,9 +26,10 @@ export default class EnemySprite extends cc.Component {
     _HP:number = 0;
     _dropItems:any[] = null;
 
-
     //飞行状态
     flyState:FLY_STATE = FLY_STATE.ENTER;
+
+    private guideHintAnim:cc.Animation = null;
 
     public initSprite(spriteNode:cc.Node, atlas:cc.SpriteAtlas, pool:cc.NodePool, enemyConfig:any){
         this._spriteNode = spriteNode;
@@ -36,6 +37,8 @@ export default class EnemySprite extends cc.Component {
         this._spritePool = pool;
         this._enemyConfig = enemyConfig;
         this.resetBloodBar();
+        this.guideHintAnim = this.node.getChildByName("guideHintAnim").getComponent(cc.Animation);
+        this.guideHintAnim.node.active = false;
     }
 
     public setSpriteFrame(){
@@ -115,5 +118,10 @@ export default class EnemySprite extends cc.Component {
                 this.hurt(-1, true);
             }
         }
+    }
+
+    public showGuide(){
+        this.guideHintAnim.node.active = true;
+        this.guideHintAnim.play();
     }
 }

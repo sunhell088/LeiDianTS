@@ -4,6 +4,8 @@ import {CommonConfig} from "../../configs/CommonConfig";
 import EnemySprite from "./EnemySprite";
 import {CommonUtil} from "../../common/CommonUtil";
 import {FLY_STATE} from "../../common/GameEnum";
+import {Player} from "../../classes/Player";
+import {GuideConfig} from "../../configs/GuideConfig";
 
 
 const {ccclass, property} = cc._decorator;
@@ -13,7 +15,7 @@ export default class FlexEnemySprite extends EnemySprite {
 
     getStartPosition(self:FlexEnemySprite) {
         var randomX:number = CommonUtil.random(-CommonConfig.WIDTH/2+self.node.width / 2, CommonConfig.WIDTH/2 - self.node.width / 2);
-        var randomY:number = CommonUtil.random(CommonConfig.HEIGHT/4, CommonConfig.HEIGHT/2);
+        var randomY:number = CommonConfig.HEIGHT/3;
         return new cc.Vec2(randomX, randomY);
     }
 
@@ -62,6 +64,7 @@ export default class FlexEnemySprite extends EnemySprite {
 
     //死亡音效（子类重载）
     playDeathSound() {
+        Player.player.guideFinish(GuideConfig.guideConfig.blessEnemy.name)
         //音效
         GameUtil.playSound(SoundConfig.box_dead);
     }

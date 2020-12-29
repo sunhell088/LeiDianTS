@@ -11,7 +11,6 @@ import ShipSprite from "../sprites/ShipSprite";
 import RockLineSprite from "../sprites/RockLineSprite";
 import RockSprite from "../sprites/RockSprite";
 import BossEnemySprite from "../sprites/enemy/BossEnemySprite";
-import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
 import ItemSprite from "../sprites/ItemSprite";
 import {IMediator} from "../framework/mvc/IMediator";
 import {CLEAN_ENEMY_TYPE, ENEMY_TYPE} from "../common/GameEnum";
@@ -19,11 +18,10 @@ import {ConfigUtil} from "../common/ConfigUtil";
 import {GameEvent} from "../common/GameEvent";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {ItemConfig} from "../configs/ItemConfig";
-import Game = cc.Game;
-import log = cc.log;
 import FlexEnemySprite from "../sprites/enemy/FlexEnemySprite";
 import StayEnemySprite from "../sprites/enemy/StayEnemySprite";
 import {SceneManager} from "../manager/scene/SceneManager";
+import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
 
 
 const {ccclass, property} = cc._decorator;
@@ -103,9 +101,10 @@ export default class FightScene extends cc.Component implements IMediator {
     private planeShadowPool: cc.NodePool = new cc.NodePool();
 
 
-    getCommands(): string[] {
+    getCommands() {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
-            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION];
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION,
+        GameEvent.GUIDE_FOCUS_ENEMY];
     }
 
     protected onLoad(): void {
@@ -114,12 +113,15 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        //这里延迟30秒执行 为了专注指引
+        this.scheduleOnce(function () {
+            this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        }, 30);
         this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
         //这里延迟5秒执行，是和追踪飞机分开
         this.scheduleOnce(function () {
             this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
-        }, 7.5);
+        }, 17);
         this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
 
@@ -152,7 +154,6 @@ export default class FightScene extends cc.Component implements IMediator {
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
         this.initPlayer();
     }
-
     private moveBackground(dt) {
         if (Player.player._death) return;
         GameUtil.bgMove(dt, this.background0.node, this.background1.node);
@@ -206,20 +207,24 @@ export default class FightScene extends cc.Component implements IMediator {
         var startPosition = new cc.Vec2(posX, this.node.height / 2 + enemySpriteSct.node.height);
         enemySpriteSct.node.setPosition(startPosition);
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
+        this.scheduleOnce(function () {
+            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBomb.id);
+        }, 1);
     }
 
     //定时创建福利飞机
     private scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._spurt || Player.player._spurtReadying || Player.player._bossIng) return;
-        let randomCount: number = CommonUtil.random(1, 2);
-        for (let i = 0; i < randomCount; i++) {
-            let enemy: EnemySprite = this.createEnemy(EnemyConfig.enemyConfig.enemyBox);
-            //设置坐标
-            var startPosition = enemy["getStartPosition"](enemy)
-            enemy.node.setPosition(startPosition);
-            enemy.setDynamicData(ConfigUtil.getEnemyHP(enemy._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemy));
-        }
+        let enemy: EnemySprite = this.createEnemy(EnemyConfig.enemyConfig.enemyBox);
+        //设置坐标
+        var startPosition = enemy["getStartPosition"](enemy)
+        enemy.node.setPosition(startPosition);
+        enemy.setDynamicData(ConfigUtil.getEnemyHP(enemy._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemy));
+
+        this.scheduleOnce(function () {
+            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBox.id);
+        }, 1);
     }
 
     //定时创建停留飞机
@@ -231,6 +236,9 @@ export default class FightScene extends cc.Component implements IMediator {
         var startPosition = new cc.Vec2(0, this.node.height / 2 + enemySpriteSct.node.height);
         enemySpriteSct.node.setPosition(startPosition);
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
+        this.scheduleOnce(function () {
+            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, enemySpriteSct._enemyConfig.id);
+        }, 1);
     }
 
     //定时创建追踪飞机
@@ -243,6 +251,9 @@ export default class FightScene extends cc.Component implements IMediator {
             this.node.height / 2 + enemySpriteSct.node.height);
         enemySpriteSct.node.setPosition(startPosition);
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
+        this.scheduleOnce(function () {
+            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyFollow.id);
+        }, 1);
     }
 
     //定时创建陨石掉落组
@@ -503,6 +514,7 @@ export default class FightScene extends cc.Component implements IMediator {
                 item.node.y += CommonUtil.random(0, 100);
             }
             item.drop();
+            ObserverManager.sendNotification(GameEvent.ITEM_DROP, item._itemConfig.name)
         }
     }
 
@@ -1122,6 +1134,17 @@ export default class FightScene extends cc.Component implements IMediator {
             this.unschedule(this.scheduleNormalEnemy);
             this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
             this.cleanEnemy(CLEAN_ENEMY_TYPE.ALL, false);
+        }
+    }
+
+    private GUIDE_FOCUS_ENEMY(enemyID:string){
+        console.log("GUIDE_FOCUS_ENEMY")
+        let enemy:EnemySprite = null;
+        for(let key in this.node.children){
+            enemy = this.node.children[key].getComponent(EnemySprite);
+            if(enemy&&enemy._enemyConfig.id==enemyID){
+                enemy.showGuide();
+            }
         }
     }
 }

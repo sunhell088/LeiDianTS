@@ -9,12 +9,12 @@ export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode: boolean = false;
+    public debugMode: boolean = true;
 
     //需要存盘的数据
     public data = {
         //当前金币
-        gold: this.debugMode ? 100000 : 0,
+        gold: this.debugMode ? 88888 : 0,
         //飞行最远距离
         maxDistance: 0,
         //当前拥有的飞机（用掩码记录）
@@ -28,7 +28,9 @@ export class Player {
         //飞机们的商城子弹(大于0：表示子弹等级)
         storeBulletMap: null,
         //当前子弹商店的随机子弹等级
-        storeSoldBulletGradeMap: {}
+        storeSoldBulletGradeMap: {},
+        //已经完成的新手教程
+        finishGuideMap: {}
     };
 
     //本局飞行距离
@@ -123,6 +125,15 @@ export class Player {
         }
     }
 
+    //判断指定新手引导是否完成
+    public checkGuideFinish(guideName:string) {
+        let bFinish:boolean = (this.data.finishGuideMap[guideName]!=null);
+        return bFinish;
+    }
+    //设置新手引导为完成状态
+    public guideFinish(guideName:string) {
+        this.data.finishGuideMap[guideName]=true;
+    }
     public getBulletMaxGrade(planeID: number): number {
         return this.bulletLevelMaxMap[planeID];
     }

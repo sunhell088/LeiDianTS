@@ -4,6 +4,7 @@ import EnemySprite from "./enemy/EnemySprite";
 import CanvasNode from "../scene/CanvasNode";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
+import {Player} from "../classes/Player";
 
 const {ccclass, property} = cc._decorator;
 @ccclass

@@ -6,7 +6,6 @@ import ShipSprite from "./ShipSprite";
 import CanvasNode from "../scene/CanvasNode";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
-import log = cc.log;
 
 const {ccclass, property} = cc._decorator;
 @ccclass

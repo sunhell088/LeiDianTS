@@ -8,7 +8,7 @@ import {ConfigUtil} from "../common/ConfigUtil";
 import {IMediator} from "../framework/mvc/IMediator";
 import {CommonUtil} from "../common/CommonUtil";
 import {SceneManager} from "../manager/scene/SceneManager";
-import log = cc.log;
+import {GuideConfig} from "../configs/GuideConfig";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -29,7 +29,7 @@ export default class LoginScene extends cc.Component implements IMediator{
     @property(cc.Button)
     clearBtn:cc.Button = null;
 
-    getCommands():string[] {
+    getCommands(){
         return [];
     }
 
@@ -39,22 +39,6 @@ export default class LoginScene extends cc.Component implements IMediator{
             location.reload()
         }, this);
         ObserverManager.registerObserverFun(this);
-        //开启碰撞
-        var manager = cc.director.getCollisionManager();
-        manager.enabled = true;
-        // manager.enabledDebugDraw = true;
-        // manager.enabledDrawBoundingBox = true;
-
-        CommonConfig.WIDTH = this.node.width;
-        CommonConfig.HEIGHT = this.node.height;
-        GameUtil.playMusic(SoundConfig.mainMusic_mp3+""+CommonUtil.random(0,2));
-        //因为transformToPixel会把相对标识改为绝对坐标
-        if(!(FormationConfig.formationConfig[0][0] instanceof cc.Vec2)){
-            FormationConfig.formationConfig = ConfigUtil.transformToPixel(CommonConfig.ENEMY_WIDTH, CommonConfig.ENEMY_HEIGHT,
-                FormationConfig.formationConfig)
-        }
-        Player.player = new Player();
-        Player.player.loadData();
         this.initLoginScene();
         this.node.on(cc.Node.EventType.TOUCH_END, this.openStoreScene, this);
     }
@@ -90,7 +74,10 @@ export default class LoginScene extends cc.Component implements IMediator{
     }
 
     private openStoreScene(){
-        console.log(1111111)
-        SceneManager.instance().changeScene("storeScene");
+        if(Player.player.checkGuideFinish(GuideConfig.guideConfig.comeOnStage.name)){
+            SceneManager.instance().changeScene("storeScene");
+        }else {
+            SceneManager.instance().changeScene("fightScene");
+        }
     }
 }

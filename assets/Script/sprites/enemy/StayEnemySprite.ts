@@ -6,6 +6,7 @@ import FightScene from "../../scene/FightScene";
 import {FLY_STATE} from "../../common/GameEnum";
 import CanvasNode from "../../scene/CanvasNode";
 import {EnemyConfig} from "../../configs/EnemyConfig";
+import {Player} from "../../classes/Player";
 
 
 const {ccclass, property} = cc._decorator;

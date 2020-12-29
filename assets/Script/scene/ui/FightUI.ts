@@ -9,6 +9,7 @@ import {GameEvent} from "../../common/GameEvent";
 import CanvasNode from "../CanvasNode";
 import {CommonConfig} from "../../configs/CommonConfig";
 import {ConfigUtil} from "../../common/ConfigUtil";
+import {SceneManager} from "../../manager/scene/SceneManager";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -87,7 +88,7 @@ export default class FightUI extends cc.Component implements IMediator{
     getCommands():string[] {
         return [GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
             GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD, GameEvent.EAT_ITEM, GameEvent.DEDUCT_BUFF_TIME
-        ,GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB_EFFECT];
+        ,GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB_EFFECT, GameEvent.GUIDE_RESULT_DIALOG];
     }
 
     protected onLoad(): void {
@@ -162,8 +163,8 @@ export default class FightUI extends cc.Component implements IMediator{
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
         cc.director.resume();
         this.node.stopAllActions();
-        cc.director.loadScene('storeScene');
         GameUtil.playMusic(SoundConfig.mainMusic_mp3+""+CommonUtil.random(0,2));
+        SceneManager.instance().changeScene("storeScene");
     }
 
     //吃道具飘名字
@@ -367,5 +368,9 @@ export default class FightUI extends cc.Component implements IMediator{
 
     private USE_BOMB_EFFECT(){
         this.updateBombCount();
+    }
+
+    private GUIDE_RESULT_DIALOG(){
+
     }
 }

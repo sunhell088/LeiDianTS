@@ -34,4 +34,8 @@ export class GameEvent {
     public static UPDATE_STORE_GOLD:string = "UPDATE_STORE_GOLD";
     //使用炸弹
     public static USE_BOMB_EFFECT:string = "USE_BOMB_EFFECT";
+
+    //------------------新手指引-------------------------
+    //弹出对话框
+    public static GUIDE_RESULT_DIALOG:string = "GUIDE_RESULT_DIALOG";
 }

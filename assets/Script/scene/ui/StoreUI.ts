@@ -8,11 +8,8 @@ import {IMediator} from "../../framework/mvc/IMediator";
 import {GameEvent} from "../../common/GameEvent";
 import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {BUY_BULLET_STATE} from "../../common/GameEnum";
-import SkakeActionInterval from "../../common/SkakeActionInterval";
-import ShakeActionInterval from "../../common/SkakeActionInterval";
-import log = cc.log;
 import {SoundConfig} from "../../configs/SoundConfig";
-import {CommonUtil} from "../../common/CommonUtil";
+import {SceneManager} from "../../manager/scene/SceneManager";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -141,6 +138,7 @@ export default class StoreUI extends cc.Component implements IMediator {
         this.currentPlaneID = Player.player.data.currentPlaneID
         this.setBackground();
         this.goldCount.string = Player.player.data.gold + "";
+        this.distanceLabel.string = Player.player.data.maxDistance + "";
         this.updateBuyBullet();
         this.updateBulletList();
         this.combineAnim.node.active = false;
@@ -178,7 +176,7 @@ export default class StoreUI extends cc.Component implements IMediator {
 
     private onStartBtn(): void {
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
-        cc.director.loadScene('fightScene');
+        SceneManager.instance().changeScene("fightScene");
     }
 
     private onBuyBulletBtn(): void {
@@ -264,7 +262,7 @@ export default class StoreUI extends cc.Component implements IMediator {
             minGridIndex = i;
             validGridCount++;
         }
-        console.log(validGridCount)
+
         if(validGridCount==1) return;
         for (let i = 0; i < storeBulletList.length; i++) {
             if(storeBulletList[i]==0) continue;
@@ -274,6 +272,8 @@ export default class StoreUI extends cc.Component implements IMediator {
             }
         }
         storeBulletList[minGridIndex] = 0;
+        Player.player.addGold(ConfigUtil.getStoreSoldBulletPrice(minLevel));
+        ObserverManager.sendNotification(GameEvent.UPDATE_STORE_GOLD);
         this.updateBulletList()
     }
 

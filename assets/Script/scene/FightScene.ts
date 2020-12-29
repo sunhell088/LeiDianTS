@@ -23,6 +23,7 @@ import Game = cc.Game;
 import log = cc.log;
 import FlexEnemySprite from "../sprites/enemy/FlexEnemySprite";
 import StayEnemySprite from "../sprites/enemy/StayEnemySprite";
+import {SceneManager} from "../manager/scene/SceneManager";
 
 
 const {ccclass, property} = cc._decorator;
@@ -1084,7 +1085,7 @@ export default class FightScene extends cc.Component implements IMediator {
             cc.delayTime(2),
             cc.callFunc(function () {
                 this.node.stopAllActions();
-                cc.director.loadScene('resultScene');
+                SceneManager.instance().changeScene("resultScene");
             }, this)
         ));
     }

@@ -7,6 +7,8 @@ import {ObserverManager} from "../framework/observe/ObserverManager";
 import {ConfigUtil} from "../common/ConfigUtil";
 import {IMediator} from "../framework/mvc/IMediator";
 import {CommonUtil} from "../common/CommonUtil";
+import {SceneManager} from "../manager/scene/SceneManager";
+import log = cc.log;
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -54,12 +56,12 @@ export default class LoginScene extends cc.Component implements IMediator{
         Player.player = new Player();
         Player.player.loadData();
         this.initLoginScene();
-        this.node.on(cc.Node.EventType.TOUCH_END, this.openSotreScene, this);
+        this.node.on(cc.Node.EventType.TOUCH_END, this.openStoreScene, this);
     }
 
     protected onDisable():void {
         ObserverManager.unRegisterObserverFun(this);
-        this.node.off(cc.Node.EventType.TOUCH_END, this.openSotreScene);
+        this.node.off(cc.Node.EventType.TOUCH_END, this.openStoreScene);
     }
 
     protected update (dt) {
@@ -87,7 +89,8 @@ export default class LoginScene extends cc.Component implements IMediator{
         this.background1.spriteFrame = this.bgSptArr[Player.player.bgIndex];
     }
 
-    private openSotreScene(){
-        cc.director.loadScene('storeScene');
+    private openStoreScene(){
+        console.log(1111111)
+        SceneManager.instance().changeScene("storeScene");
     }
 }

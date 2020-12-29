@@ -2,7 +2,6 @@
  * 模块监听管理，用于游戏模块分离
  **/
 import {Observer} from "./Observer";
-import log = cc.log;
 
 export class ObserverManager {
     private static observer:Observer = new Observer();

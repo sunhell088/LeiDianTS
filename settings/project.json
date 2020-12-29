@@ -8,11 +8,11 @@
   "group-list": [
     "default"
   ],
-  "start-scene": "2d2f792f-a40c-49bb-a189-ed176a246e49",
-  "design-resolution-width": 960,
-  "design-resolution-height": 640,
-  "fit-width": false,
-  "fit-height": true,
+  "start-scene": "78933d57-c370-4efb-acb7-9c2e923bc548",
+  "design-resolution-width": 320,
+  "design-resolution-height": 568,
+  "fit-width": true,
+  "fit-height": false,
   "use-project-simulator-setting": false,
   "simulator-orientation": false,
   "use-customize-simulator": true,

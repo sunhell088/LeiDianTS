@@ -9,6 +9,8 @@ import {ObserverManager} from "../../framework/observe/ObserverManager";
 import {GameEvent} from "../../common/GameEvent";
 import BombRainSprite from "../BombRainSprite";
 import LoginScene from "../../scene/LoginScene";
+import {GuideConfig} from "../../configs/GuideConfig";
+import {EnemyConfig} from "../../configs/EnemyConfig";
 
 
 const {ccclass, property} = cc._decorator;

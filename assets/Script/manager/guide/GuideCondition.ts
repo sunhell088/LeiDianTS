@@ -1,10 +1,12 @@
+import {Player} from "../../classes/Player";
+
 export class GuideConditionFinishID {
-    private readonly guideID:number = null;
-    constructor(guideID:number) {
-        this.guideID = guideID;
+    private readonly guideName:string = null;
+    constructor(guideName:string) {
+        this.guideName = guideName;
     }
 
-    checkCondition(guideID:number):boolean {
-        return guideID==this.guideID
+    checkCondition():boolean {
+        return Player.player.checkGuideFinish(this.guideName)
     }
 }

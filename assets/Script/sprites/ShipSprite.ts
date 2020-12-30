@@ -79,7 +79,12 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     hurt(){
-        if(Player.player._bomb||Player.player._spurtReadying||Player.player._spurt||Player.player.debugMode) return;
+        console.log(Player.player._bomb)
+        console.log(Player.player._spurtReadying)
+        console.log(Player.player._spurt)
+        console.log(Player.player.debugModexxoo)
+        if(Player.player._bomb||Player.player._spurtReadying||Player.player._spurt||Player.player.debugModexxoo) return;
+        console.log(1111)
         //是否在护盾状态下
         if(Player.player._protecting){
             GameUtil.playSound(SoundConfig.shield);  //音效

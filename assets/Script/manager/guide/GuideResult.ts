@@ -19,7 +19,6 @@ export class GuidePauseGame {
 export class GuideFocusEnemy {
     doResult(...par):void {
         let enemyID:string = par[0]
-        console.log("GuideFocusEnemy"+enemyID)
         ObserverManager.sendNotification(GameEvent.GUIDE_FOCUS_ENEMY, enemyID);
     }
 }

@@ -9,19 +9,6 @@ export class GuideTriggerComeOnStage {
     }
 }
 
-export class GuideTriggerItemDrop {
-    private triggerType:string = GameEvent.ITEM_DROP;
-    private readonly itemName:string = null;
-    constructor(itemName:string) {
-        this.itemName = itemName;
-    }
-    checkTrigger(...par):boolean {
-        let triggerType:string = par[0];
-        let itemName:string = par[1];
-        return triggerType==this.triggerType&&itemName==this.itemName
-    }
-}
-
 export class GuideTriggerEnemyAppear {
     private triggerType:string = GameEvent.SPECIAL_ENEMY_APPEAR;
     private readonly enemyName:string = null;
@@ -32,5 +19,18 @@ export class GuideTriggerEnemyAppear {
         let triggerType:string = par[0];
         let enemyName:string = par[1];
         return triggerType==this.triggerType&&enemyName==this.enemyName
+    }
+}
+
+export class GuideTriggerItemDrop {
+    private triggerType:string = GameEvent.ITEM_DROP;
+    private readonly itemName:string = null;
+    constructor(itemName:string) {
+        this.itemName = itemName;
+    }
+    checkTrigger(...par):boolean {
+        let triggerType:string = par[0];
+        let itemName:string = par[1];
+        return triggerType==this.triggerType&&itemName==this.itemName
     }
 }

@@ -20,9 +20,14 @@ export default class FlexEnemySprite extends EnemySprite {
     }
 
     hurt(bulletPower, bDrop) {
-        // if(!this.bBlink){
+        if(!Player.player.checkGuideFinish(GuideConfig.guideConfig.blessEnemy.name)
+        ||!Player.player.checkGuideFinish(GuideConfig.guideConfig.blessEnemy2.name)){
+            if(!this.bBlink){
+                super.hurt(bulletPower, bDrop);
+            }
+        }else {
             super.hurt(bulletPower, bDrop);
-        // }
+        }
     }
     destroySprite() {
         super.destroySprite();
@@ -64,7 +69,10 @@ export default class FlexEnemySprite extends EnemySprite {
 
     //死亡音效（子类重载）
     playDeathSound() {
-        Player.player.guideFinish(GuideConfig.guideConfig.blessEnemy.name)
+        Player.player.guideFinish(GuideConfig.guideConfig.blessEnemy.name);
+        if(Player.player.checkGuideFinish(GuideConfig.guideConfig.blessEnemy.name)){
+            Player.player.guideFinish(GuideConfig.guideConfig.blessEnemy2.name);
+        }
         //音效
         GameUtil.playSound(SoundConfig.box_dead);
     }

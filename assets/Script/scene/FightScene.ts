@@ -22,6 +22,7 @@ import FlexEnemySprite from "../sprites/enemy/FlexEnemySprite";
 import StayEnemySprite from "../sprites/enemy/StayEnemySprite";
 import {SceneManager} from "../manager/scene/SceneManager";
 import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
+import {GuideConfig} from "../configs/GuideConfig";
 
 
 const {ccclass, property} = cc._decorator;
@@ -113,20 +114,15 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        //这里延迟30秒执行 为了专注指引
-        this.scheduleOnce(function () {
-            this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
-        }, 30);
-        this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
-        //这里延迟5秒执行，是和追踪飞机分开
-        this.scheduleOnce(function () {
-            this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
-        }, 17);
         this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
+        this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
+        this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
 
-        //定时清理影子
-        this.schedule(this.setShadowEnd, 0.1);
+
+        //定时刷新各类buff进度条
+        this.schedule(this.scheduleBuff, 0.1);
         this.init();
     }
 
@@ -140,7 +136,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.unschedule(this.scheduleFollowEnemy);
         this.unschedule(this.scheduleBlessEnemy);
         this.unschedule(this.scheduleStayEnemy);
-        this.unschedule(this.setShadowEnd);
+        this.unschedule(this.scheduleBuff);
     }
 
     protected update(dt) {
@@ -209,7 +205,7 @@ export default class FightScene extends cc.Component implements IMediator {
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
         this.scheduleOnce(function () {
             ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBomb.id);
-        }, 1);
+        }, 2);
     }
 
     //定时创建福利飞机
@@ -224,7 +220,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
         this.scheduleOnce(function () {
             ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBox.id);
-        }, 1);
+        }, 1.5);
     }
 
     //定时创建停留飞机
@@ -253,7 +249,7 @@ export default class FightScene extends cc.Component implements IMediator {
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
         this.scheduleOnce(function () {
             ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyFollow.id);
-        }, 1);
+        }, 1.5);
     }
 
     //定时创建陨石掉落组
@@ -1036,11 +1032,6 @@ export default class FightScene extends cc.Component implements IMediator {
         effectAnimation.play();
     }
 
-    //冲刺
-    private itemFunctionSpurt() {
-        if (Player.player._spurt || Player.player._spurtReadying) return;
-    }
-
     private setShadowStart() {
         let spriteNode: cc.Node = null;
         if (this.planeShadowPool.size() > 0) {
@@ -1054,7 +1045,7 @@ export default class FightScene extends cc.Component implements IMediator {
         Player.player.shadowRemainTime += CommonConfig.SHADOW_TIME;
     }
 
-    private setShadowEnd() {
+    private scheduleBuff() {
         if (Player.player.shadowRemainTime <= 0) return;
         Player.player.shadowRemainTime -= 1;
         if (Player.player.shadowRemainTime % CommonConfig.SHADOW_TIME <= 0 && this.shipShadowList.length > 0) {
@@ -1067,6 +1058,10 @@ export default class FightScene extends cc.Component implements IMediator {
     private KILL_ENEMY(enemySprite: EnemySprite, bDrop: boolean) {
         //自爆飞机将全屏其他飞机炸开
         if (enemySprite._enemyConfig.id == EnemyConfig.enemyConfig.enemyBomb.id) {
+            Player.player.guideFinish(GuideConfig.guideConfig.bombEnemy.name);
+            if(Player.player.checkGuideFinish(GuideConfig.guideConfig.bombEnemy.name)){
+                Player.player.guideFinish(GuideConfig.guideConfig.bombEnemy2.name);
+            }
             this.cleanEnemy(CLEAN_ENEMY_TYPE.EXCEPT_SPECIAL_ENEMY, true);
         } else {
             if (bDrop) {
@@ -1138,7 +1133,6 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     private GUIDE_FOCUS_ENEMY(enemyID:string){
-        console.log("GUIDE_FOCUS_ENEMY")
         let enemy:EnemySprite = null;
         for(let key in this.node.children){
             enemy = this.node.children[key].getComponent(EnemySprite);

@@ -1,5 +1,4 @@
 import EnemySprite from "../sprites/enemy/EnemySprite";
-import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
 import FlexEnemySprite from "../sprites/enemy/FlexEnemySprite";
 import BossEnemySprite from "../sprites/enemy/BossEnemySprite";
 import StayEnemySprite from "../sprites/enemy/StayEnemySprite";

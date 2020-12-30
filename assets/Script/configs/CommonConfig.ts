@@ -9,7 +9,7 @@ export class CommonConfig {
     //子弹速度
     public static BULLET_SPEED = 1500;
     //敌机速度
-    public static ENEMY_SPEED = 300;
+    public static ENEMY_SPEED = 300*0.8;
     //停留敌机速度
     public static SMALL_BOSS_SPEED = 100;
     //boss敌机最后冲刺速度

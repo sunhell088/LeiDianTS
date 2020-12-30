@@ -9,12 +9,12 @@ export class Player {
     public static player: Player;
 
     //无敌模式
-    public debugMode: boolean = true;
+    public debugModexxoo: boolean = false;
 
     //需要存盘的数据
     public data = {
         //当前金币
-        gold: this.debugMode ? 88888 : 0,
+        gold: this.debugModexxoo ? 88888 : 0,
         //飞行最远距离
         maxDistance: 0,
         //当前拥有的飞机（用掩码记录）
@@ -78,6 +78,8 @@ export class Player {
     public autoCombineBulletTime: number = 0;
     //炸弹数量
     public bombCount: number = 0;
+    //完成敌机新手引导
+    public bFinishGuideEnemy:boolean = false;
 
     //从本地读取玩家数据
     public loadData() {

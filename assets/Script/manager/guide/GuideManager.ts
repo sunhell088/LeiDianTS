@@ -24,19 +24,25 @@ export class GuideManager implements IMediator{
 
     private doTrigger(triggerType:string, ...par){
         let triggerList:any[] = null;
+        let conditionList:any[] = null;
         let resultList:any[] = null;
         for(let key in GuideConfig.guideConfig){
             if(Player.player.checkGuideFinish(""+key)){
-                console.log(key)
                 continue;
             }
             let bTrigger:boolean = true;
             triggerList = GuideConfig.guideConfig[key].trigger;
+            conditionList = GuideConfig.guideConfig[key].condition;
             resultList = GuideConfig.guideConfig[key].result;
             for (let i in triggerList){
                 if(triggerList[i].checkTrigger(triggerType, par)==false){
                     bTrigger = false;
                     break;
+                }
+            }
+            if(bTrigger&&conditionList){
+                for(let key in conditionList){
+                    bTrigger = conditionList[key].checkCondition();
                 }
             }
             if(bTrigger){

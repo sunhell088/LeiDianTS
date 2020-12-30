@@ -1,11 +1,7 @@
-import {IMediator} from "../../framework/mvc/IMediator";
-import {ObserverManager} from "../../framework/observe/ObserverManager";
-import {GameEvent} from "../../common/GameEvent";
 import {GuideConfig} from "../../configs/GuideConfig";
-import Game = cc.Game;
 import {Player} from "../../classes/Player";
 
-export class GuideManager implements IMediator{
+export class GuideManager{
     private static guideManager:GuideManager = null;
     public static instance(): GuideManager {
         if(this.guideManager==null){
@@ -14,54 +10,30 @@ export class GuideManager implements IMediator{
         return this.guideManager;
     }
 
-    public init(){
-        ObserverManager.registerObserverFun(this);
-    }
-
-    getCommands() {
-        return [GameEvent.GUIDE_TRIGGER_COME_ON_STAGE, GameEvent.ITEM_DROP, GameEvent.SPECIAL_ENEMY_APPEAR];
-    }
-
-    private doTrigger(triggerType:string, ...par){
-        let triggerList:any[] = null;
-        let conditionList:any[] = null;
-        let resultList:any[] = null;
+    public doTrigger(triggerType:string, ...par){
         for(let key in GuideConfig.guideConfig){
-            if(Player.player.checkGuideFinish(""+key)){
+            if(Player.player.hasFinishGuide(GuideConfig.guideConfig[key].name)){
                 continue;
             }
-            let bTrigger:boolean = true;
-            triggerList = GuideConfig.guideConfig[key].trigger;
-            conditionList = GuideConfig.guideConfig[key].condition;
-            resultList = GuideConfig.guideConfig[key].result;
-            for (let i in triggerList){
-                if(triggerList[i].checkTrigger(triggerType, par)==false){
-                    bTrigger = false;
-                    break;
-                }
-            }
-            if(bTrigger&&conditionList){
+            //判断触发事件
+            if(GuideConfig.guideConfig[key].trigger==triggerType){
+                //判断是否满足条件队列
+                let conditionList:any[] = GuideConfig.guideConfig[key].condition;
+                let bCondition:boolean = true;
                 for(let key in conditionList){
-                    bTrigger = conditionList[key].checkCondition();
+                    if(!conditionList[key].checkCondition(par)){
+                        bCondition = false;
+                        break;
+                    }
                 }
-            }
-            if(bTrigger){
-                for(let key in resultList){
-                    resultList[key].doResult(par);
+                //执行结果队列
+                if(bCondition){
+                    let resultList:any[] = GuideConfig.guideConfig[key].result;
+                    for(let key in resultList){
+                        resultList[key].doResult(par);
+                    }
                 }
             }
         }
-    }
-
-    private GUIDE_TRIGGER_COME_ON_STAGE(){
-        this.doTrigger(GameEvent.GUIDE_TRIGGER_COME_ON_STAGE);
-    }
-
-    private ITEM_DROP(itemName:string){
-        this.doTrigger(GameEvent.ITEM_DROP, itemName);
-    }
-
-    private SPECIAL_ENEMY_APPEAR(enemyID:string){
-        this.doTrigger(GameEvent.SPECIAL_ENEMY_APPEAR, enemyID);
     }
 }

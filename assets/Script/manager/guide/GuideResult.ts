@@ -1,24 +1,36 @@
 import {DialogManager} from "../widget/DialogManager";
-import {ObserverManager} from "../../framework/observe/ObserverManager";
-import {GameEvent} from "../../common/GameEvent";
+import {Player} from "../../classes/Player";
 
 export class GuideResultDialog {
     private readonly dialogName:string = null;
-    constructor(dialogName:string) {
-        this.dialogName = dialogName;
+    constructor(...par) {
+        this.dialogName = par[0];
     }
-    doResult(...par):void {
+    doResult():void {
         DialogManager.instance().showDialog(this.dialogName);
     }
 }
-export class GuidePauseGame {
-    doResult(...par):void {
+export class GuideResultPauseGame {
+    doResult():void {
         cc.director.pause();
     }
 }
-export class GuideFocusEnemy {
-    doResult(...par):void {
-        let enemyID:string = par[0]
-        ObserverManager.sendNotification(GameEvent.GUIDE_FOCUS_ENEMY, enemyID);
+
+export class GuideResultFinishGuide {
+    private readonly guideID:string = null;
+    constructor(...par) {
+        this.guideID = par[0];
+    }
+    doResult():void {
+        Player.player.guideFinish(this.guideID);
+    }
+}
+
+export class GuideResultFocusEnemy {
+    private readonly enemyID:string = null;
+    constructor(...par) {
+        this.enemyID = par[0];
+    }
+    doResult():void {
     }
 }

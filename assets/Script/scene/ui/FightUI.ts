@@ -11,6 +11,7 @@ import {CommonConfig} from "../../configs/CommonConfig";
 import {ConfigUtil} from "../../common/ConfigUtil";
 import {SceneManager} from "../../manager/scene/SceneManager";
 import {DialogManager} from "../../manager/widget/DialogManager";
+import {GuideConfig} from "../../configs/GuideConfig";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -43,15 +44,6 @@ export default class FightUI extends cc.Component implements IMediator{
     //刷新记录图片
     @property(cc.Sprite)
     updateRecordSpt:cc.Sprite = null;
-
-    //升级特效
-    @property(cc.Node)
-    levelUpEffectNode:cc.Node = null;
-    //升级特效—人物图片
-    @property(cc.Sprite)
-    levelUpMan:cc.Sprite = null;
-    @property([cc.SpriteFrame])
-    levelUpManSpriteFrame:cc.SpriteFrame[] = [];
 
     //吃功能道具飘名字
     @property(cc.SpriteAtlas)

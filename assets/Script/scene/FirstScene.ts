@@ -13,7 +13,6 @@ const {ccclass, property} = cc._decorator;
 export default class LoginScene extends cc.Component{
     protected onLoad(): void {
         SceneManager.instance().changeScene("loginScene");
-        GuideManager.instance().init();
 
         //开启碰撞
         var manager = cc.director.getCollisionManager();

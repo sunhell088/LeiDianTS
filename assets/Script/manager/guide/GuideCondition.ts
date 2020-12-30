@@ -1,12 +1,12 @@
 import {Player} from "../../classes/Player";
 
-export class GuideConditionFinishID {
-    private readonly guideName:string = null;
-    constructor(guideName:string) {
-        this.guideName = guideName;
+export class GuideConditionEnemy {
+    private readonly enemyID:string = null;
+    constructor(enemyID:string) {
+        this.enemyID = enemyID;
     }
-
-    checkCondition():boolean {
-        return Player.player.checkGuideFinish(this.guideName)
+    checkCondition(...par):boolean {
+        let enemyID:string = par[0];
+        return enemyID==this.enemyID;
     }
 }

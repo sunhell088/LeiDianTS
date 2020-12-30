@@ -18,14 +18,7 @@ export default class FollowEnemySprite extends EnemySprite {
     bBlink:boolean = true;
 
     hurt(bulletPower, bDrop) {
-        if(!Player.player.checkGuideFinish(GuideConfig.guideConfig.followEnemy.name)
-            ||!Player.player.checkGuideFinish(GuideConfig.guideConfig.followEnemy2.name)){
-            if(!this.bBlink){
-                super.hurt(bulletPower, bDrop);
-            }
-        }else {
-            super.hurt(bulletPower, bDrop);
-        }
+        super.hurt(bulletPower, bDrop);
     }
     destroySprite() {
         super.destroySprite();
@@ -79,10 +72,6 @@ export default class FollowEnemySprite extends EnemySprite {
     }
     //死亡音效（子类重载）
     playDeathSound(){
-        Player.player.guideFinish(GuideConfig.guideConfig.followEnemy.name);
-        if(Player.player.checkGuideFinish(GuideConfig.guideConfig.followEnemy.name)){
-            Player.player.guideFinish(GuideConfig.guideConfig.followEnemy2.name);
-        }
         //音效
         GameUtil.playSound(SoundConfig.followEnemy_dead);
     }

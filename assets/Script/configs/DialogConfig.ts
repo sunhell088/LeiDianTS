@@ -1,6 +1,7 @@
 import {DialogManager} from "../manager/widget/DialogManager";
 import {Player} from "../classes/Player";
 import {GuideConfig} from "./GuideConfig";
+import {SceneManager} from "../manager/scene/SceneManager";
 
 export class DialogConfig {
     public static dialogConfig = {
@@ -29,8 +30,28 @@ export class DialogConfig {
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
-                Player.player.guideFinish(GuideConfig.guideConfig.comeOnStage.name)
                 cc.director.resume();
+            }
+        },
+        //----------没完成新手引导就死亡了
+        dialogDeadNotFinish01:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    敌机太强大，机长请多加小心！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogDeadNotFinish02");
+            }
+        },
+        dialogDeadNotFinish02:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    让我们再来一次试试。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                SceneManager.instance().changeScene("fightScene");
             }
         },
         //----宝箱飞机出现
@@ -93,6 +114,55 @@ export class DialogConfig {
                 cc.director.resume();
             }
         },
+        //----停留飞机出现
+        dialogStayEnemy01:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    重装飞机出现了！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogStayEnemy02");
+            }
+        },
+        dialogStayEnemy02:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    击爆它将获得大量奖励。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogStayEnemy03");
+            }
+        },
+        dialogStayEnemy03:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    但重装飞机血量很厚，现在请不要恋战！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+            }
+        },
+        //----陨石出现
+        dialogRock01:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    陨石出现了！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogRock02");
+            }
+        },
+        dialogRock02:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    陨石无法击破，请注意闪避！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+            }
+        },
         //----宝箱飞机再次出现
         dialogBlessEnemy21:{
             headIcon:"teacher",
@@ -126,7 +196,7 @@ export class DialogConfig {
         dialogFollowEnemy22:{
             headIcon:"teacher",
             speakerName:"新手教官:",
-            textInfo:"    请一定小心。",
+            textInfo:"    这次请击落它。",
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
@@ -147,6 +217,46 @@ export class DialogConfig {
             headIcon:"teacher",
             speakerName:"新手教官:",
             textInfo:"    争取优先击爆它吧！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+            }
+        },
+        //----每次有1级脆皮飞机
+        dialogMinLevelEnemy:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    在每一波飞机队列中，都会有部分最低级飞机",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogMinLevelEnemy1");
+            }
+        },
+        dialogMinLevelEnemy1:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    击破它们，作为突破口吧！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+            }
+        },
+        //--------敌机的新手指引完成
+        finishGuideEnemy:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    恭喜你，已经对敌机的类型有了一定的了解。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("finishGuideEnemy2");
+            }
+        },
+        finishGuideEnemy2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    让我们来了解下道具吧。",
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().closeDialog();

@@ -1,12 +1,8 @@
 import {Player} from "../classes/Player";
 import {GameUtil} from "../common/GameUtil";
-import {FormationConfig} from "../configs/FormationConfig";
-import {CommonConfig} from "../configs/CommonConfig";
-import {SoundConfig} from "../configs/SoundConfig";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {ConfigUtil} from "../common/ConfigUtil";
 import {IMediator} from "../framework/mvc/IMediator";
-import {CommonUtil} from "../common/CommonUtil";
 import {SceneManager} from "../manager/scene/SceneManager";
 import {GuideConfig} from "../configs/GuideConfig";
 
@@ -28,6 +24,8 @@ export default class LoginScene extends cc.Component implements IMediator{
     startHint:cc.Sprite = null;
     @property(cc.Button)
     clearBtn:cc.Button = null;
+    @property(cc.Button)
+    checkBtn:cc.Button = null;
 
     getCommands(){
         return [];
@@ -37,6 +35,9 @@ export default class LoginScene extends cc.Component implements IMediator{
         this.clearBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
             Player.player.clearData();
             location.reload()
+        }, this);
+        this.checkBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
+            window.alert(localStorage.playerData);
         }, this);
         ObserverManager.registerObserverFun(this);
         this.initLoginScene();
@@ -74,7 +75,7 @@ export default class LoginScene extends cc.Component implements IMediator{
     }
 
     private openStoreScene(){
-        if(Player.player.checkGuideFinish(GuideConfig.guideConfig.comeOnStage.name)){
+        if(Player.player.hasFinishGuide(GuideConfig.guideConfig.comeOnStage.name)){
             SceneManager.instance().changeScene("storeScene");
         }else {
             SceneManager.instance().changeScene("fightScene");

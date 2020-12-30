@@ -7,6 +7,8 @@ import {IMediator} from "../framework/mvc/IMediator";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import ItemSprite from "./ItemSprite";
 import {ItemConfig} from "../configs/ItemConfig";
+import {GuideTriggerEvent} from "../common/GuideTriggerEvent";
+import {GuideManager} from "../manager/guide/GuideManager";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -69,7 +71,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
             cc.moveTo(0.3, this.node.x, -CommonConfig.HEIGHT/3),
             cc.callFunc(function(){
                 Player.player._stopBullet = false;
-                ObserverManager.sendNotification(GameEvent.GUIDE_TRIGGER_COME_ON_STAGE);
+                GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_COME_ON_STAGE)
             })
         ));
     }
@@ -79,12 +81,7 @@ export default class ShipSprite extends cc.Component implements IMediator{
     }
 
     hurt(){
-        console.log(Player.player._bomb)
-        console.log(Player.player._spurtReadying)
-        console.log(Player.player._spurt)
-        console.log(Player.player.debugModexxoo)
         if(Player.player._bomb||Player.player._spurtReadying||Player.player._spurt||Player.player.debugModexxoo) return;
-        console.log(1111)
         //是否在护盾状态下
         if(Player.player._protecting){
             GameUtil.playSound(SoundConfig.shield);  //音效

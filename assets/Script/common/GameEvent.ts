@@ -34,14 +34,5 @@ export class GameEvent {
     public static UPDATE_STORE_GOLD:string = "UPDATE_STORE_GOLD";
     //使用炸弹
     public static USE_BOMB_EFFECT:string = "USE_BOMB_EFFECT";
-    //------------------新手指引-------------------------
-    //登场
-    public static GUIDE_TRIGGER_COME_ON_STAGE:string = "GUIDE_TRIGGER_COME_ON_STAGE";
-    //物品爆出
-    public static ITEM_DROP:string = "ITEM_DROP";
-    //特殊敌机出现
-    public static SPECIAL_ENEMY_APPEAR:string = "SPECIAL_ENEMY_APPEAR";
-    //聚焦某个节点对象
-    public static GUIDE_FOCUS_ENEMY:string = "GUIDE_FOCUS_ENEMY";
 
 }

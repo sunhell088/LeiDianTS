@@ -177,7 +177,7 @@
       "array": [
         0,
         0,
-        517.233672410256,
+        517.0092227031449,
         0,
         0,
         0,
@@ -7653,19 +7653,6 @@
     "updateRecordSpt": {
       "__id__": 81
     },
-    "levelUpEffectNode": null,
-    "levelUpMan": null,
-    "levelUpManSpriteFrame": [
-      {
-        "__uuid__": "44462416-152c-4d53-b1ea-38c5be130075"
-      },
-      {
-        "__uuid__": "5e86392a-bcc5-46f4-8f29-f19a5c7a0e3e"
-      },
-      {
-        "__uuid__": "c03060f0-2c8b-452c-80cb-5fc82d04f3d0"
-      }
-    ],
     "showEatItemNameAtlas": {
       "__uuid__": "1c9c16d7-96e3-4ebf-b47a-f0890f0eaed8"
     },

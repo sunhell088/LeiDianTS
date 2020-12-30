@@ -30,7 +30,7 @@ export class Player {
         //当前子弹商店的随机子弹等级
         storeSoldBulletGradeMap: {},
         //已经完成的新手教程
-        finishGuideMap: {}
+        finishGuideMap: {},
     };
 
     //本局飞行距离
@@ -78,8 +78,6 @@ export class Player {
     public autoCombineBulletTime: number = 0;
     //炸弹数量
     public bombCount: number = 0;
-    //完成敌机新手引导
-    public bFinishGuideEnemy:boolean = false;
 
     //从本地读取玩家数据
     public loadData() {
@@ -128,7 +126,7 @@ export class Player {
     }
 
     //判断指定新手引导是否完成
-    public checkGuideFinish(guideName:string) {
+    public hasFinishGuide(guideName:string) {
         let bFinish:boolean = (this.data.finishGuideMap[guideName]!=null);
         return bFinish;
     }

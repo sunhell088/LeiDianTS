@@ -23,6 +23,10 @@ import StayEnemySprite from "../sprites/enemy/StayEnemySprite";
 import {SceneManager} from "../manager/scene/SceneManager";
 import FollowEnemySprite from "../sprites/enemy/FollowEnemySprite";
 import {GuideConfig} from "../configs/GuideConfig";
+import {DialogConfig} from "../configs/DialogConfig";
+import {DialogManager} from "../manager/widget/DialogManager";
+import {GuideTriggerEvent} from "../common/GuideTriggerEvent";
+import {GuideManager} from "../manager/guide/GuideManager";
 
 
 const {ccclass, property} = cc._decorator;
@@ -104,8 +108,7 @@ export default class FightScene extends cc.Component implements IMediator {
 
     getCommands() {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
-            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION,
-        GameEvent.GUIDE_FOCUS_ENEMY];
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION];
     }
 
     protected onLoad(): void {
@@ -119,7 +122,6 @@ export default class FightScene extends cc.Component implements IMediator {
         this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
         this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
         this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
-
 
         //定时刷新各类buff进度条
         this.schedule(this.scheduleBuff, 0.1);
@@ -143,7 +145,7 @@ export default class FightScene extends cc.Component implements IMediator {
         this.moveBackground(dt);
     }
 
-    private init() {
+    protected init() {
         //切换背景音乐
         GameUtil.playMusic(SoundConfig.fightMusic_mp3 + "" + CommonUtil.random(0, 2));
         this.background0.spriteFrame = this.bgSptArr[Player.player.bgIndex];
@@ -173,11 +175,11 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     //定时创建普通飞机
-    public scheduleNormalEnemy() {
+    protected scheduleNormalEnemy() {
         var formation = FormationConfig.formationConfig[CommonUtil.random(0, FormationConfig.formationConfig.length - 1)];
         //五架飞机中必有一个最低级飞机
         var worstEnemyIndex = CommonUtil.random(0, formation.length - 1);
-        //一定几率出现两个最低级飞机(如果重复，这这次只有一架)
+        //一定几率出现两个最低级飞机(如果重复，这次只有一架)
         var worstEnemyIndex2 = CommonUtil.random(0, formation.length - 1);
         for (var i = 0; i < formation.length; i++) {
             var enemyConfig: any = ConfigUtil.getEnemyConfigByStage(Player.player.getDistanceStage());
@@ -194,7 +196,7 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     //定时创建炸弹飞机(只在屏幕两边产生)
-    private scheduleBombEnemy() {
+    protected scheduleBombEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._spurt || Player.player._spurtReadying || Player.player._bossIng) return;
         var enemySpriteSct = this.createEnemy(EnemyConfig.enemyConfig.enemyBomb);
@@ -204,12 +206,12 @@ export default class FightScene extends cc.Component implements IMediator {
         enemySpriteSct.node.setPosition(startPosition);
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
         this.scheduleOnce(function () {
-            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBomb.id);
+            GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBomb.id);
         }, 2);
     }
 
     //定时创建福利飞机
-    private scheduleBlessEnemy() {
+    protected scheduleBlessEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._spurt || Player.player._spurtReadying || Player.player._bossIng) return;
         let enemy: EnemySprite = this.createEnemy(EnemyConfig.enemyConfig.enemyBox);
@@ -219,12 +221,12 @@ export default class FightScene extends cc.Component implements IMediator {
         enemy.setDynamicData(ConfigUtil.getEnemyHP(enemy._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemy));
 
         this.scheduleOnce(function () {
-            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBox.id);
+            GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyBox.id);
         }, 1.5);
     }
 
     //定时创建停留飞机
-    private scheduleStayEnemy() {
+    protected scheduleStayEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._spurt || Player.player._spurtReadying || Player.player._bossIng) return;
         var enemySpriteSct = this.createEnemy(DifficultConfig.stayEnemyArr[CommonUtil.random(0, DifficultConfig.stayEnemyArr.length - 1)]);
@@ -233,12 +235,12 @@ export default class FightScene extends cc.Component implements IMediator {
         enemySpriteSct.node.setPosition(startPosition);
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
         this.scheduleOnce(function () {
-            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, enemySpriteSct._enemyConfig.id);
-        }, 1);
+            GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_ENEMY_APPEAR, enemySpriteSct._enemyConfig.id);
+        }, 2);
     }
 
     //定时创建追踪飞机
-    private scheduleFollowEnemy() {
+    protected scheduleFollowEnemy() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._spurt || Player.player._spurtReadying || Player.player._bossIng) return;
         var enemySpriteSct = this.createEnemy(EnemyConfig.enemyConfig.enemyFollow);
@@ -248,12 +250,12 @@ export default class FightScene extends cc.Component implements IMediator {
         enemySpriteSct.node.setPosition(startPosition);
         enemySpriteSct.setDynamicData(ConfigUtil.getEnemyHP(enemySpriteSct._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemySpriteSct));
         this.scheduleOnce(function () {
-            ObserverManager.sendNotification(GameEvent.SPECIAL_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyFollow.id);
+            GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_ENEMY_APPEAR, EnemyConfig.enemyConfig.enemyFollow.id);
         }, 1.5);
     }
 
     //定时创建陨石掉落组
-    private scheduleRockGroup() {
+    protected scheduleRockGroup() {
         //指定炸弹中、冲刺中、冲刺准备中、升级状态中 不创建
         if (Player.player._bomb || Player.player._spurt || Player.player._spurtReadying || Player.player._bossIng) return;
         var rockList = ConfigUtil.getRockConfigByStage();
@@ -275,6 +277,9 @@ export default class FightScene extends cc.Component implements IMediator {
             actionList.push(createRockAction);
         }
         this.node.runAction(cc.sequence(actionList));
+        this.scheduleOnce(function () {
+            GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_ROCK_APPEAR);
+        }, 2.5)
     }
 
     //根据飞行距离创建BOSS
@@ -325,7 +330,7 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     //发射子弹
-    private shoot() {
+    protected shoot() {
         if (Player.player._stopBullet) return;
         if (Player.player._death) return;
         this.shootReal(this.ship.node);
@@ -510,11 +515,10 @@ export default class FightScene extends cc.Component implements IMediator {
                 item.node.y += CommonUtil.random(0, 100);
             }
             item.drop();
-            ObserverManager.sendNotification(GameEvent.ITEM_DROP, item._itemConfig.name)
         }
     }
 
-    private onTouchMoved(event) {
+    protected onTouchMoved(event) {
         let oldX: number = this.ship.node.x;
         let oldY: number = this.ship.node.y;
         let shipSelf: cc.Node = this.ship.node;
@@ -1045,7 +1049,7 @@ export default class FightScene extends cc.Component implements IMediator {
         Player.player.shadowRemainTime += CommonConfig.SHADOW_TIME;
     }
 
-    private scheduleBuff() {
+    protected scheduleBuff() {
         if (Player.player.shadowRemainTime <= 0) return;
         Player.player.shadowRemainTime -= 1;
         if (Player.player.shadowRemainTime % CommonConfig.SHADOW_TIME <= 0 && this.shipShadowList.length > 0) {
@@ -1058,10 +1062,6 @@ export default class FightScene extends cc.Component implements IMediator {
     private KILL_ENEMY(enemySprite: EnemySprite, bDrop: boolean) {
         //自爆飞机将全屏其他飞机炸开
         if (enemySprite._enemyConfig.id == EnemyConfig.enemyConfig.enemyBomb.id) {
-            Player.player.guideFinish(GuideConfig.guideConfig.bombEnemy.name);
-            if(Player.player.checkGuideFinish(GuideConfig.guideConfig.bombEnemy.name)){
-                Player.player.guideFinish(GuideConfig.guideConfig.bombEnemy2.name);
-            }
             this.cleanEnemy(CLEAN_ENEMY_TYPE.EXCEPT_SPECIAL_ENEMY, true);
         } else {
             if (bDrop) {

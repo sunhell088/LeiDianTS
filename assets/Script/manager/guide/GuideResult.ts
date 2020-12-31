@@ -25,12 +25,3 @@ export class GuideResultFinishGuide {
         Player.player.guideFinish(this.guideID);
     }
 }
-
-export class GuideResultFocusEnemy {
-    private readonly enemyID:string = null;
-    constructor(...par) {
-        this.enemyID = par[0];
-    }
-    doResult():void {
-    }
-}

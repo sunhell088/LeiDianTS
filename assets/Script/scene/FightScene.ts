@@ -108,7 +108,8 @@ export default class FightScene extends cc.Component implements IMediator {
 
     getCommands() {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
-            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION];
+            GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION
+        ,GameEvent.FOCUS_ENEMY];
     }
 
     protected onLoad(): void {
@@ -117,11 +118,25 @@ export default class FightScene extends cc.Component implements IMediator {
         this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
-        this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
-        this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
-        this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
-        this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
-        this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        if(!Player.player.hasFinishGuide(GuideConfig.guideConfig.minLevelEnemyOver2.name)){
+            this.scheduleOnce(this.scheduleBlessEnemy, 10);
+            this.scheduleOnce(this.scheduleFollowEnemy, 20);
+            this.scheduleOnce(this.scheduleBombEnemy, 35);
+            this.scheduleOnce(this.scheduleStayEnemy, 45);
+            this.scheduleOnce(this.scheduleRockGroup, 55);
+            this.scheduleOnce(function () {
+                this.scheduleOnce(this.scheduleBlessEnemy, 15);
+                this.scheduleOnce(this.scheduleFollowEnemy, 25);
+                this.scheduleOnce(this.scheduleBombEnemy, 35);
+            }, 55)
+        }else {
+            this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
+            this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
+            this.schedule(this.scheduleBombEnemy, CommonConfig.BLESS_BOMB_DELAY);
+            this.schedule(this.scheduleStayEnemy, CommonConfig.STAY_ENEMY_DELAY);
+            this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+        }
+
 
         //定时刷新各类buff进度条
         this.schedule(this.scheduleBuff, 0.1);
@@ -192,6 +207,7 @@ export default class FightScene extends cc.Component implements IMediator {
             enemy.node.x = point.x;
             enemy.node.y = point.y + this.node.height / 2 + CommonConfig.ENEMY_HEIGHT * 3;
             enemy.setDynamicData(ConfigUtil.getEnemyHP(enemy._enemyConfig), ConfigUtil.createSpecialEnemyDrop(enemy));
+            GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_ENEMY_APPEAR, enemyConfig.id);
         }
     }
 
@@ -1092,7 +1108,10 @@ export default class FightScene extends cc.Component implements IMediator {
             cc.delayTime(2),
             cc.callFunc(function () {
                 this.node.stopAllActions();
-                SceneManager.instance().changeScene("resultScene");
+                if(Player.player.hasFinishGuide(GuideConfig.guideConfig.deadMinLevelFinish.name)){
+                    SceneManager.instance().changeScene("resultScene");
+                }
+                GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_DEAD);
             }, this)
         ));
     }
@@ -1132,7 +1151,7 @@ export default class FightScene extends cc.Component implements IMediator {
         }
     }
 
-    private GUIDE_FOCUS_ENEMY(enemyID:string){
+    private FOCUS_ENEMY(enemyID:string){
         let enemy:EnemySprite = null;
         for(let key in this.node.children){
             enemy = this.node.children[key].getComponent(EnemySprite);

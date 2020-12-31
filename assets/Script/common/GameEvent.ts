@@ -32,7 +32,10 @@ export class GameEvent {
     public static DEDUCT_BUFF_TIME:string = "DEDUCT_BUFF_TIME";
     //刷新商城金币
     public static UPDATE_STORE_GOLD:string = "UPDATE_STORE_GOLD";
+    //聚焦某个类型飞机
+    public static FOCUS_ENEMY:string = "FOCUS_ENEMY";
     //使用炸弹
     public static USE_BOMB_EFFECT:string = "USE_BOMB_EFFECT";
+
 
 }

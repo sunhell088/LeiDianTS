@@ -2,9 +2,13 @@ import {DialogManager} from "../manager/widget/DialogManager";
 import {Player} from "../classes/Player";
 import {GuideConfig} from "./GuideConfig";
 import {SceneManager} from "../manager/scene/SceneManager";
+import {ObserverManager} from "../framework/observe/ObserverManager";
+import {GameEvent} from "../common/GameEvent";
+import {EnemyConfig} from "./EnemyConfig";
 
 export class DialogConfig {
     public static dialogConfig = {
+        //---开场白
         dialogComeOnStage01:{
             headIcon:"teacher",
             speakerName:"新手教官:",
@@ -31,13 +35,14 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                Player.player.guideFinish(GuideConfig.guideConfig.comeOnStage.name);
             }
         },
         //----------没完成新手引导就死亡了
         dialogDeadNotFinish01:{
             headIcon:"teacher",
             speakerName:"新手教官:",
-            textInfo:"    敌机太强大，机长请多加小心！",
+            textInfo:"    你还需要多加练习。",
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().showDialog("dialogDeadNotFinish02");
@@ -46,7 +51,7 @@ export class DialogConfig {
         dialogDeadNotFinish02:{
             headIcon:"teacher",
             speakerName:"新手教官:",
-            textInfo:"    让我们再来一次试试。",
+            textInfo:"    让我们再来一次吧。",
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
@@ -72,6 +77,8 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemyBox.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.blessEnemy.name);
             }
         },
         //----追踪飞机出现
@@ -92,6 +99,8 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemyBox.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.followEnemy.name);
             }
         },
         //----自爆飞机出现
@@ -112,6 +121,8 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemyBomb.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.bombEnemy.name);
             }
         },
         //----停留飞机出现
@@ -141,6 +152,8 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                Player.player.guideFinish(GuideConfig.guideConfig.stayEnemy.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.stayEnemy2.name);
             }
         },
         //----陨石出现
@@ -161,6 +174,7 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                Player.player.guideFinish(GuideConfig.guideConfig.rockAppear.name);
             }
         },
         //----宝箱飞机再次出现
@@ -181,6 +195,8 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemyBox.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.blessEnemy2.name);
             }
         },
         //----追踪飞机再次出现
@@ -201,6 +217,8 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemyFollow.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.followEnemy2.name);
             }
         },
         //----自爆飞机再次出现
@@ -221,19 +239,21 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemyBomb.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.bombEnemy2.name);
             }
         },
-        //----每次有1级脆皮飞机
-        dialogMinLevelEnemy:{
+        //----提示每次有1级脆皮飞机
+        dialogMinLevelEnemy0:{
             headIcon:"teacher",
             speakerName:"新手教官:",
             textInfo:"    在每一波飞机队列中，都会有部分最低级飞机",
             dialogDirection:true,
             dialogAction:function () {
-                DialogManager.instance().showDialog("dialogMinLevelEnemy1");
+                DialogManager.instance().showDialog("dialogMinLevelEnemy01");
             }
         },
-        dialogMinLevelEnemy1:{
+        dialogMinLevelEnemy01:{
             headIcon:"teacher",
             speakerName:"新手教官:",
             textInfo:"    击破它们，作为突破口吧！",
@@ -241,13 +261,37 @@ export class DialogConfig {
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemy0.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.minLevelEnemy0.name);
+            }
+        },
+        //----再次提示每次有1级脆皮飞机
+        dialogMinLevelEnemyOver:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    切记每波的低级飞机是突破口。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogMinLevelEnemyOver01");
+            }
+        },
+        dialogMinLevelEnemyOver01:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    这样可以使你更游刃有余！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemy0.id);
+                Player.player.guideFinish(GuideConfig.guideConfig.minLevelEnemyOver2.name);
             }
         },
         //--------敌机的新手指引完成
         finishGuideEnemy:{
             headIcon:"teacher",
             speakerName:"新手教官:",
-            textInfo:"    恭喜你，已经对敌机的类型有了一定的了解。",
+            textInfo:"    现在敌机已经很强大了。",
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().showDialog("finishGuideEnemy2");
@@ -256,11 +300,12 @@ export class DialogConfig {
         finishGuideEnemy2:{
             headIcon:"teacher",
             speakerName:"新手教官:",
-            textInfo:"    让我们来了解下道具吧。",
+            textInfo:"    让我们来升级下火力吧",
             dialogDirection:true,
             dialogAction:function () {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
+                SceneManager.instance().changeScene("storeScene");
             }
         }
         

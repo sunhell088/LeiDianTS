@@ -90,7 +90,6 @@ export default class FightScene extends cc.Component implements IMediator {
 
     //只支持最多5个
     private shipShadowList: cc.Node[] = [];
-
     private bulletPool: cc.NodePool = new cc.NodePool();
     private bulletHitEffectPool: cc.NodePool = new cc.NodePool();
     private enemyPool: cc.NodePool = new cc.NodePool();
@@ -104,7 +103,8 @@ export default class FightScene extends cc.Component implements IMediator {
     private enemyExplodePool: cc.NodePool = new cc.NodePool();
     private playerBombRainPool: cc.NodePool = new cc.NodePool();
     private planeShadowPool: cc.NodePool = new cc.NodePool();
-
+    //双击状态
+    private _clicked:boolean = false;
 
     getCommands() {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
@@ -115,7 +115,7 @@ export default class FightScene extends cc.Component implements IMediator {
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
         this.node.on(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
-        this.node.on(cc.Node.EventType.TOUCH_END, this.onTouchEnd, this);
+        this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.schedule(this.shoot, CommonConfig.BULLET_DELAY);
         this.schedule(this.scheduleNormalEnemy, CommonConfig.ENEMY_DELAY);
         if(!Player.player.hasFinishGuide(GuideConfig.guideConfig.minLevelEnemyOver2.name)){
@@ -146,6 +146,7 @@ export default class FightScene extends cc.Component implements IMediator {
     protected onDisable(): void {
         ObserverManager.unRegisterObserverFun(this);
         this.node.off(cc.Node.EventType.TOUCH_MOVE, this.onTouchMoved, this);
+        this.node.off(cc.Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.unschedule(this.shoot);
         this.unschedule(this.scheduleNormalEnemy);
         this.unschedule(this.scheduleRockGroup);
@@ -552,21 +553,27 @@ export default class FightScene extends cc.Component implements IMediator {
         this.onTouchMovedReal(oldX, oldY, curPos, this.shipShadowList[0])
     }
 
-    //放开手指，就使用炸弹
-    private onTouchEnd(event) {
-        if(Player.player.bombCount>0){
-            this.useBomb();
-        }else {
-            //屏幕抖动，提示没有炸弹
-            this.node.runAction(GameUtil.shakeBy(0.3,5,2))
+    private onTouchStart(event){
+        let target:FightScene = event.getCurrentTarget().getComponent(FightScene);
+        if(target._clicked){
+            target.useBomb();
+        }else{
+            target._clicked = true;
+            target.scheduleOnce(function(){ target._clicked = false; }, 0.25);
         }
+        return true
     }
 
     private useBomb(){
-        if(Player.player.bombCount<=0) return;
-        Player.player.bombCount--;
-        this.createBombRain();
-        ObserverManager.sendNotification(GameEvent.USE_BOMB_EFFECT);
+        if(Player.player._bomb||Player.player._spurt||Player.player._spurtReadying) return;
+        if(Player.player.bombCount<=0){
+            //屏幕抖动，提示没有炸弹
+            this.node.runAction(GameUtil.shakeBy(0.3,5,2))
+        }else {
+            Player.player.bombCount--;
+            this.createBombRain();
+            ObserverManager.sendNotification(GameEvent.USE_BOMB_EFFECT);
+        }
     }
 
 

@@ -109,7 +109,7 @@ export default class FightScene extends cc.Component implements IMediator {
     getCommands() {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
             GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION
-        ,GameEvent.FOCUS_ENEMY];
+        ,GameEvent.FOCUS_ENEMY,GameEvent.FOCUS_ITEM];
     }
 
     protected onLoad(): void {
@@ -121,14 +121,15 @@ export default class FightScene extends cc.Component implements IMediator {
         if(!Player.player.hasFinishGuide(GuideConfig.guideConfig.minLevelEnemyOver2.name)){
             this.scheduleOnce(this.scheduleBlessEnemy, 10);
             this.scheduleOnce(this.scheduleFollowEnemy, 20);
-            this.scheduleOnce(this.scheduleBombEnemy, 35);
-            this.scheduleOnce(this.scheduleStayEnemy, 45);
-            this.scheduleOnce(this.scheduleRockGroup, 55);
+            this.scheduleOnce(this.scheduleBombEnemy, 30);
+            this.scheduleOnce(this.scheduleStayEnemy, 40);
+            this.scheduleOnce(this.scheduleRockGroup, 50);
             this.scheduleOnce(function () {
-                this.scheduleOnce(this.scheduleBlessEnemy, 15);
-                this.scheduleOnce(this.scheduleFollowEnemy, 25);
-                this.scheduleOnce(this.scheduleBombEnemy, 35);
-            }, 55)
+                this.scheduleOnce(this.scheduleBlessEnemy, 10);
+                this.scheduleOnce(this.scheduleFollowEnemy, 20);
+                this.scheduleOnce(this.scheduleBombEnemy, 30);
+                this.schedule(this.scheduleRockGroup, CommonConfig.ROCK_CONFIG_DELAY);
+            }, 50)
         }else {
             this.schedule(this.scheduleBlessEnemy, CommonConfig.BLESS_PLANE_DELAY);
             this.schedule(this.scheduleFollowEnemy, CommonConfig.FOLLOW_ENEMY_DELAY);
@@ -1164,6 +1165,15 @@ export default class FightScene extends cc.Component implements IMediator {
             enemy = this.node.children[key].getComponent(EnemySprite);
             if(enemy&&enemy._enemyConfig.id==enemyID){
                 enemy.showGuide();
+            }
+        }
+    }
+    private FOCUS_ITEM(itemName:string){
+        let item:ItemSprite = null;
+        for(let key in this.node.children){
+            item = this.node.children[key].getComponent(ItemSprite);
+            if(item&&item._itemConfig.name==itemName){
+                item.showGuide();
             }
         }
     }

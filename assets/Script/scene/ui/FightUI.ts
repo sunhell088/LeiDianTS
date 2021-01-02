@@ -12,6 +12,8 @@ import {ConfigUtil} from "../../common/ConfigUtil";
 import {SceneManager} from "../../manager/scene/SceneManager";
 import {DialogManager} from "../../manager/widget/DialogManager";
 import {GuideConfig} from "../../configs/GuideConfig";
+import {GuideManager} from "../../manager/guide/GuideManager";
+import {GuideTriggerEvent} from "../../common/GuideTriggerEvent";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -73,7 +75,8 @@ export default class FightUI extends cc.Component implements IMediator{
     //炸弹图标
     @property([cc.Node])
     bombBuffList:cc.Node[] = [];
-
+    @property(cc.Node)
+    doubleClickHint: cc.Node = null;
 
 
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
@@ -103,6 +106,7 @@ export default class FightUI extends cc.Component implements IMediator{
 
     //初始化玩家UI信息
     private init(){
+        this.doubleClickHint.active = false;
         this.goldCount.string = "0";
         this.progressRoleSpt.node.runAction(cc.repeatForever(cc.blink(1, 1)))
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID)
@@ -203,6 +207,9 @@ export default class FightUI extends cc.Component implements IMediator{
             //超过屏幕边界修正过来
             CommonUtil.pClamp(this.showEatItemName.node);
             ObserverManager.sendNotification(GameEvent.EAT_ITEM, itemConfigObj);
+            this.scheduleOnce(function () {
+                GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_EAT_ITEM, itemConfigObj.name)
+            }, 1)
             this.showEatItemName.node.runAction(cc.sequence(
                 cc.scaleTo(0.1, 1.2),
                 cc.scaleTo(0.2, 1),

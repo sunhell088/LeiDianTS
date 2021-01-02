@@ -216,7 +216,7 @@ export class ConfigUtil {
         let hp:number = 0;
         switch (enemyConfig.id) {
             case EnemyConfig.enemyConfig.enemy0.id:
-                hp = 10;
+                hp = 1;
                 break;
             case EnemyConfig.enemyConfig.enemy1.id:
                 hp = 20;

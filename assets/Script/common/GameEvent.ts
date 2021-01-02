@@ -34,6 +34,10 @@ export class GameEvent {
     public static UPDATE_STORE_GOLD:string = "UPDATE_STORE_GOLD";
     //聚焦某个类型飞机
     public static FOCUS_ENEMY:string = "FOCUS_ENEMY";
+    //聚焦某个类型道具
+    public static FOCUS_ITEM:string = "FOCUS_ITEM";
+    //打开战斗场景某个UI
+    public static OPEN_DOUBLE_CLICK_HINT:string = "OPEN_DOUBLE_CLICK_HINT";
     //使用炸弹
     public static USE_BOMB_EFFECT:string = "USE_BOMB_EFFECT";
 

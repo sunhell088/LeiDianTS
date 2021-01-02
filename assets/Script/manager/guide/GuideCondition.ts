@@ -29,7 +29,17 @@ export class GuideConditionFinishGuide {
     }
     checkCondition():boolean {
         let bFinish:boolean = Player.player.hasFinishGuide(this.guideName);
-        console.log(this.guideName+"====checkCondition===="+bFinish);
         return bFinish;
+    }
+}
+
+export class GuideConditionItem {
+    private readonly itemName:string = null;
+    constructor(itemName:string) {
+        this.itemName = itemName;
+    }
+    checkCondition(...par):boolean {
+        let itemName:string = par[0];
+        return itemName==this.itemName;
     }
 }

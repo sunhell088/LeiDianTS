@@ -33,7 +33,7 @@ export default class FlexEnemySprite extends EnemySprite {
             this.flyState = FLY_STATE.RUN;
             var array = [];
             array.push(new cc.Vec2(this.node.x, this.node.y));
-            for (var i = 0; i < 7; i++) {
+            for (var i = 0; i < 3; i++) {
                 var x = CommonUtil.random(-CommonConfig.WIDTH/2, CommonConfig.WIDTH/2);
                 var y = CommonUtil.random(0, CommonConfig.HEIGHT/2);
                 array.push(new cc.Vec2(x, y));

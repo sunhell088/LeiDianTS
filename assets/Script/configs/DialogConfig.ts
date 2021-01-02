@@ -5,6 +5,7 @@ import {SceneManager} from "../manager/scene/SceneManager";
 import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
 import {EnemyConfig} from "./EnemyConfig";
+import {ItemConfig} from "./ItemConfig";
 
 export class DialogConfig {
     public static dialogConfig = {
@@ -306,8 +307,139 @@ export class DialogConfig {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
                 SceneManager.instance().changeScene("storeScene");
+                Player.player.guideFinish(GuideConfig.guideConfig.deadMinLevelFinish.name);
+            }
+        },
+        //--------道具吸铁石指引---
+        dialogItemXTS:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    这是磁石。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogItemXTS2");
+            }
+        },
+        dialogItemXTS2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    获取后，可拥有自动吸引金币和道具功能！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ITEM, ItemConfig.itemConfig.item_xts.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.itemXTS.name);
+            }
+        },
+        //护盾指引
+        dialogItemProtect:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    这是护盾。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogItemProtect2");
+            }
+        },
+        dialogItemProtect2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    获取后，可拥有防御一次敌机或陨石撞击！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ITEM, ItemConfig.itemConfig.item_protect.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.itemProtect.name);
+            }
+        },
+        //双倍火力指引
+        dialogItemDouble:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    这是双倍火力。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogItemDouble2");
+            }
+        },
+        dialogItemDouble2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    获取后，可拥有双倍火力！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ITEM, ItemConfig.itemConfig.item_double.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.itemDouble.name);
+            }
+        },
+        //影子传说指引
+        dialogItemShadow:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    这是影子传说。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogItemShadow2");
+            }
+        },
+        dialogItemShadow2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    获取后，可拥有一个如影随形！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ITEM, ItemConfig.itemConfig.item_shadow.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.itemShadow.name);
+            }
+        },
+        //炸弹指引
+        dialogItemBomb:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    这是炸弹。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogItemBomb2");
+            }
+        },
+        dialogItemBomb2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    获取后，双击屏幕即可使用全屏炸弹！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                cc.director.resume();
+                ObserverManager.sendNotification(GameEvent.FOCUS_ITEM, ItemConfig.itemConfig.item_bomb.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.itemBomb.name);
+            }
+        },
+        //双击使用炸弹指引
+        dialogDoubleClickBomb:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    你已经获得炸弹一枚。",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().showDialog("dialogDoubleClickBomb2");
+            }
+        },
+        dialogDoubleClickBomb2:{
+            headIcon:"teacher",
+            speakerName:"新手教官:",
+            textInfo:"    双击屏幕即可使用全屏炸弹！",
+            dialogDirection:true,
+            dialogAction:function () {
+                DialogManager.instance().closeDialog();
+                // ObserverManager.sendNotification(GameEvent.OPEN_DOUBLE_CLICK_HINT);
+                cc.director.resume();
             }
         }
-        
     }
 }

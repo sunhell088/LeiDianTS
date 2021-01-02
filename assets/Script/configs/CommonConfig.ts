@@ -6,6 +6,8 @@ export class CommonConfig {
     public static WIDTH = 320;
     public static HEIGHT = 568;
 
+    //道具飘动速度
+    public static ITEM_FLY_SPEED = 100;
     //子弹速度
     public static BULLET_SPEED = 1500;
     //敌机速度
@@ -49,7 +51,7 @@ export class CommonConfig {
     //产生冲刺敌机的间隔
     public static ENEMY_SPURT_DELAY = 0.3;
     //同一批陨石出现的间隔时间
-    public static ROCK_DELAY = 0.4;
+    public static ROCK_DELAY = 0.4*2;
     //冲刺持续时间
     public static SPURT_DURATION = 2.5;
 
@@ -75,13 +77,13 @@ export class CommonConfig {
     public static PRESET_COUNT_BOMB = 10;
 
     //吸铁石时间
-    public static MAGNET_TIME = 10;
+    public static MAGNET_TIME = 15;
     //护盾时间
-    public static PROTECT_TIME = 10;
+    public static PROTECT_TIME = 15;
     //双倍火力时间
-    public static DOUBLE_FIRE_TIME = 10;
+    public static DOUBLE_FIRE_TIME = 15;
     //影子时间10秒（*10解决小数点精度问题）
-    public static SHADOW_TIME = 100;
+    public static SHADOW_TIME = 150;
     //最大距离
     public static MAX_DISTANCE:number = 10000;
     //自动合成的最大时间

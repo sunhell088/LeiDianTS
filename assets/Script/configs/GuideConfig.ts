@@ -7,10 +7,11 @@ import {GuideTriggerEvent} from "../common/GuideTriggerEvent";
 import {EnemyConfig} from "./EnemyConfig";
 import {
     GuideConditionEnemy,
-    GuideConditionFinishGuide,
+    GuideConditionFinishGuide, GuideConditionItem,
     GuideConditionNotFinishGuide
 } from "../manager/guide/GuideCondition";
 import {DialogConfig} from "./DialogConfig";
+import {ItemConfig} from "./ItemConfig";
 
 export class GuideConfig {
 
@@ -167,6 +168,84 @@ export class GuideConfig {
             ],
             result:[
                 new GuideResultDialog("finishGuideEnemy"),
+                new GuideResultPauseGame()
+            ]
+        },
+        //吸铁石指引
+        itemXTS:{
+            name:"itemXTS",
+            trigger:GuideTriggerEvent.GUIDE_ITEM_APPEAR,
+            condition:[
+                new GuideConditionFinishGuide("deadMinLevelFinish"),
+                new GuideConditionItem(ItemConfig.itemConfig.item_xts.name)
+            ],
+            result:[
+                new GuideResultDialog("dialogItemXTS"),
+                new GuideResultPauseGame()
+            ]
+        },
+        //护盾指引
+        itemProtect:{
+            name:"itemProtect",
+            trigger:GuideTriggerEvent.GUIDE_ITEM_APPEAR,
+            condition:[
+                new GuideConditionFinishGuide("deadMinLevelFinish"),
+                new GuideConditionItem(ItemConfig.itemConfig.item_protect.name)
+            ],
+            result:[
+                new GuideResultDialog("dialogItemProtect"),
+                new GuideResultPauseGame()
+            ]
+        },
+        //双倍火力指引
+        itemDouble:{
+            name:"itemDouble",
+            trigger:GuideTriggerEvent.GUIDE_ITEM_APPEAR,
+            condition:[
+                new GuideConditionFinishGuide("deadMinLevelFinish"),
+                new GuideConditionItem(ItemConfig.itemConfig.item_double.name)
+            ],
+            result:[
+                new GuideResultDialog("dialogItemDouble"),
+                new GuideResultPauseGame()
+            ]
+        },
+        //影子传说指引
+        itemShadow:{
+            name:"itemShadow",
+            trigger:GuideTriggerEvent.GUIDE_ITEM_APPEAR,
+            condition:[
+                new GuideConditionFinishGuide("deadMinLevelFinish"),
+                new GuideConditionItem(ItemConfig.itemConfig.item_shadow.name)
+            ],
+            result:[
+                new GuideResultDialog("dialogItemShadow"),
+                new GuideResultPauseGame()
+            ]
+        },
+        //炸弹指引
+        itemBomb:{
+            name:"itemBomb",
+            trigger:GuideTriggerEvent.GUIDE_ITEM_APPEAR,
+            condition:[
+                new GuideConditionFinishGuide("deadMinLevelFinish"),
+                new GuideConditionItem(ItemConfig.itemConfig.item_bomb.name)
+            ],
+            result:[
+                new GuideResultDialog("dialogItemBomb"),
+                new GuideResultPauseGame()
+            ]
+        },
+        //双击屏幕使用炸弹指引
+        doubleClickBomb:{
+            name:"doubleClickBomb",
+            trigger:GuideTriggerEvent.GUIDE_EAT_ITEM,
+            condition:[
+                new GuideConditionFinishGuide("itemBomb"),
+                new GuideConditionItem(ItemConfig.itemConfig.item_bomb.name)
+            ],
+            result:[
+                new GuideResultDialog("dialogDoubleClickBomb"),
                 new GuideResultPauseGame()
             ]
         }

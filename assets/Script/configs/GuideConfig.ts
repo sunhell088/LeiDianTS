@@ -1,7 +1,7 @@
 import {
     GuideResultPauseGame,
     GuideResultDialog,
-    GuideResultFinishGuide
+    GuideResultFinishGuide, GuideResultOpenDoubleClickUI
 } from "../manager/guide/GuideResult";
 import {GuideTriggerEvent} from "../common/GuideTriggerEvent";
 import {EnemyConfig} from "./EnemyConfig";
@@ -30,7 +30,7 @@ export class GuideConfig {
         deadNotMinLevelFinish:{
             name:"deadNotMinLevelFinish",
             trigger:GuideTriggerEvent.GUIDE_DEAD,
-            condition:[new GuideConditionNotFinishGuide("minLevelEnemy")],
+            condition:[new GuideConditionNotFinishGuide("minLevelEnemyOver1")],
             result:[
                 new GuideResultDialog("dialogDeadNotFinish01"),
                 new GuideResultPauseGame()
@@ -135,8 +135,8 @@ export class GuideConfig {
             ]
         },
         //提示攻击每波最弱飞机
-        minLevelEnemy0:{
-            name:"minLevelEnemy0",
+        minLevelEnemyOver1:{
+            name:"minLevelEnemyOver1",
             trigger:GuideTriggerEvent.GUIDE_ENEMY_APPEAR,
             condition:[
                 new GuideConditionEnemy(EnemyConfig.enemyConfig.enemy1.id),
@@ -245,7 +245,7 @@ export class GuideConfig {
                 new GuideConditionItem(ItemConfig.itemConfig.item_bomb.name)
             ],
             result:[
-                new GuideResultDialog("dialogDoubleClickBomb"),
+                new GuideResultOpenDoubleClickUI(),
                 new GuideResultPauseGame()
             ]
         }

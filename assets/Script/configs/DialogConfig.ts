@@ -263,7 +263,7 @@ export class DialogConfig {
                 DialogManager.instance().closeDialog();
                 cc.director.resume();
                 ObserverManager.sendNotification(GameEvent.FOCUS_ENEMY, EnemyConfig.enemyConfig.enemy0.id);
-                Player.player.guideFinish(GuideConfig.guideConfig.minLevelEnemy0.name);
+                Player.player.guideFinish(GuideConfig.guideConfig.minLevelEnemyOver1.name);
             }
         },
         //----再次提示每次有1级脆皮飞机
@@ -418,27 +418,6 @@ export class DialogConfig {
                 cc.director.resume();
                 ObserverManager.sendNotification(GameEvent.FOCUS_ITEM, ItemConfig.itemConfig.item_bomb.name);
                 Player.player.guideFinish(GuideConfig.guideConfig.itemBomb.name);
-            }
-        },
-        //双击使用炸弹指引
-        dialogDoubleClickBomb:{
-            headIcon:"teacher",
-            speakerName:"新手教官:",
-            textInfo:"    你已经获得炸弹一枚。",
-            dialogDirection:true,
-            dialogAction:function () {
-                DialogManager.instance().showDialog("dialogDoubleClickBomb2");
-            }
-        },
-        dialogDoubleClickBomb2:{
-            headIcon:"teacher",
-            speakerName:"新手教官:",
-            textInfo:"    双击屏幕即可使用全屏炸弹！",
-            dialogDirection:true,
-            dialogAction:function () {
-                DialogManager.instance().closeDialog();
-                // ObserverManager.sendNotification(GameEvent.OPEN_DOUBLE_CLICK_HINT);
-                cc.director.resume();
             }
         }
     }

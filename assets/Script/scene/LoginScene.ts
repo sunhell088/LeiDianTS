@@ -78,6 +78,7 @@ export default class LoginScene extends cc.Component implements IMediator{
         if(Player.player.hasFinishGuide(GuideConfig.guideConfig.minLevelEnemyOver2.name)){
             SceneManager.instance().changeScene("storeScene");
         }else {
+            // SceneManager.instance().changeScene("storeScene");
             SceneManager.instance().changeScene("fightScene");
         }
     }

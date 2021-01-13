@@ -36,8 +36,14 @@ export class GameEvent {
     public static FOCUS_ENEMY:string = "FOCUS_ENEMY";
     //聚焦某个类型道具
     public static FOCUS_ITEM:string = "FOCUS_ITEM";
-    //打开战斗场景某个UI
+    //打开双击使用炸弹ui
     public static OPEN_DOUBLE_CLICK_HINT:string = "OPEN_DOUBLE_CLICK_HINT";
+    //双击 提示（双击使用炸弹）
+    public static DOUBLE_CLICK_HINT_DO:string = "DOUBLE_CLICK_HINT_DO";
+    //使用指定飞机
+    public static USE_PLANE:string = "USE_PLANE";
+    //购买指定飞机
+    public static BUY_PLANE:string = "BUY_PLANE";
     //使用炸弹
     public static USE_BOMB_EFFECT:string = "USE_BOMB_EFFECT";
 

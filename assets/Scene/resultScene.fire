@@ -183,7 +183,7 @@
       "array": [
         0,
         0,
-        514.4190898479566,
+        530.8735725198609,
         0,
         0,
         0,
@@ -2014,7 +2014,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 42.5,
+      "width": 39.99,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -2067,8 +2067,8 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_useOriginalSize": false,
-    "_string": "(MAX)",
-    "_N$string": "(MAX)",
+    "_string": "(最远)",
+    "_N$string": "(最远)",
     "_fontSize": 15,
     "_lineHeight": 40,
     "_enableWrapText": true,

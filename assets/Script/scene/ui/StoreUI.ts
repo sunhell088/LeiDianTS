@@ -12,12 +12,11 @@ import {SoundConfig} from "../../configs/SoundConfig";
 import {SceneManager} from "../../manager/scene/SceneManager";
 import DialogUI from "./common/DialogUI";
 import {DialogManager} from "../../manager/widget/DialogManager";
+import BuyPlaneUI from "./BuyPlaneUI";
 
 const {ccclass, property} = cc._decorator;
 @ccclass
 export default class StoreUI extends cc.Component implements IMediator {
-    @property(cc.Button)
-    checkDataBtn: cc.Button = null;
     @property(cc.Sprite)
     background0: cc.Sprite = null;
     @property(cc.Sprite)
@@ -35,8 +34,8 @@ export default class StoreUI extends cc.Component implements IMediator {
     @property(cc.Button)
     changePlaneBtn: cc.Button = null;
     //战机图片
-    @property(cc.Node)
-    planeNode: cc.Node = null;
+    @property(cc.Sprite)
+    planeSprite: cc.Sprite = null;
     @property(cc.SpriteAtlas)
     planeSpriteAtlas: cc.SpriteAtlas = null;
     //战机描述
@@ -97,17 +96,20 @@ export default class StoreUI extends cc.Component implements IMediator {
     @property(cc.Animation)
     levelUpEffectAnimation: cc.Animation = null;
 
+    //战机购买界面
+    @property(cc.Node)
+    buyPlanePageview: cc.Node = null;
+
     private bulletPool: cc.NodePool = new cc.NodePool();
     private currentPlaneID: number = null;
 
+
     getCommands(){
-        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE, GameEvent.UPDATE_STORE_GOLD];
+        return [GameEvent.UPDATE_STORE_BULLET, GameEvent.FLY_NOTICE, GameEvent.UPDATE_STORE_GOLD, GameEvent.USE_PLANE,
+            GameEvent.BUY_PLANE];
     }
 
     protected onLoad(): void {
-        this.checkDataBtn.node.on(cc.Node.EventType.TOUCH_END, function () {
-            window.alert(localStorage.playerData);
-        }, this);
         ObserverManager.registerObserverFun(this);
         this.changePlaneBtn.node.on(cc.Node.EventType.TOUCH_END, this.onChangePlaneBtn, this);
         this.startBtn.node.on(cc.Node.EventType.TOUCH_END, this.onStartBtn, this);
@@ -136,11 +138,15 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private init() {
+        this.buyPlanePageview.active = false;
         this.autoCombineTimeLab.string = "自动合成" + CommonConfig.AUTO_COMBINE_MAX_TIME + "秒"
-        this.currentPlaneID = Player.player.data.currentPlaneID
+        this.currentPlaneID = Player.player.data.currentPlaneID;
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
+        this.planeSprite.spriteFrame = this.planeSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
+        this.planeDescribeLab.string = planeConfig.name;
         this.setBackground();
         this.goldCount.string = Player.player.data.gold + "";
-        this.distanceLabel.string = Player.player.data.maxDistance + "";
+        this.distanceLabel.string = Math.round(Player.player.data.maxDistance)+"";
         this.updateBuyBullet();
         this.updateBulletList();
         this.combineAnim.node.active = false;
@@ -174,6 +180,9 @@ export default class StoreUI extends cc.Component implements IMediator {
     }
 
     private onChangePlaneBtn(): void {
+        this.buyPlanePageview.active = !this.buyPlanePageview.active;
+        let buyPlaneUI:BuyPlaneUI = this.buyPlanePageview.getComponent(BuyPlaneUI);
+        buyPlaneUI.init();
     }
 
     private onStartBtn(): void {
@@ -292,7 +301,7 @@ export default class StoreUI extends cc.Component implements IMediator {
 
     //发射子弹
     private shoot() {
-        this.shootReal(this.planeNode);
+        this.shootReal(this.planeSprite.node);
         if (this.shipShadowNode.active) {
             this.shootReal(this.shipShadowNode)
         }
@@ -314,12 +323,21 @@ export default class StoreUI extends cc.Component implements IMediator {
         } else {
             spriteNode = cc.instantiate(this.bulletPrefab);
         }
-        this.planeNode.addChild(spriteNode);
+        this.planeSprite.node.addChild(spriteNode);
         let bulletSprite = spriteNode.getComponent(BulletSprite);
         bulletSprite.initSprite(spriteNode, this.bulletAtlas, this.bulletPool);
         let planeConfig = ConfigUtil.getPlaneConfig(this.currentPlaneID);
         bulletSprite.setBulletSpriteFrame(planeConfig.bulletType, Player.player.getBulletMaxGrade(this.currentPlaneID));
         return spriteNode;
+    }
+    //切换战机
+    private changePlane(){
+        this.currentPlaneID = Player.player.data.currentPlaneID;
+        let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
+        this.planeSprite.spriteFrame = this.planeSpriteAtlas.getSpriteFrame(planeConfig.fightTextureName);
+        this.planeDescribeLab.string = planeConfig.name;
+        this.updateBuyBullet();
+        this.updateBulletList();
     }
 
     private UPDATE_STORE_BULLET(levelUp: boolean, sourceIndex: number, targetIndex: number, bAuto: boolean) {
@@ -365,5 +383,18 @@ export default class StoreUI extends cc.Component implements IMediator {
 
     private UPDATE_STORE_GOLD() {
         this.goldCount.string = "" + Player.player.data.gold;
+    }
+
+    private USE_PLANE(planeID){
+        Player.player.data.currentPlaneID = planeID;
+        this.buyPlanePageview.active = false;
+        this.changePlane();
+    }
+
+    private BUY_PLANE(planeID){
+        if(Player.player.buyPlane(planeID)){
+            this.buyPlanePageview.active = false;
+            this.changePlane();
+        }
     }
 }

@@ -27,6 +27,7 @@ import {DialogConfig} from "../configs/DialogConfig";
 import {DialogManager} from "../manager/widget/DialogManager";
 import {GuideTriggerEvent} from "../common/GuideTriggerEvent";
 import {GuideManager} from "../manager/guide/GuideManager";
+import Game = cc.Game;
 
 
 const {ccclass, property} = cc._decorator;
@@ -109,7 +110,7 @@ export default class FightScene extends cc.Component implements IMediator {
     getCommands() {
         return [GameEvent.KILL_ENEMY, GameEvent.PROTECT_EFFECT, GameEvent.GAME_OVER,
             GameEvent.BULLET_HIT_ENEMY, GameEvent.ITEM_COLLISION_PLAYER, GameEvent.EAT_ITEM, GameEvent.SPURT_DURATION
-        ,GameEvent.FOCUS_ENEMY,GameEvent.FOCUS_ITEM];
+        ,GameEvent.FOCUS_ENEMY,GameEvent.FOCUS_ITEM, GameEvent.DOUBLE_CLICK_HINT_DO];
     }
 
     protected onLoad(): void {
@@ -378,9 +379,14 @@ export default class FightScene extends cc.Component implements IMediator {
         Player.player._death = false;
         let planeConfig = ConfigUtil.getPlaneConfig(Player.player.data.currentPlaneID);
         this.ship.shipSprite.spriteFrame = this.shipAtlas.getSpriteFrame(planeConfig.fightTextureName);
-        this.ship.node.setPosition(0, 0);
+        this.ship.node.setPosition(0,-CommonConfig.HEIGHT/3);
         planeConfig.planeFunction(this.ship);
-
+        if(Player.player._shadowFire){
+            this.setShadowStart();
+        }
+        if(Player.player._magnet){
+            this.ship.setMagnetStart();
+        }
         //重置和战斗相关的数据
         Player.player.resetFightData();
 
@@ -537,6 +543,7 @@ export default class FightScene extends cc.Component implements IMediator {
     }
 
     protected onTouchMoved(event) {
+        if(DialogManager.instance().inDialog()) return;
         let oldX: number = this.ship.node.x;
         let oldY: number = this.ship.node.y;
         let shipSelf: cc.Node = this.ship.node;
@@ -560,7 +567,9 @@ export default class FightScene extends cc.Component implements IMediator {
             target.useBomb();
         }else{
             target._clicked = true;
-            target.scheduleOnce(function(){ target._clicked = false; }, 0.25);
+            target.scheduleOnce(function(){
+                target._clicked = false;
+            }, 0.25);
         }
         return true
     }
@@ -1070,10 +1079,12 @@ export default class FightScene extends cc.Component implements IMediator {
         this.shipShadowList.push(spriteNode);
         this.node.addChild(spriteNode);
         spriteNode.setPosition(this.ship.node.getPosition());
-        Player.player.shadowRemainTime += CommonConfig.SHADOW_TIME;
     }
 
     protected scheduleBuff() {
+        if(Player.player._shadowFire&&this.shipShadowList.length==1){
+            return;
+        }
         if (Player.player.shadowRemainTime <= 0) return;
         Player.player.shadowRemainTime -= 1;
         if (Player.player.shadowRemainTime % CommonConfig.SHADOW_TIME <= 0 && this.shipShadowList.length > 0) {
@@ -1118,8 +1129,9 @@ export default class FightScene extends cc.Component implements IMediator {
                 this.node.stopAllActions();
                 if(Player.player.hasFinishGuide(GuideConfig.guideConfig.deadMinLevelFinish.name)){
                     SceneManager.instance().changeScene("resultScene");
+                }else {
+                    GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_DEAD);
                 }
-                GuideManager.instance().doTrigger(GuideTriggerEvent.GUIDE_DEAD);
             }, this)
         ));
     }
@@ -1143,6 +1155,7 @@ export default class FightScene extends cc.Component implements IMediator {
                     return;
                 }
                 this.setShadowStart();
+                Player.player.shadowRemainTime += CommonConfig.SHADOW_TIME;
                 break;
         }
     }
@@ -1176,5 +1189,10 @@ export default class FightScene extends cc.Component implements IMediator {
                 item.showGuide();
             }
         }
+    }
+
+    private DOUBLE_CLICK_HINT_DO(){
+        cc.director.resume();
+        this.useBomb();
     }
 }

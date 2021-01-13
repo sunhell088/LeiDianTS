@@ -188,16 +188,15 @@ export default class ShipSprite extends cc.Component implements IMediator{
 
     //显示磁铁
     setMagnetStart(){
-        Player.player._magnet = true;
         this.magnetSprite.node.active = true;
         Player.player.magnetRemainTime = CommonConfig.MAGNET_TIME;
     }
     deductMagnetTime(){
+        if(Player.player._magnet) return;
         if(Player.player.magnetRemainTime>0){
             Player.player.magnetRemainTime -= 0.1;
             ObserverManager.sendNotification(GameEvent.DEDUCT_BUFF_TIME, ItemConfig.itemConfig.item_xts.name);
         }else {
-            Player.player._magnet = false;
             this.magnetSprite.node.active = false;
         }
     }

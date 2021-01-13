@@ -25,6 +25,13 @@ export class DialogManager{
     }
 
     public closeDialog() {
-        this.dialogUI.node.active = false
+        this.dialogUI.node.active = false;
+    }
+
+    public inDialog():boolean{
+        if(this.dialogUI!=null&&this.dialogUI.node!=null&&this.dialogUI.node.active){
+            return true;
+        }
+        return false;
     }
 }

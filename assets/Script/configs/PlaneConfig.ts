@@ -1,10 +1,13 @@
+import ShipSprite from "../sprites/ShipSprite";
+import {Player} from "../classes/Player";
+
 export class PlaneConfig {
 
     public static planeConfig:any[] = [
         {
             id: 1,
-            name: "无名之辈",
-            textureName: "#ui_role_head0.png",
+            name: "一架普通战机",
+            textureName: "ui_role_head0",
             fightTextureName: "role0",
             levelUpTextureName: "#levelup1.png",
             nameIndex: 0,
@@ -15,32 +18,32 @@ export class PlaneConfig {
         },
         {
             id: 2,//磁铁
-            name: "万磁王",
-            textureName: "#ui_role_head1.png",
+            name: "自带磁石",
+            textureName: "ui_role_head1",
             fightTextureName: "role1",
             levelUpTextureName: "#levelup2.png",
             nameIndex: 1,
             bulletType: "bullet3",
             bombType: "bullet3_35",
-            price: 5000,
-            //磁铁（且双倍金币-金币变大）
-            planeFunction:function(shipSprite){
-                shipSprite.setMagnet(true);
+            price: 50000,
+            //磁铁
+            planeFunction:function(shipSprite:ShipSprite){
+                Player.player._magnet = true;
             },
         },
         {
             id: 4,//自带影子
-            name: "影流之主",
-            textureName: "#ui_role_head2.png",
+            name: "自带磁石和一个影子",
+            textureName: "ui_role_head2",
             fightTextureName: "role2",
             levelUpTextureName: "#levelup3.png",
             nameIndex: 2,
             bulletType: "bullet5",
             bombType: "bullet5_35",
-            price: 10000,
-            //自带双倍火力
-            planeFunction:function(shipSprite){
-                shipSprite._doubleFire = true;
+            price: 500000,
+            planeFunction:function(shipSprite:ShipSprite){
+                // Player.player._magnet = true;
+                Player.player._shadowFire = true;
             },
         }
     ];

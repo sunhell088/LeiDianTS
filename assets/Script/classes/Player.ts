@@ -4,6 +4,8 @@ import {ObserverManager} from "../framework/observe/ObserverManager";
 import {GameEvent} from "../common/GameEvent";
 import {ConfigUtil} from "../common/ConfigUtil";
 import {BUY_BULLET_STATE} from "../common/GameEnum";
+import {CommonUtil} from "../common/CommonUtil";
+import {GameUtil} from "../common/GameUtil";
 
 export class Player {
     public static player: Player;
@@ -59,6 +61,8 @@ export class Player {
     public _magnet: boolean = false;
     //双倍火力中
     public _doubleFire: boolean = false;
+    //影子传说中
+    public _shadowFire: boolean = false;
     //护罩中
     public _protecting: boolean = false;
     //停止发射子弹中
@@ -160,6 +164,18 @@ export class Player {
         return -1;
     }
 
+    public buyPlane(planeID):boolean {
+        let planeConfig:any = ConfigUtil.getPlaneConfig(planeID);
+        if (this.data.gold < planeConfig.price) {
+            let notice: string = ConfigUtil.getLanguage("noMoney", planeConfig.price - this.data.gold);
+            ObserverManager.sendNotification(GameEvent.FLY_NOTICE, notice);
+            return false;
+        }
+        this.deductGold(planeConfig.price);
+        Player.player.data.planeStorage |= planeID;
+        Player.player.data.currentPlaneID = planeID;
+        return true;
+    }
     public buyBullet(planeID): BUY_BULLET_STATE {
         let emptyIndex: number = this.getStoreBulletEmptyIndex(planeID);
         if (emptyIndex == -1) {
@@ -299,6 +315,7 @@ export class Player {
         this._stopBullet = true;
         this.currentDistance = 0;
         this.currentRewardGold = 0;
+        this._enemyAddSpeed = 0;
     }
 
 }

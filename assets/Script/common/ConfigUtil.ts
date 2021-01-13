@@ -60,17 +60,21 @@ export class ConfigUtil {
 
     public static createSpecialEnemyDrop(enemySpriteSct){
         var dropArray = [];
-        //宝箱飞机爆 影子
+        //宝箱飞机
         if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBox){
-            dropArray.push(ConfigUtil.getSpecialDropItem());
+            let itemConfig:any = ConfigUtil.getSpecialDropItem();
+            while (Player.player._magnet&&itemConfig.name==ItemConfig.itemConfig.item_xts.name){
+                itemConfig = ConfigUtil.getSpecialDropItem();
+            }
+            dropArray.push(itemConfig);
         }
-        //追踪飞机爆 影子
+        //追踪飞机
         else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyFollow){
             for(let i=0;i<5;i++){
                 dropArray.push(ItemConfig.itemConfig.item_red);
             }
         }
-        //停留飞机爆 冲刺
+        //停留飞机
         else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyStay1
         ||enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyStay2){
             for(let i=0;i<5;i++){
@@ -81,7 +85,9 @@ export class ConfigUtil {
         else if(enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1
             ||enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1
             || enemySpriteSct._enemyConfig == EnemyConfig.enemyConfig.enemyBoss1){
-            dropArray.push(ItemConfig.itemConfig.item_xts);
+            if(!Player.player._magnet){
+                dropArray.push(ItemConfig.itemConfig.item_xts);
+            }
             dropArray.push(ItemConfig.itemConfig.item_protect);
             dropArray.push(ItemConfig.itemConfig.item_shadow);
             dropArray.push(ItemConfig.itemConfig.item_double);

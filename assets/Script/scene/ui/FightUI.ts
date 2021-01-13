@@ -14,6 +14,7 @@ import {DialogManager} from "../../manager/widget/DialogManager";
 import {GuideConfig} from "../../configs/GuideConfig";
 import {GuideManager} from "../../manager/guide/GuideManager";
 import {GuideTriggerEvent} from "../../common/GuideTriggerEvent";
+import log = cc.log;
 
 const {ccclass, property} = cc._decorator;
 @ccclass
@@ -78,17 +79,18 @@ export default class FightUI extends cc.Component implements IMediator{
     @property(cc.Node)
     doubleClickHint: cc.Node = null;
 
-
     private eatCoinEffectPool: cc.NodePool = new cc.NodePool();
-
+    //双击状态
+    private _clicked:boolean = false;
     getCommands(){
         return [GameEvent.RESTART_GAME, GameEvent.MOVE_BG, GameEvent.UPDATE_DISTANCE_STAGE,
             GameEvent.ITEM_COLLISION_PLAYER, GameEvent.UPDATE_FIGHT_GOLD, GameEvent.EAT_ITEM, GameEvent.DEDUCT_BUFF_TIME
-        ,GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB_EFFECT];
+        ,GameEvent.PROTECT_EFFECT, GameEvent.USE_BOMB_EFFECT, GameEvent.OPEN_DOUBLE_CLICK_HINT];
     }
 
     protected onLoad(): void {
         ObserverManager.registerObserverFun(this);
+        this.doubleClickHint.on(cc.Node.EventType.TOUCH_END, this.onDoubleClickHint, this);
         this.pauseBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnPauseGame, this);
         this.backBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnBackGame, this);
         this.restartBtn.node.on(cc.Node.EventType.TOUCH_END, this.OnRestartGame, this);
@@ -138,11 +140,26 @@ export default class FightUI extends cc.Component implements IMediator{
         ));
     }
 
+    private onDoubleClickHint(event){
+        if(this._clicked){
+            this.doubleClickHint.active = false;
+            Player.player.guideFinish(GuideConfig.guideConfig.doubleClickBomb.name);
+            ObserverManager.sendNotification(GameEvent.DOUBLE_CLICK_HINT_DO);
+        }else{
+            this._clicked = true;
+            setTimeout(function(){
+                let target:FightUI = event.getCurrentTarget().parent.getComponent(FightUI);
+                target._clicked = false;
+                }, 250);
+        }
+        return true
+    }
     //暂停游戏
     private OnPauseGame(sender,type){
         GameUtil.playSound(SoundConfig.OnclickEffect_mp3);
-        //游戏暂停
-        cc.director.pause();
+        this.scheduleOnce(function () {
+            cc.director.pause();
+        }, 0.1)
         //暂停界面显示
         this.pauseNode.active = true;
         cc.audioEngine.pauseAllEffects();
@@ -342,16 +359,7 @@ export default class FightUI extends cc.Component implements IMediator{
                 break;
             case ItemConfig.itemConfig.item_shadow.name:
                 percent = Player.player.shadowRemainTime%CommonConfig.SHADOW_TIME/CommonConfig.SHADOW_TIME;
-                //如果只要有一个影子，就一直显示进度条
-                if(Player.player.shadowRemainTime>=CommonConfig.SHADOW_TIME) percent = 1;
                 buffProgress = this.shadowProgress;
-                let shadowCount:number = Player.player.shadowRemainTime/CommonConfig.SHADOW_TIME;
-                if(shadowCount>1){
-                    this.shadowCountLab.node.active = true;
-                    this.shadowCountLab.string = "x"+Math.ceil(Player.player.shadowRemainTime/CommonConfig.SHADOW_TIME);
-                }else {
-                    this.shadowCountLab.node.active = false;
-                }
                 break;
             case ItemConfig.itemConfig.item_double.name:
                 percent = Player.player.doubleFireRemainTime/CommonConfig.DOUBLE_FIRE_TIME;
@@ -359,7 +367,22 @@ export default class FightUI extends cc.Component implements IMediator{
                 break;
         }
         buffProgress.progress = percent;
-        if(percent<=0) buffProgress.node.parent.active = false;
+        if(itemName==ItemConfig.itemConfig.item_shadow.name){
+            let shadowCount:number = Player.player.shadowRemainTime/CommonConfig.SHADOW_TIME;
+            if(shadowCount>1){
+                this.shadowCountLab.node.active = true;
+                this.shadowCountLab.string = "x"+Math.ceil(Player.player.shadowRemainTime/CommonConfig.SHADOW_TIME);
+            }else {
+                this.shadowCountLab.node.active = false;
+                if(shadowCount<=0){
+                    buffProgress.node.parent.active = false;
+                }
+            }
+        }else {
+            if(percent<=0){
+                buffProgress.node.parent.active = false;
+            }
+        }
     }
 
     private PROTECT_EFFECT(){
@@ -368,5 +391,9 @@ export default class FightUI extends cc.Component implements IMediator{
 
     private USE_BOMB_EFFECT(){
         this.updateBombCount();
+    }
+
+    private OPEN_DOUBLE_CLICK_HINT(){
+        this.doubleClickHint.active = true;
     }
 }

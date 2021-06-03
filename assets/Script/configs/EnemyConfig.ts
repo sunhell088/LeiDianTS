@@ -1,0 +1,110 @@
+import EnemySprite from "../sprites/enemy/EnemySprite";
+import FlexEnemySprite from "../sprites/enemy/FlexEnemySprite";
+import BossEnemySprite from "../sprites/enemy/BossEnemySprite";
+import StayEnemySprite from "../sprites/enemy/StayEnemySprite";
+
+
+export class EnemyConfig {
+
+    public static enemyConfig:any = {
+        enemy0:{
+            id:"enemy0",
+            textureName:"enemy0",
+            enemyClassName:"EnemySprite"
+        },
+        enemy1:{
+            id:"enemy1",
+            textureName:"enemy1",
+            enemyClassName:"EnemySprite"
+        },
+        enemy2:{
+            id:"enemy2",
+            textureName:"enemy2",
+            enemyClassName:"EnemySprite"
+        },
+        enemy3:{
+            id:"enemy3",
+            textureName:"enemy3",
+            enemyClassName:"EnemySprite"
+        },
+        enemy4:{
+            id:"enemy4",
+            textureName:"enemy4",
+            enemyClassName:"EnemySprite"
+        },
+        enemy5:{
+            id:"enemy5",
+            textureName:"enemy5",
+            enemyClassName:"EnemySprite"
+        },
+        enemy6:{
+            id:"enemy6",
+            textureName:"enemy6",
+            enemyClassName:"EnemySprite"
+        },
+        enemy7:{
+            id:"enemy7",
+            textureName:"enemy7",
+            enemyClassName:"EnemySprite"
+        },
+        enemy8:{
+            id:"enemy8",
+            textureName:"enemy8",
+            enemyClassName:"EnemySprite"
+        },
+        enemy9:{
+            id:"enemy9",
+            textureName:"enemy9",
+            enemyClassName:"EnemySprite"
+        },
+        //------------------特殊飞机---------------------------
+        //自爆飞机
+        enemyBomb:{
+            id:"enemyBomb",
+            textureName:"enemy10",
+            enemyClassName:"StayEnemySprite"
+        },
+        //宝箱飞机
+        enemyBox:{
+            id:"enemyBox",
+            textureName:"enemy21",
+            enemyClassName:"FlexEnemySprite"
+        },
+        //追踪飞机
+        enemyFollow:{
+            id:"enemyFollow",
+            textureName:"enemy27",
+            enemyClassName:"FollowEnemySprite"
+        },
+        //停留飞机
+        enemyStay1:{
+            id:"enemyStay1",
+            textureName:"enemy22",
+            enemyClassName:"StayEnemySprite"
+        },
+        //停留大飞机2
+        enemyStay2:{
+            id:"enemyStay2",
+            textureName:"enemy26",
+            enemyClassName:"StayEnemySprite"
+        },
+        //boss1
+        enemyBoss1:{
+            id:"enemyBoss1",
+            textureName:"enemy23",
+            enemyClassName:"BossEnemySprite"
+        },
+        //boss2
+        enemyBoss2:{
+            id:"enemyBoss2",
+            textureName:"enemy24",
+            enemyClassName:"BossEnemySprite"
+        },
+        //boss3
+        enemyBoss3:{
+            id:"enemyBoss3",
+            textureName:"enemy25",
+            enemyClassName:"BossEnemySprite"
+        }
+    };
+}

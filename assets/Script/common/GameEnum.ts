@@ -1,0 +1,28 @@
+export enum FLY_STATE {
+    ENTER = 0,
+    RUN = 1,
+    EXIT = 2
+}
+
+//用掩码表示
+export enum ENEMY_TYPE {
+    NORMAL_ENEMY = 1,
+    ROCK = 2,
+    BLESS_ENEMY = 4,
+    FOLLOW_ENEMY = 8,
+    STAY_ENEMY = 16
+}
+
+//用掩码表示
+export enum CLEAN_ENEMY_TYPE {
+    EXCEPT_SPECIAL_ENEMY = ENEMY_TYPE.NORMAL_ENEMY + ENEMY_TYPE.ROCK ,
+    ALL = ENEMY_TYPE.NORMAL_ENEMY + ENEMY_TYPE.ROCK + ENEMY_TYPE.BLESS_ENEMY + ENEMY_TYPE.FOLLOW_ENEMY + ENEMY_TYPE.STAY_ENEMY
+
+}
+
+//购买子弹
+export enum BUY_BULLET_STATE {
+    OK = 0,
+    NO_MONEY = 1,
+    NO_GRID = 2
+}

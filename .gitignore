@@ -49,3 +49,5 @@ Thumbs.db
 #//////////////////////////
 
 .vscode/
+/assets/resources/sound/*.meta
+/assets/resources/sound/music/*.meta
